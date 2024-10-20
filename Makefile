@@ -1,8 +1,8 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address,undefined
 
-SRCS = $(addprefix srcs/, minishell.c builtin.c line_split.c redirection_split.c syntax_tree.c syntax_tree2.c\
-							check_syntax_and_transform.c syntax_tree3.c parser.c)
+SRCS = $(addprefix srcs/, minishell.c line_split.c redirection_split.c syntax_tree.c syntax_tree2.c\
+		check_syntax_and_transform.c expansion.c parser.c env.c)
 DEPS = $(SRCS:.c=.d)
 OBJS = $(SRCS:.c=.o)
 

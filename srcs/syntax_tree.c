@@ -6,24 +6,19 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/18 22:11:07 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/20 20:26:30 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir_split_arr, char **new_envp)
+int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir_split_arr)
 {
 	int		i;
-	char	*filename;
+	int		cmd_name_found;
 
 	i = 0;
-	if (!find_redirections(redir_split_arr[i]))
-	{
-		redir_branches[i]->type = COMMAND;
-		redir_branches[i]->value = redir_split_arr[i];
-		i++;
-	}
+	cmd_name_found = 0;
 	while (redir_split_arr[i])
 	{
 		if (ft_strncmp(redir_split_arr[i], "<<", 2) == 0)
@@ -32,28 +27,39 @@ int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir
 			redir_branches[i]->type = SINGLE_LEFT;
 		else if (ft_strncmp(redir_split_arr[i], ">>", 2) == 0)
 			redir_branches[i]->type = DOUBLE_RIGHT;
-		else
+		else if (ft_strncmp(redir_split_arr[i], ">", 1) == 0)
 			redir_branches[i]->type = SINGLE_RIGHT;
-		redir_branches[i]->value = redir_split_arr[i];
-		redir_branches[i + 1]->type = T_FILE;
-		filename = perform_expansions(redir_split_arr[i + 1], new_envp);
-		if (!filename)
-			return (0);
-		redir_branches[i + 1]->value = revert_transform(filename);
-		i += 2;
+		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && redir_split_arr[i][0] == '$')
+			redir_branches[i]->type = HEREDOC_DELIMITER;
+		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && (redir_split_arr[i][0] == DQUOTE_DOLLAR || redir_split_arr[i][0] == ESC_DOLLAR))
+			redir_branches[i]->type = HEREDOC_QUOTED_DELIMITER;
+		else if (i != 0 && (redir_branches[i - 1]->type == SINGLE_LEFT
+		|| redir_branches[i - 1]->type == DOUBLE_RIGHT || redir_branches[i - 1]->type == SINGLE_RIGHT))
+			redir_branches[i]->type = T_FILE;
+		else if (!cmd_name_found)
+		{
+			cmd_name_found = 1;
+			redir_branches[i]->type = CMD_NAME;
+		}
+		else
+			redir_branches[i]->type = CMD_ARGUMENT;
+		redir_branches[i]->value = revert_transform(redir_split_arr[i]);
+		i++;
 	}
-	if (redir_branches[0]->type != COMMAND)
-		return (1);
-	return (create_cmd_name_args_branches(redir_branches[0], new_envp));
+	return (1);
 }
 
 int	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, char **new_envp)
 {
 	char	**redir_split_arr;
+	char	*expanded_str;
 	int		i;
 
 	stree->type = REDIRECTION;
-	redir_split_arr = redirection_split(pipe_split);
+	expanded_str = perform_expansions(pipe_split, new_envp);
+	if (!expanded_str)
+		return (0);
+	redir_split_arr = redirection_split(expanded_str);
 	if (!redir_split_arr)
 	{
 		printf("Malloc failed for redirection_split\n");
@@ -78,13 +84,14 @@ int	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, char **n
 		}
 		i++;
 	}
-	if (!create_cmd_redirection_branches(stree->branches, redir_split_arr, new_envp))
+	if (!create_cmd_redirection_branches(stree->branches, redir_split_arr))
 	{
 		free_2d_malloc_array(&redir_split_arr);
 		return (0);
 	}
 	free(redir_split_arr[stree->num_branches]);
 	free(redir_split_arr);
+	free(expanded_str);
 	return (1);
 }
 

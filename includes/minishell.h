@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/18 22:04:38 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/20 20:14:01 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ typedef enum e_token_type
 	DOUBLE_LEFT,
 	DOUBLE_RIGHT,
 	PIPE,
-	T_FILE
+	T_FILE,
+	HEREDOC_DELIMITER,
+	HEREDOC_QUOTED_DELIMITER
 }	t_token_type;
 typedef enum e_escaped_type
 {
@@ -54,10 +56,8 @@ char	**line_split(char *str, char *charset);
 char	**redirection_split(char *str);
 int		create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp);
 int		count_split_elements(char **split);
-int		create_cmd_name_args_branches(t_syntax_tree *stree, char **new_envp);
 void	free_syntax_tree(t_syntax_tree *stree);
 char	*revert_transform(char *token);
-int		find_redirections(const char *str);
 int		check_syntax_and_transform_line(char *line);
 void	free_2d_malloc_array(char ***split);
 char	*find_env_value(char **new_envp, char *key);

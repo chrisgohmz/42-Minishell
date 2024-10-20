@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/18 21:56:26 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/20 20:29:08 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	free_2d_malloc_array(char ***split)
 	*split = NULL;
 }
 
-static char	*alloc_word(char *start, char *end, int index)
+static char	*alloc_word(char *start, char *end)
 {
 	char	*word;
 	int		i;
@@ -39,14 +39,7 @@ static char	*alloc_word(char *start, char *end, int index)
 	i = 0;
 	j = 0;
 	while (start + i < end)
-	{
-		if (index > 0 && ft_strchr(" \t", start[i]))
-		{
-			i++;
-			continue;
-		}
 		word[j++] = start[i++];
-	}
 	word[j] = '\0';
 	return (word);
 }
@@ -55,22 +48,29 @@ static int	count_words(char *str)
 {
 	int	words;
 	int	in_word;
+	int	in_delimiter;
 
 	words = 0;
 	in_word = 0;
-	if (ft_strchr("<>", *str))
-		words++;
+	in_delimiter = 0;
 	while (*str)
 	{
-		if (!ft_strchr("<>", *str) && !in_word)
+		if (ft_strchr("<>", *str) && !in_delimiter)
 		{
-			in_word = 1;
 			words++;
+			in_word = 0;
+			in_delimiter = 1;
 		}
-		else if (ft_strchr("<>", *str) && in_word)
+		else if (!in_word && !ft_strchr("<> \t", *str))
+		{
+			words++;
+			in_word = 1;
+			in_delimiter = 0;
+		}
+		else if (ft_strchr(" \t", *str))
 		{
 			in_word = 0;
-			words++;
+			in_delimiter = 0;
 		}
 		str++;
 	}
@@ -82,33 +82,44 @@ static void	insert_words(char **split, char *str, int words)
 	int		index;
 	char	*start;
 	char	*end;
+	int		in_word;
+	int		in_delimiter;
 
 	index = 0;
 	start = str;
-	end = str;
-	while (ft_strchr("<>", *end))
-		end++;
-	if (start != end)
-	{
-		split[index] = alloc_word(start, end, index);
-		index++;
-	}
+	in_word = 0;
+	in_delimiter = 0;
+	while (*start == ' ' || *start == '\t')
+		start++;
+	end = start;
+	if (ft_strchr("<>", *start))
+		in_delimiter = 1;
+	else
+		in_word = 1;
 	while (*end && index < words)
 	{
-		start = end;
-		while (!ft_strchr("<>", *end) && *end)
+		while (in_delimiter && ft_strchr("<>", *end) && *end)
 			end++;
-		split[index] = alloc_word(start, end, index);
+		while (in_word && !ft_strchr("<> \t", *end) && *end)
+			end++;
+		split[index] = alloc_word(start, end);
 		index++;
 		start = end;
 		if (!*start)
 			break ;
-		while (ft_strchr("<>", *end) && *end)
-			end++;
-		split[index] = alloc_word(start, end, index);
-		if (!split[index])
-			return (free_2d_malloc_array(&split));
-		index++;
+		while (*start == ' ' || *start == '\t')
+			start++;
+		end = start;
+		if (ft_strchr("<>", *start))
+		{
+			in_delimiter = 1;
+			in_word = 0;
+		}
+		else
+		{
+			in_delimiter = 0;
+			in_word = 1;
+		}
 	}
 	split[index] = NULL;
 }

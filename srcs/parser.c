@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/18 20:37:54 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/20 20:35:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ void	parse_tree(t_syntax_tree *stree)
 		if (branch < stree->num_branches && stree->type != COMMAND && stree->type != REDIRECTION)
 			printf("token type: %d, token value: %s\n", stree->type, stree->value);
 	}
-	if (stree->type == CMD_NAME || stree->type == CMD_ARGUMENT || stree->type == T_FILE
-		|| stree->type == SINGLE_LEFT || stree->type == SINGLE_RIGHT || stree->type == DOUBLE_LEFT
-		|| stree->type == DOUBLE_RIGHT)
+	if (stree->type != COMMAND && stree->type != REDIRECTION && stree->type != PIPE)
 		printf("token type: %d, token value: %s\n", stree->type, stree->value);
 }
