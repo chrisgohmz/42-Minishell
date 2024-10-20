@@ -14,13 +14,9 @@
 
 int	print_u(t_format *format_lst, unsigned int n)
 {
-	char	*flags;
-	int		left;
 	char	*formatted_u;
 	int		len;
 
-	flags = format_lst->flags;
-	left = 0;
 	formatted_u = malloc_str_u(n, format_lst->precision);
 	if (!formatted_u)
 		return (-1);

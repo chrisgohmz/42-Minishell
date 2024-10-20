@@ -15,12 +15,10 @@
 int	print_p(t_format *format_lst, void *p)
 {
 	char	*flags;
-	int		left;
 	char	*formatted_p;
 	int		len;
 
 	flags = format_lst->flags;
-	left = 0;
 	formatted_p = malloc_str_p(p, flags, format_lst->precision);
 	if (!formatted_p)
 		return (-1);

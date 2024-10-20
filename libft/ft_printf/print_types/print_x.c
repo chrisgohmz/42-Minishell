@@ -14,11 +14,9 @@
 
 int	print_x(t_format *format_lst, unsigned int n, char format)
 {
-	int		left;
 	char	*formatted_x;
 	int		len;
 
-	left = 0;
 	formatted_x = malloc_str_x(n, format_lst, format);
 	if (!formatted_x)
 		return (-1);

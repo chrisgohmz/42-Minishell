@@ -65,5 +65,7 @@ char	*find_key_value(char *env, char *key);
 void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t expanded_size);
 void	parse_tree(t_syntax_tree *stree);
 char	*perform_expansions(char *str, char **new_envp);
+int		make_new_envp(char **new_envp, char **envp);
+void	free_2d_static_arr(char **arr);
 
 #endif

@@ -16,12 +16,10 @@ int	print_char(t_format *format_lst, char c)
 {
 	char	*flags;
 	int		width;
-	int		precision;
 	int		left;
 
 	flags = format_lst->flags;
 	width = format_lst->width;
-	precision = format_lst->precision;
 	left = 0;
 	if (ft_strchr(flags, '-'))
 		left = 1;

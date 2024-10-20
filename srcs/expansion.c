@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size)
+size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size, char dollar_char)
 {
 	size_t	src_n;
 	size_t	dest_len;
@@ -23,10 +23,14 @@ size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size)
 		return (size + ft_strlen(src));
 	while (src_n < size - 1 - dest_len && src[src_n])
 	{
-		if (src[src_n] == ' ')
+		if (src[src_n] == ' ' && dollar_char == DQUOTE_DOLLAR)
 			dest[dest_len + src_n] = ESC_SPACE;
-		else if (src[src_n] == '\t')
+		else if (src[src_n] == '\t' && dollar_char == DQUOTE_DOLLAR)
 			dest[dest_len + src_n] = ESC_TAB;
+		else if (src[src_n] == '>')
+			dest[dest_len + src_n] = ESC_RIGHT;
+		else if (src[src_n] == '<')
+			dest[dest_len + src_n] = ESC_LEFT;
 		else
 			dest[dest_len + src_n] = src[src_n];
 		src_n++;
@@ -57,10 +61,8 @@ void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t exp
 		}
 		if (!is_heredoc_delim && (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR) && (ft_isalnum(old_str[i + 1]) || old_str[i + 1] == '_'))
 		{
-			if (old_str[i] == '$')
-				j = ft_strlcat(new_str, find_env_value(new_envp, old_str + i), expanded_size + 1);
-			else
-				j = ft_strlcat_transform_metachar(new_str, find_env_value(new_envp, old_str + i), expanded_size + 1);
+			if (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR)
+				j = ft_strlcat_transform_metachar(new_str, find_env_value(new_envp, old_str + i), expanded_size + 1, old_str[i]);
 			i++;
 			while (ft_isalnum(old_str[i]) || old_str[i] == '_')
 				i++;

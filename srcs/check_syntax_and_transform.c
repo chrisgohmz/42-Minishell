@@ -12,6 +12,18 @@
 
 #include "../includes/minishell.h"
 
+int	check_first_word_is_pipe(char *line, int *i)
+{
+	while (line[*i] == ' ' || line[*i] == '\t')
+		(*i)++;
+	if (line[*i] == '|')
+	{
+		printf("Syntax Error: Missing command before pipe\n");
+		return (0);
+	}
+	return (1);
+}
+
 char	*revert_transform(char *token)
 {
 	int	i;
@@ -104,6 +116,8 @@ int	check_syntax_and_transform_line(char *line)
 	redirection_or_pipe = 0;
 	within_squotes = 0;
 	within_dquotes = 0;
+	if (!check_first_word_is_pipe(line, &i))
+		return (1);
 	while (line[i])
 	{
 		if (!within_squotes && line[i] == '"')
@@ -124,7 +138,7 @@ int	check_syntax_and_transform_line(char *line)
 	}
 	if (redirection_or_pipe)
 	{
-		printf("Redirection/Pipe Syntax Error\n");
+		printf("Syntax Error: Missing argument after Pipe/Redirection\n");
 		return (1);
 	}
 	return (0);
