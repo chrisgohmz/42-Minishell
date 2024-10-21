@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/20 20:26:30 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/21 20:40:05 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir
 			redir_branches[i]->type = DOUBLE_RIGHT;
 		else if (ft_strncmp(redir_split_arr[i], ">", 1) == 0)
 			redir_branches[i]->type = SINGLE_RIGHT;
-		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && redir_split_arr[i][0] == '$')
+		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT)
 			redir_branches[i]->type = HEREDOC_DELIMITER;
 		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && (redir_split_arr[i][0] == DQUOTE_DOLLAR || redir_split_arr[i][0] == ESC_DOLLAR))
 			redir_branches[i]->type = HEREDOC_QUOTED_DELIMITER;

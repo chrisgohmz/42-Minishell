@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/18 18:55:57 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/21 19:29:37 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,14 @@ char	*revert_transform(char *token)
 	return (token);
 }
 
-int	check_redirection_pipe_syntax(char *line, int separated)
+int	check_redirection_pipe_syntax(char *line, int sfw, int srf)
 {
 	int	error;
 
 	error = 0;
-	if ((line[0] == '<' || line[0] == '>' || line[0] == '|') && separated)
+	if (line[0] == '|' && sfw)
 		error = 1;
-	else if (line[0] == '<' && ft_strchr(">|", line[1]))
-		error = 1;
-	else if (line[0] == '>' && ft_strchr("<|", line[1]))
-		error = 1;
-	else if (line[0] == '|' && ft_strchr("<>", line[1]))
-		error = 1;
-	else if (line[0] == '<' && line[1] == '<' && line[2] == '<')
-		error = 1;
-	else if (line[0] == '>' && line[1] == '>' && line[2] == '>')
-		error = 1;
-	else if (line[0] == '|' && line[1] == '|' && line[2] == '|')
+	else if (ft_strchr("<>|", line[0]) && srf)
 		error = 1;
 	if (error)
 	{
@@ -106,14 +96,14 @@ void	transform_special_char(char *c, int within_squotes, int within_dquotes)
 int	check_syntax_and_transform_line(char *line)
 {
 	int	i;
-	int	separated;
-	int	redirection_or_pipe;
+	int	searching_first_word;
+	int	searching_redir_file;
 	int	within_squotes;
 	int	within_dquotes;
 
 	i = 0;
-	separated = 0;
-	redirection_or_pipe = 0;
+	searching_first_word = 0;
+	searching_redir_file = 0;
 	within_squotes = 0;
 	within_dquotes = 0;
 	if (!check_first_word_is_pipe(line, &i))
@@ -125,10 +115,22 @@ int	check_syntax_and_transform_line(char *line)
 		else if (!within_dquotes && line[i] == '\'')
 			within_squotes = 1 - within_squotes;
 		transform_special_char(line + i, within_squotes, within_dquotes);
-		if (!check_redirection_pipe_syntax(line + i, separated))
+		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file))
 			return (1);
-		separated = (redirection_or_pipe && ft_strchr(" \t", line[i]) != NULL);
-		redirection_or_pipe = (separated || ft_strchr("<>|", line[i]) != NULL);
+		if (searching_first_word && !ft_strchr(" \t<>", line[i]))
+			searching_first_word = 0;
+		else if (!searching_first_word && line[i] == '|')
+			searching_first_word = 1;
+		else if (!searching_redir_file && ft_strchr("<>", line[i]))
+			searching_redir_file = 1;
+		else if (searching_redir_file && !ft_strchr(" \t", line[i]))
+			searching_redir_file = 0;
+		if (line[i] == '>' && line[i + 1] == '>')
+			i++;
+		else if (line[i] == '<' && line[i + 1] == '<')
+			i++;
+		else if (line[i] == '|' && line[i + 1] == '|')
+			i++;
 		i++;
 	}
 	if (within_squotes || within_dquotes)
@@ -136,7 +138,7 @@ int	check_syntax_and_transform_line(char *line)
 		printf("Syntax Error: unclosed quotes\n");
 		return (1);
 	}
-	if (redirection_or_pipe)
+	if (searching_first_word || searching_redir_file)
 	{
 		printf("Syntax Error: Missing argument after Pipe/Redirection\n");
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/20 20:14:01 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/21 18:59:59 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ typedef struct s_syntax_tree
 	int						num_branches;
 	struct s_syntax_tree	**branches;
 }	t_syntax_tree;
-void	builtin_env(char **envp);
 char	**line_split(char *str, char *charset);
 char	**redirection_split(char *str);
 int		create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp);
