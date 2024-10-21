@@ -66,5 +66,6 @@ void	parse_tree(t_syntax_tree *stree);
 char	*perform_expansions(char *str, char **new_envp);
 int		make_new_envp(char **new_envp, char **envp);
 void	free_2d_static_arr(char **arr);
+char    *remove_quotes(char *old_str);
 
 #endif

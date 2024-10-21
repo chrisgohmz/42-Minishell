@@ -12,27 +12,21 @@
 
 #include "../includes/minishell.h"
 
-static char	*alloc_word(char *start, char *end, int skip_chars)
+static char	*alloc_word(char *start, char *end)
 {
 	char	*word;
 	int		i;
-	int		j;
 
-	word = malloc((end - start + 1 - skip_chars) * sizeof(char));
+	word = malloc((end - start + 1) * sizeof(char));
 	if (!word)
 		return (NULL);
 	i = 0;
-	j = 0;
 	while (start + i < end)
 	{
-		if (start[i] != '"' && start[i] != '\'')
-		{
-			word[j] = start[i];
-			j++;
-		}
+		word[i] = start[i];
 		i++;
 	}
-	word[j] = '\0';
+	word[i] = '\0';
 	return (word);
 }
 
@@ -51,9 +45,7 @@ static int	count_words(char *str, char *charset)
 			words++;
 		}
 		else if (ft_strchr(charset, *str))
-		{
 			in_word = 0;
-		}
 		str++;
 	}
 	return (words);
@@ -62,7 +54,6 @@ static int	count_words(char *str, char *charset)
 static void	insert_words(char **split, char *str, char *charset, int words)
 {
 	int		index;
-	int		skip_chars;
 	char	*start;
 	char	*end;
 
@@ -70,18 +61,13 @@ static void	insert_words(char **split, char *str, char *charset, int words)
 	end = str;
 	while (*end && index < words)
 	{
-		skip_chars = 0;
 		start = end;
 		while (ft_strchr(charset, *start) && *start)
 			start++;
 		end = start;
 		while (!ft_strchr(charset, *end) && *end)
-		{
-			if (*end == '"' || *end == '\'')
-				skip_chars++;
 			end++;
-		}
-		split[index] = alloc_word(start, end, skip_chars);
+		split[index] = alloc_word(start, end);
 		if (!split[index])
 			free_2d_malloc_array(&split);
 		index++;

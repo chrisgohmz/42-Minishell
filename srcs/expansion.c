@@ -78,6 +78,8 @@ void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t exp
 			}
 			new_str[j++] = old_str[i++];
 		}
+		else if ((old_str[i] == '"' || old_str[i] == '\'') && is_heredoc_delim)
+			new_str[j++] = old_str[i++];
 		else
 			i++;
 	}
@@ -119,6 +121,11 @@ char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_size)
 				is_heredoc_delim = 0;
 				not_expanding = 0;
 			}
+			(*expanded_size)++;
+			i++;
+		}
+		else if ((str[i] == '"' || str[i] == '\'') && is_heredoc_delim)
+		{
 			(*expanded_size)++;
 			i++;
 		}

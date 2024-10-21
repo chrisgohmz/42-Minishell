@@ -29,10 +29,10 @@ int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir
 			redir_branches[i]->type = DOUBLE_RIGHT;
 		else if (ft_strncmp(redir_split_arr[i], ">", 1) == 0)
 			redir_branches[i]->type = SINGLE_RIGHT;
+		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && ft_strchr("'\"", redir_split_arr[i][0]))
+			redir_branches[i]->type = HEREDOC_QUOTED_DELIMITER;
 		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT)
 			redir_branches[i]->type = HEREDOC_DELIMITER;
-		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && (redir_split_arr[i][0] == DQUOTE_DOLLAR || redir_split_arr[i][0] == ESC_DOLLAR))
-			redir_branches[i]->type = HEREDOC_QUOTED_DELIMITER;
 		else if (i != 0 && (redir_branches[i - 1]->type == SINGLE_LEFT
 		|| redir_branches[i - 1]->type == DOUBLE_RIGHT || redir_branches[i - 1]->type == SINGLE_RIGHT))
 			redir_branches[i]->type = T_FILE;
@@ -43,6 +43,10 @@ int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir
 		}
 		else
 			redir_branches[i]->type = CMD_ARGUMENT;
+		if (redir_branches[i]->type == HEREDOC_QUOTED_DELIMITER)
+			redir_split_arr[i] = remove_quotes(redir_split_arr[i]);
+		if (!redir_split_arr[i])
+			return (0);
 		redir_branches[i]->value = revert_transform(redir_split_arr[i]);
 		i++;
 	}
