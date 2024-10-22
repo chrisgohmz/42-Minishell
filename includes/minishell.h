@@ -19,7 +19,6 @@
 
 typedef enum e_token_type
 {
-	COMMAND,
 	CMD_NAME,
 	CMD_ARGUMENT,
 	REDIRECTION,

@@ -17,13 +17,26 @@ void	parse_tree(t_syntax_tree *stree)
 	int	branch;
 
 	branch = 0;
-	while (stree->branches && branch < stree->num_branches)
+	while (stree->branches && branch < stree->num_branches && stree->type == REDIRECTION)
+	{
+		if (stree->branches[branch]->type == DOUBLE_LEFT || stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
+			parse_tree(stree->branches[branch]);
+		branch++;
+	}
+	branch = 0;
+	while (stree->branches && branch < stree->num_branches && stree->type == REDIRECTION)
+	{
+		if (stree->branches[branch]->type != DOUBLE_LEFT && stree->branches[branch]->type != HEREDOC_DELIMITER && stree->branches[branch]->type != HEREDOC_QUOTED_DELIMITER)
+			parse_tree(stree->branches[branch]);
+		branch++;
+	}
+	while (stree->branches && branch < stree->num_branches && stree->type != REDIRECTION)
 	{
 		parse_tree(stree->branches[branch]);
 		branch++;
-		if (branch < stree->num_branches && stree->type != COMMAND && stree->type != REDIRECTION)
+		if (branch < stree->num_branches && stree->type != REDIRECTION)
 			printf("token type: %d, token value: %s\n", stree->type, stree->value);
 	}
-	if (stree->type != COMMAND && stree->type != REDIRECTION && stree->type != PIPE)
+	if (stree->type != REDIRECTION && stree->type != PIPE)
 		printf("token type: %d, token value: %s\n", stree->type, stree->value);
 }
