@@ -19,6 +19,8 @@
 
 typedef enum e_token_type
 {
+	ROOT,
+	LIST,
 	CMD_NAME,
 	CMD_ARGUMENT,
 	REDIRECTION,
@@ -26,6 +28,8 @@ typedef enum e_token_type
 	SINGLE_RIGHT,
 	DOUBLE_LEFT,
 	DOUBLE_RIGHT,
+	AND,
+	OR,
 	PIPE,
 	T_FILE,
 	HEREDOC_DELIMITER,
@@ -41,7 +45,8 @@ typedef enum e_escaped_type
 	ESC_LEFT = -8,
 	ESC_RIGHT = -9,
 	ESC_DOLLAR = -10,
-	DQUOTE_DOLLAR = -11
+	DQUOTE_DOLLAR = -11,
+	ESC_AND = -12
 }	t_escaped_type;
 typedef struct s_syntax_tree
 {
@@ -66,5 +71,6 @@ char	*perform_expansions(char *str, char **new_envp);
 int		make_new_envp(char **new_envp, char **envp);
 void	free_2d_static_arr(char **arr);
 char    *remove_quotes(char *old_str);
+char	**logical_split(char *str);
 
 #endif

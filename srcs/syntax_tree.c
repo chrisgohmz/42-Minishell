@@ -109,39 +109,71 @@ int	count_split_elements(char **split)
 	return (i);
 }
 
-int	create_pipe_branches(t_syntax_tree **stree, char *line, char **new_envp)
+int	create_pipe_branches(t_syntax_tree *stree, char **new_envp)
 {
 	char	**pipe_split;
 	int		i;
 
-	pipe_split = line_split(line, "|");
+	pipe_split = ft_split(stree->value, '|');
 	if (!pipe_split)
-	{
-		printf("Malloc failed for pipe_split\n");
 		return (0);
+	stree->num_branches = count_split_elements(pipe_split);
+	stree->branches = ft_calloc(stree->num_branches, sizeof(t_syntax_tree *));
+	if (!stree->branches)
+		return (free_2d_malloc_array(&pipe_split), 0);
+	i = 0;
+	while (i < stree->num_branches)
+	{
+		stree->branches[i] = ft_calloc(1, sizeof(t_syntax_tree));
+		if (!stree->branches[i])
+		{
+			free_2d_malloc_array(&pipe_split);
+			return (0);
+		}
+		if (!(create_redirection_branches(stree->branches[i], pipe_split[i], new_envp)))
+			return (0);
+		i++;
 	}
-	(*stree)->num_branches = count_split_elements(pipe_split);
+	free_2d_malloc_array(&pipe_split);
+	return (1);
+}
+
+int	create_logical_branches(t_syntax_tree **stree, char *line, char **new_envp)
+{
+	char	**logical_split_arr;
+	int		i;
+
+	logical_split_arr = logical_split(line);
+	if (!logical_split_arr)
+		return (0);
+	(*stree)->num_branches = count_split_elements(logical_split_arr);
 	(*stree)->branches = ft_calloc((*stree)->num_branches, sizeof(t_syntax_tree *));
 	if (!(*stree)->branches)
-	{
-		printf("Malloc failed for branches\n");
-		return (0);
-	}
+		return (free_2d_malloc_array(&logical_split_arr), 0);
 	i = 0;
 	while (i < (*stree)->num_branches)
 	{
 		(*stree)->branches[i] = ft_calloc(1, sizeof(t_syntax_tree));
 		if (!(*stree)->branches[i])
 		{
-			printf("Malloc failed for branch\n");
-			free_2d_malloc_array(&pipe_split);
+			free_2d_malloc_array(&logical_split_arr);
 			return (0);
 		}
-		if (!(create_redirection_branches((*stree)->branches[i], pipe_split[i], new_envp)))
-			return (0);
+		(*stree)->branches[i]->value = logical_split_arr[i];
+		if (ft_strncmp(logical_split_arr[i], "&&", 2) == 0)
+			(*stree)->branches[i]->type = AND;
+		else if (ft_strncmp(logical_split_arr[i], "||", 2) == 0)
+			(*stree)->branches[i]->type = OR;
+		else
+		{
+			(*stree)->branches[i]->type = LIST;
+			if (!create_pipe_branches((*stree)->branches[i], new_envp))
+				return (0);
+		}
 		i++;
 	}
-	free_2d_malloc_array(&pipe_split);
+	free(logical_split_arr[i]);
+	free(logical_split_arr);
 	return (1);
 }
 
@@ -153,8 +185,8 @@ int	create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp)
 		printf("Malloc failed for stree\n");
 		return (0);
 	}
-	(*stree)->type = PIPE;
-	if (!create_pipe_branches(stree, line, new_envp))
+	(*stree)->type = ROOT;
+	if (!create_logical_branches(stree, line, new_envp))
 		return (0);
 	return (1);
 }

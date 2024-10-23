@@ -12,21 +12,6 @@
 
 #include "../includes/minishell.h"
 
-void	free_2d_malloc_array(char ***split)
-{
-	int	i;
-
-	i = 0;
-	while ((*split)[i])
-	{
-		free((*split)[i]);
-		(*split)[i] = NULL;
-		i++;
-	}
-	free(*split);
-	*split = NULL;
-}
-
 static char	*alloc_word(char *start, char *end)
 {
 	char	*word;
@@ -56,21 +41,16 @@ static int	count_words(char *str)
 	in_delimiter = 0;
 	while (*str)
 	{
-		if (ft_strchr("<>", *str) && !in_delimiter)
+		if ((*str == '&' || (*str == '|' && *(str + 1) == '|')) && !in_delimiter)
 		{
 			words++;
 			in_word = 0;
 			in_delimiter = 1;
 		}
-		else if (!in_word && !ft_strchr("<> \t", *str))
+		else if (!in_word && !(*str == '&' || (*str == '|' && *(str + 1) == '|')))
 		{
 			words++;
 			in_word = 1;
-			in_delimiter = 0;
-		}
-		else if (ft_strchr(" \t", *str))
-		{
-			in_word = 0;
 			in_delimiter = 0;
 		}
 		str++;
@@ -83,25 +63,13 @@ static void	insert_words(char **split, char *str, int words)
 	int		index;
 	char	*start;
 	char	*end;
-	int		in_word;
-	int		in_delimiter;
 
 	index = 0;
 	start = str;
-	in_word = 0;
-	in_delimiter = 0;
-	while (*start == ' ' || *start == '\t')
-		start++;
 	end = start;
-	if (ft_strchr("<>", *start))
-		in_delimiter = 1;
-	else
-		in_word = 1;
 	while (*end && index < words)
 	{
-		while (in_delimiter && ft_strchr("<>", *end) && *end)
-			end++;
-		while (in_word && !ft_strchr("<> \t", *end) && *end)
+		while (*end && *end != '&' && !(*end == '|' && *(end + 1) == '|'))
 			end++;
 		split[index] = alloc_word(start, end);
 		if (!split[index])
@@ -113,24 +81,20 @@ static void	insert_words(char **split, char *str, int words)
 		start = end;
 		if (!*start)
 			break ;
-		while (*start == ' ' || *start == '\t')
-			start++;
-		end = start;
-		if (ft_strchr("<>", *start))
+		end += 2;
+		split[index] = alloc_word(start, end);
+		if (!split[index])
 		{
-			in_delimiter = 1;
-			in_word = 0;
+			free_2d_malloc_array(&split);
+			return ;
 		}
-		else
-		{
-			in_delimiter = 0;
-			in_word = 1;
-		}
+		index++;
+		start = end;
 	}
 	split[index] = NULL;
 }
 
-char	**redirection_split(char *str)
+char	**logical_split(char *str)
 {
 	int		words;
 	char	**split;

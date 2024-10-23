@@ -12,13 +12,23 @@
 
 #include "../includes/minishell.h"
 
-int	check_first_word_is_pipe(char *line, int *i)
+int	check_first_word_is_pipe_or_logical(char *line, int *i)
 {
 	while (line[*i] == ' ' || line[*i] == '\t')
 		(*i)++;
-	if (line[*i] == '|')
+	if (line[*i] == '|' && line[*i + 1] == '|')
 	{
-		printf("Syntax Error: Missing command before pipe\n");
+		printf("Syntax Error: Missing command before ||\n");
+		return (0);
+	}
+	else if (line[*i] == '&' && line[*i + 1] == '&')
+	{
+		printf("Syntax Error: Missing command before &&\n");
+		return (0);
+	}
+	else if (line[*i] == '|')
+	{
+		printf("Syntax Error: Missing command before |\n");
 		return (0);
 	}
 	return (1);
@@ -45,6 +55,8 @@ char	*revert_transform(char *token)
 			token[i] = '>';
 		else if (token[i] == ESC_LEFT)
 			token[i] = '<';
+		else if (token[i] == ESC_AND)
+			token[i] = '&';
 		else if (token[i] == ESC_DOLLAR)
 			token[i] = '$';
 		else if (token[i] == DQUOTE_DOLLAR)
@@ -56,16 +68,19 @@ char	*revert_transform(char *token)
 
 int	check_redirection_pipe_syntax(char *line, int sfw, int srf)
 {
-	int	error;
-
-	error = 0;
-	if (line[0] == '|' && sfw)
-		error = 1;
-	else if (ft_strchr("<>|", line[0]) && srf)
-		error = 1;
-	if (error)
+	if (ft_strchr("|&", line[0]) && sfw)
 	{
-		printf("Redirection/Pipe Syntax Error\n");
+		printf("Syntax Error: Missing command after |, ||, or &&\n");
+		return (0);
+	}
+	else if (ft_strchr("<>|&", line[0]) && srf)
+	{
+		printf("Syntax Error: Missing file name after redirection operator\n");
+		return (0);
+	}
+	else if (line[0] == '&' && line[1] != '&')
+	{
+		printf("Syntax Error: Invalid operator &, please use && instead\n");
 		return (0);
 	}
 	return (1);
@@ -87,6 +102,8 @@ void	transform_special_char(char *c, int within_squotes, int within_dquotes)
 		*c = ESC_RIGHT;
 	else if ((within_squotes || within_dquotes) && *c == '<')
 		*c = ESC_LEFT;
+	else if ((within_squotes || within_dquotes) && *c == '&')
+		*c = ESC_AND;
 	else if (within_squotes && *c == '$')
 		*c = ESC_DOLLAR;
 	else if (within_dquotes && *c == '$')
@@ -106,20 +123,20 @@ int	check_syntax_and_transform_line(char *line)
 	searching_redir_file = 0;
 	within_squotes = 0;
 	within_dquotes = 0;
-	if (!check_first_word_is_pipe(line, &i))
+	if (!check_first_word_is_pipe_or_logical(line, &i))
 		return (1);
 	while (line[i])
 	{
 		if (!within_squotes && line[i] == '"')
-			within_dquotes = 1 - within_dquotes;
+			within_dquotes = !within_dquotes;
 		else if (!within_dquotes && line[i] == '\'')
-			within_squotes = 1 - within_squotes;
+			within_squotes = !within_squotes;
 		transform_special_char(line + i, within_squotes, within_dquotes);
 		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file))
 			return (1);
 		if (searching_first_word && !ft_strchr(" \t<>", line[i]))
 			searching_first_word = 0;
-		else if (!searching_first_word && line[i] == '|')
+		else if (!searching_first_word && (line[i] == '|' || (line[i] == '&' && line[i + 1] == '&')))
 			searching_first_word = 1;
 		else if (!searching_redir_file && ft_strchr("<>", line[i]))
 			searching_redir_file = 1;
@@ -131,6 +148,8 @@ int	check_syntax_and_transform_line(char *line)
 			i++;
 		else if (line[i] == '|' && line[i + 1] == '|')
 			i++;
+		else if (line[i] == '&' && line[i + 1] == '&')
+			i++;
 		i++;
 	}
 	if (within_squotes || within_dquotes)
@@ -138,9 +157,14 @@ int	check_syntax_and_transform_line(char *line)
 		printf("Syntax Error: unclosed quotes\n");
 		return (1);
 	}
-	if (searching_first_word || searching_redir_file)
+	if (searching_first_word)
 	{
-		printf("Syntax Error: Missing argument after Pipe/Redirection\n");
+		printf("Syntax Error: Missing command after |, ||, or &&\n");
+		return (1);
+	}
+	else if (searching_redir_file)
+	{
+		printf("Syntax Error: Missing file name after redirection operator\n");
 		return (1);
 	}
 	return (0);
