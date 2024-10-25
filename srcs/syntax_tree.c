@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/21 20:40:05 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/24 17:51:27 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ int	create_logical_branches(t_syntax_tree **stree, char *line, char **new_envp)
 			(*stree)->branches[i]->type = OR;
 		else
 		{
-			(*stree)->branches[i]->type = LIST;
+			(*stree)->branches[i]->type = PIPE;
 			if (!create_pipe_branches((*stree)->branches[i], new_envp))
 				return (0);
 		}

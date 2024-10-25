@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/21 18:59:59 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/25 20:26:03 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 typedef enum e_token_type
 {
 	ROOT,
-	LIST,
 	CMD_NAME,
 	CMD_ARGUMENT,
 	REDIRECTION,
@@ -46,7 +45,9 @@ typedef enum e_escaped_type
 	ESC_RIGHT = -9,
 	ESC_DOLLAR = -10,
 	DQUOTE_DOLLAR = -11,
-	ESC_AND = -12
+	ESC_AND = -12,
+	ESC_OPEN_BRACKET = -13,
+	ESC_CLOSE_BRACKET = -14
 }	t_escaped_type;
 typedef struct s_syntax_tree
 {

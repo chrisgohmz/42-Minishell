@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/21 19:29:37 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/25 21:36:53 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_first_word_is_pipe_or_logical(char *line, int *i)
+int	check_first_word_is_pipe_or_logical(char *line, int *i, int *sfw)
 {
 	while (line[*i] == ' ' || line[*i] == '\t')
 		(*i)++;
@@ -31,6 +31,8 @@ int	check_first_word_is_pipe_or_logical(char *line, int *i)
 		printf("Syntax Error: Missing command before |\n");
 		return (0);
 	}
+	else if (line[*i] == '(')
+		*sfw = 1;
 	return (1);
 }
 
@@ -57,6 +59,10 @@ char	*revert_transform(char *token)
 			token[i] = '<';
 		else if (token[i] == ESC_AND)
 			token[i] = '&';
+		else if (token[i] == ESC_OPEN_BRACKET)
+			token[i] = '(';
+		else if (token[i] == ESC_CLOSE_BRACKET)
+			token[i] = ')';
 		else if (token[i] == ESC_DOLLAR)
 			token[i] = '$';
 		else if (token[i] == DQUOTE_DOLLAR)
@@ -66,7 +72,7 @@ char	*revert_transform(char *token)
 	return (token);
 }
 
-int	check_redirection_pipe_syntax(char *line, int sfw, int srf)
+int	check_redirection_pipe_syntax(char *line, int sfw, int srf, int bracket_level)
 {
 	if (ft_strchr("|&", line[0]) && sfw)
 	{
@@ -81,6 +87,16 @@ int	check_redirection_pipe_syntax(char *line, int sfw, int srf)
 	else if (line[0] == '&' && line[1] != '&')
 	{
 		printf("Syntax Error: Invalid operator &, please use && instead\n");
+		return (0);
+	}
+	else if (bracket_level < 0)
+	{
+		printf("Syntax Error: Missing opening parenthesis");
+		return (0);
+	}
+	else if (line[0] == '(' && !sfw)
+	{
+		printf("Syntax Error: unexpected '(' found\n");
 		return (0);
 	}
 	return (1);
@@ -104,6 +120,10 @@ void	transform_special_char(char *c, int within_squotes, int within_dquotes)
 		*c = ESC_LEFT;
 	else if ((within_squotes || within_dquotes) && *c == '&')
 		*c = ESC_AND;
+	else if ((within_squotes || within_dquotes) && *c == '(')
+		*c = ESC_OPEN_BRACKET;
+	else if ((within_squotes || within_dquotes) && *c == ')')
+		*c = ESC_CLOSE_BRACKET;
 	else if (within_squotes && *c == '$')
 		*c = ESC_DOLLAR;
 	else if (within_dquotes && *c == '$')
@@ -117,13 +137,15 @@ int	check_syntax_and_transform_line(char *line)
 	int	searching_redir_file;
 	int	within_squotes;
 	int	within_dquotes;
+	int	bracket_level;
 
 	i = 0;
 	searching_first_word = 0;
 	searching_redir_file = 0;
 	within_squotes = 0;
 	within_dquotes = 0;
-	if (!check_first_word_is_pipe_or_logical(line, &i))
+	bracket_level = 0;
+	if (!check_first_word_is_pipe_or_logical(line, &i, &searching_first_word))
 		return (1);
 	while (line[i])
 	{
@@ -131,8 +153,12 @@ int	check_syntax_and_transform_line(char *line)
 			within_dquotes = !within_dquotes;
 		else if (!within_dquotes && line[i] == '\'')
 			within_squotes = !within_squotes;
+		else if (!within_dquotes && !within_squotes && line[i] == '(')
+			bracket_level++;
+		else if (!within_dquotes && !within_squotes && line[i] == ')')
+			bracket_level--;
 		transform_special_char(line + i, within_squotes, within_dquotes);
-		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file))
+		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file, bracket_level))
 			return (1);
 		if (searching_first_word && !ft_strchr(" \t<>", line[i]))
 			searching_first_word = 0;
@@ -165,6 +191,11 @@ int	check_syntax_and_transform_line(char *line)
 	else if (searching_redir_file)
 	{
 		printf("Syntax Error: Missing file name after redirection operator\n");
+		return (1);
+	}
+	else if (bracket_level)
+	{
+		printf("Syntax Error: Missing closing parenthesis\n");
 		return (1);
 	}
 	return (0);
