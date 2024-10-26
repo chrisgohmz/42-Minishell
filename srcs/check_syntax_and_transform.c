@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/25 21:36:53 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/26 23:03:37 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_first_word_is_pipe_or_logical(char *line, int *i, int *sfw)
+int	check_first_word_is_pipe_or_logical(char *line, int *i)
 {
 	while (line[*i] == ' ' || line[*i] == '\t')
 		(*i)++;
@@ -31,8 +31,6 @@ int	check_first_word_is_pipe_or_logical(char *line, int *i, int *sfw)
 		printf("Syntax Error: Missing command before |\n");
 		return (0);
 	}
-	else if (line[*i] == '(')
-		*sfw = 1;
 	return (1);
 }
 
@@ -72,7 +70,7 @@ char	*revert_transform(char *token)
 	return (token);
 }
 
-int	check_redirection_pipe_syntax(char *line, int sfw, int srf, int bracket_level)
+int	check_redirection_pipe_syntax(char *line, int sfw, int srf)
 {
 	if (ft_strchr("|&", line[0]) && sfw)
 	{
@@ -87,11 +85,6 @@ int	check_redirection_pipe_syntax(char *line, int sfw, int srf, int bracket_leve
 	else if (line[0] == '&' && line[1] != '&')
 	{
 		printf("Syntax Error: Invalid operator &, please use && instead\n");
-		return (0);
-	}
-	else if (bracket_level < 0)
-	{
-		printf("Syntax Error: Missing opening parenthesis");
 		return (0);
 	}
 	else if (line[0] == '(' && !sfw)
@@ -138,6 +131,7 @@ int	check_syntax_and_transform_line(char *line)
 	int	within_squotes;
 	int	within_dquotes;
 	int	bracket_level;
+	int	empty_brackets;
 
 	i = 0;
 	searching_first_word = 0;
@@ -145,7 +139,8 @@ int	check_syntax_and_transform_line(char *line)
 	within_squotes = 0;
 	within_dquotes = 0;
 	bracket_level = 0;
-	if (!check_first_word_is_pipe_or_logical(line, &i, &searching_first_word))
+	empty_brackets = 0;
+	if (!check_first_word_is_pipe_or_logical(line, &i))
 		return (1);
 	while (line[i])
 	{
@@ -158,7 +153,9 @@ int	check_syntax_and_transform_line(char *line)
 		else if (!within_dquotes && !within_squotes && line[i] == ')')
 			bracket_level--;
 		transform_special_char(line + i, within_squotes, within_dquotes);
-		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file, bracket_level))
+		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file))
+			return (1);
+		else if (!check_bracket_syntax(line + i, bracket_level, empty_brackets))
 			return (1);
 		if (searching_first_word && !ft_strchr(" \t<>", line[i]))
 			searching_first_word = 0;
@@ -176,6 +173,10 @@ int	check_syntax_and_transform_line(char *line)
 			i++;
 		else if (line[i] == '&' && line[i + 1] == '&')
 			i++;
+		else if (line[i] == '(')
+			empty_brackets = 1;
+		else if (empty_brackets && !ft_strchr(" \t", line[i]))
+			empty_brackets = 0;
 		i++;
 	}
 	if (within_squotes || within_dquotes)

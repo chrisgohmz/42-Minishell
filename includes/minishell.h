@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/25 20:26:03 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/26 22:09:04 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,6 @@ int		make_new_envp(char **new_envp, char **envp);
 void	free_2d_static_arr(char **arr);
 char    *remove_quotes(char *old_str);
 char	**logical_split(char *str);
+int		check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
 
 #endif

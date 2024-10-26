@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_syntax_and_transform2.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgoh <cgoh@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 02:40:30 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/22 03:06:46 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/26 22:09:14 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,19 @@ char    *remove_quotes(char *old_str)
     }
     free(old_str);
     return (new_str);
+}
+
+int	check_bracket_syntax(char *line, int bracket_level, int empty_brackets)
+{
+	if (bracket_level < 0)
+	{
+		printf("Syntax Error: Missing opening parenthesis\n");
+		return (0);
+	}
+	else if (empty_brackets && line[0] == ')')
+	{
+		printf("Syntax Error: Empty parenthesis\n");
+		return (0);
+	}
+	return (1);
 }
