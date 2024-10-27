@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/26 22:09:04 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/27 21:34:56 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 typedef enum e_token_type
 {
 	ROOT,
+	BRACKETS,
 	CMD_NAME,
 	CMD_ARGUMENT,
 	REDIRECTION,
