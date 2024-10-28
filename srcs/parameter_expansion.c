@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.c                                        :+:      :+:    :+:   */
+/*   parameter_expansion.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 17:57:59 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/20 19:48:53 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/28 20:46:53 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size, char dollar_char)
+static size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size, char dollar_char)
 {
 	size_t	src_n;
 	size_t	dest_len;
@@ -39,7 +39,7 @@ size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size, c
 	return (ft_strlen(dest) + ft_strlen(&src[src_n]));
 }
 
-void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t expanded_size)
+static void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t expanded_size)
 {
 	int	i;
 	int	j;
@@ -85,7 +85,7 @@ void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t exp
 	}
 }
 
-char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_size)
+static char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_size)
 {
 	int		i;
 	char	*expanded_str;
@@ -136,7 +136,7 @@ char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_size)
 	return (expanded_str);
 }
 
-char	*perform_expansions(char *str, char **new_envp)
+char	*perform_parameter_expansions(char *str, char **new_envp)
 {
 	char	*expanded_str;
 	size_t	expanded_size;

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/27 21:49:31 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/28 20:55:46 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ int	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, char **n
 	int		i;
 
 	stree->type = REDIRECTION;
-	expanded_str = perform_expansions(pipe_split, new_envp);
+	expanded_str = perform_parameter_expansions(pipe_split, new_envp);
+	if (!expanded_str)
+		return (0);
+	expanded_str = perform_wildcard_expansions(expanded_str);
 	if (!expanded_str)
 		return (0);
 	redir_split_arr = redirection_split(expanded_str);

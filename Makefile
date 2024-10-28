@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 SRCS = $(addprefix srcs/, minishell.c redirection_split.c syntax_tree.c syntax_tree2.c\
 		check_syntax_and_transform.c check_syntax_and_transform2.c expansion.c parser.c env.c\
-		logical_split.c)
+		logical_split.c wildcard_expansion.c)
 DEPS = $(SRCS:.c=.d)
 OBJS = $(SRCS:.c=.o)
 

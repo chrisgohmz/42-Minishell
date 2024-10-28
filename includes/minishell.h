@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/27 21:34:56 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/28 21:52:35 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 # include "../libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <dirent.h>
+# include <stdio.h>
+# include <errno.h>
 # define ENV_MAX_VARS 100000
 
 typedef enum e_token_type
@@ -33,7 +36,8 @@ typedef enum e_token_type
 	PIPE,
 	T_FILE,
 	HEREDOC_DELIMITER,
-	HEREDOC_QUOTED_DELIMITER
+	HEREDOC_QUOTED_DELIMITER,
+	WILDCARD
 }	t_token_type;
 typedef enum e_escaped_type
 {
@@ -57,7 +61,6 @@ typedef struct s_syntax_tree
 	int						num_branches;
 	struct s_syntax_tree	**branches;
 }	t_syntax_tree;
-char	**line_split(char *str, char *charset);
 char	**redirection_split(char *str);
 int		create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp);
 int		count_split_elements(char **split);
@@ -69,7 +72,8 @@ char	*find_env_value(char **new_envp, char *key);
 char	*find_key_value(char *env, char *key);
 void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t expanded_size);
 void	parse_tree(t_syntax_tree *stree);
-char	*perform_expansions(char *str, char **new_envp);
+char	*perform_parameter_expansions(char *str, char **new_envp);
+char	*perform_wildcard_expansions(char *str);
 int		make_new_envp(char **new_envp, char **envp);
 void	free_2d_static_arr(char **arr);
 char    *remove_quotes(char *old_str);
