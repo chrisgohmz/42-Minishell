@@ -11,7 +11,7 @@ SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c\
 		 ft_utoa.c ft_utox.c ft_ptoa.c ft_lstnew.c ft_lstadd_front.c\
 		 ft_lstsize.c ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c\
 		 ft_lstclear.c ft_lstiter.c ft_lstmap.c ft_isint.c ft_abs.c\
-		 ft_max.c ft_min.c ft_atoi_base.c ft_multi_split.c
+		 ft_max.c ft_min.c ft_atoi_base.c ft_multi_split.c ft_multi_strjoin.c
 
 FT_PRINTF_DIR = ft_printf
 FT_PRINTF_SRCS = $(FT_PRINTF_DIR)/ft_printf.c $(FT_PRINTF_DIR)/parse_str/parse_str.c\

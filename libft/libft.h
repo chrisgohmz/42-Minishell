@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:45:49 by cgoh              #+#    #+#             */
-/*   Updated: 2024/09/18 20:26:13 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/30 18:06:56 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int				ft_min(int a, int b);
 int				ft_atoi_base(char *str, char *base);
 int				ft_printf(const char *format, ...);
 char			**ft_multi_split(char *str, char *charset);
+char			*ft_multi_strjoin(int size, char **strs, char *sep);
 
 typedef struct s_list
 {

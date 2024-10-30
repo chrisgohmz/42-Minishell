@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/28 21:52:35 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/30 20:25:33 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int		check_syntax_and_transform_line(char *line);
 void	free_2d_malloc_array(char ***split);
 char	*find_env_value(char **new_envp, char *key);
 char	*find_key_value(char *env, char *key);
-void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t expanded_size);
 void	parse_tree(t_syntax_tree *stree);
 char	*perform_parameter_expansions(char *str, char **new_envp);
 char	*perform_wildcard_expansions(char *str);
