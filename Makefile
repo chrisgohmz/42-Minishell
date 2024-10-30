@@ -15,7 +15,7 @@ NAME = minishell
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME) -g -lreadline
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME) -g -lreadline -ltinfo
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)

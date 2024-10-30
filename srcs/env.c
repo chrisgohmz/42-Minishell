@@ -25,7 +25,7 @@ void	free_2d_static_arr(char **arr)
 	}
 }
 
-char	*find_key_value(char *env, char *key)
+static char	*find_key_value(char *env, char *key)
 {
 	while (*env && *key && *env == *key)
 	{

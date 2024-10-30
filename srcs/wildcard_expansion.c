@@ -12,6 +12,30 @@
 
 #include "../includes/minishell.h"
 
+static void	sort_expansions(char **expansions, int expansions_count)
+{
+	int		i;
+	int		j;
+	char	*temp;
+
+	i = 0;
+	while (i < expansions_count)
+	{
+		j = 0;
+		while (j < expansions_count - i - 1)
+		{
+			if (ft_strncmp(expansions[j + 1], expansions[j], 256) < 0)
+			{
+				temp = expansions[j];
+				expansions[j] = expansions[j + 1];
+				expansions[j + 1] = temp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
 static int	check_wildcard_match(char *entry_name, char delimiter, int *i)
 {
 	while (entry_name[*i] && entry_name[*i] != delimiter)
@@ -24,8 +48,9 @@ static char	*expand_wildcard(char *pattern)
 	DIR				*dirptr;
 	struct dirent	*entry;
 	char			*expanded_str;
-	char			*temp;
-	char			*strs_to_join[2];
+	char			*expansions[MAX_WILDCARD_EXPANSIONS];
+	int				expansions_count;
+	int				include_dot;
 	int				i;
 	int				j;
 	int				save_j;
@@ -36,14 +61,13 @@ static char	*expand_wildcard(char *pattern)
 		perror("opendir");
 		return (free(pattern), NULL);
 	}
-	expanded_str = ft_strdup("");
-	if (!expanded_str)
-		return (free(pattern), closedir(dirptr), NULL);
 	errno = 0;
+	expansions_count = 0;
 	entry = readdir(dirptr);
+	include_dot = (pattern[0] == '.');
 	while (entry)
 	{
-		if (entry->d_name[0] == '.')
+		if (entry->d_name[0] == '.' && !include_dot)
 		{
 			entry = readdir(dirptr);
 			continue;
@@ -76,28 +100,21 @@ static char	*expand_wildcard(char *pattern)
 			else
 				break;
 		}
-		if (!entry->d_name[i] && !pattern[j])
+		if (!entry->d_name[i] && !pattern[j] && expansions_count < MAX_WILDCARD_EXPANSIONS)
 		{
-			strs_to_join[0] = expanded_str;
-			strs_to_join[1] = entry->d_name;
-			temp = ft_multi_strjoin(2, strs_to_join, " ");
-			if (!temp)
-				return (free(expanded_str), free(pattern), closedir(dirptr), NULL);
-			free(expanded_str);
-			expanded_str = temp;
+			expansions[expansions_count] = entry->d_name;
+			expansions_count++;
 		}
 		errno = 0;
 		entry = readdir(dirptr);
 	}
-	closedir(dirptr);
 	if (errno)
-	{
-		perror("readdir");
-		return (free(pattern), free(expanded_str), NULL);
-	}
-	if (!expanded_str[0])
-		return (free(expanded_str), pattern);
-	return (free(pattern), expanded_str);
+		return (perror("readdir"), free(pattern), closedir(dirptr), NULL);
+	if (!expansions_count)
+		return (closedir(dirptr), pattern);
+	sort_expansions(expansions, expansions_count);
+	expanded_str = ft_multi_strjoin(expansions_count, expansions, " ");
+	return (closedir(dirptr), free(pattern), expanded_str);
 }
 
 char	*perform_wildcard_expansions(char *str)

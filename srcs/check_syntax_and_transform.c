@@ -67,6 +67,8 @@ char	*revert_transform(char *token)
 			token[i] = '$';
 		else if (token[i] == DQUOTE_DOLLAR)
 			token[i] = '$';
+		else if (token[i] == ESC_WILDCARD)
+			token[i] = '*';
 		i++;
 	}
 	return (token);
@@ -123,6 +125,8 @@ void	transform_special_char(char *c, int within_squotes, int within_dquotes)
 		*c = ESC_DOLLAR;
 	else if (within_dquotes && *c == '$')
 		*c = DQUOTE_DOLLAR;
+	else if ((within_squotes || within_dquotes) && *c == '*')
+		*c = ESC_WILDCARD;
 }
 
 int	check_syntax_and_transform_line(char *line)
