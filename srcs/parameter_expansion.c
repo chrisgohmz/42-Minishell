@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 17:57:59 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/28 20:46:53 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/31 18:05:24 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ static char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_
 		{
 			*expanded_size += ft_strlen(find_env_value(new_envp, str + i));
 			i++;
-			while (ft_isalnum(str[i	]) || str[i] == '_')
+			while (ft_isalnum(str[i]) || str[i] == '_')
 				i++;
 		}
 		else if (str[i] != '"' && str[i] != '\'')

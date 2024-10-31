@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 21:09:38 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/20 21:09:46 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/31 18:20:14 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	free_2d_static_arr(char **arr)
 
 static char	*find_key_value(char *env, char *key)
 {
-	while (*env && *key && *env == *key)
+	while (*env && *key && *env == *key && (ft_isalnum(*key) || *key == '_'))
 	{
 		env++;
 		key++;

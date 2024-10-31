@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/28 20:55:46 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/10/31 17:32:53 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,8 +167,7 @@ int	create_logical_branches(t_syntax_tree **stree, char *line, char **new_envp)
 			(*stree)->branches[i]->type = AND;
 		else if (ft_strncmp(logical_split_arr[i], "||", 2) == 0)
 			(*stree)->branches[i]->type = OR;
-		else if (ft_strnstr(logical_split_arr[i], "&&", ft_strlen(logical_split_arr[i]))
-			|| ft_strnstr(logical_split_arr[i], "||", ft_strlen(logical_split_arr[i])))
+		else if (ft_strchr(logical_split_arr[i], '('))
 		{
 			(*stree)->branches[i]->type = BRACKETS;
 			if (!create_logical_branches(&(*stree)->branches[i], logical_split_arr[i], new_envp))
