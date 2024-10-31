@@ -168,6 +168,10 @@ int	check_syntax_and_transform_line(char *line)
 			bracket_level--;
 		else if (is_export && line[i] == '=')
 			exporting_value = 1;
+		else if (exporting_value && ft_strchr(" \t", line[i]))
+			exporting_value = 0;
+		else if (is_export && ft_strchr("|&", line[i]))
+			is_export = 0;
 		transform_special_char(line + i, within_squotes, within_dquotes, exporting_value);
 		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file, pipe_first_word))
 			return (1);
