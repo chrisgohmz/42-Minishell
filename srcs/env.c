@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 21:09:38 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/31 18:20:14 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/05 18:33:30 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	free_2d_static_arr(char **arr)
 	int	i;
 
 	i = 0;
-	while (arr[i])
+	while (arr[i] && arr[i] != (void *)0x1)
 	{
 		free(arr[i]);
 		arr[i] = (void *)0x1;

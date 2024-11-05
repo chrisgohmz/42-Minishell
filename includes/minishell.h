@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/30 20:25:33 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/05 18:31:15 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef enum e_token_type
 	T_FILE,
 	HEREDOC_DELIMITER,
 	HEREDOC_QUOTED_DELIMITER,
+	WORD
 }	t_token_type;
 typedef enum e_escaped_type
 {
@@ -63,19 +64,19 @@ typedef struct s_syntax_tree
 	struct s_syntax_tree	**branches;
 }	t_syntax_tree;
 char	**redirection_split(char *str);
-int		create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp);
+int		create_syntax_tree(t_syntax_tree **stree, char *line);
 int		count_split_elements(char **split);
 void	free_syntax_tree(t_syntax_tree *stree);
 char	*revert_transform(char *token);
 int		check_syntax_and_transform_line(char *line);
 char	*find_env_value(char **new_envp, char *key);
 void	free_2d_malloc_array(char ***split);
-void	parse_tree(t_syntax_tree *stree);
+int		parse_tree(t_syntax_tree *stree, char **new_envp);
 char	*perform_parameter_expansions(char *str, char **new_envp);
 char	*perform_wildcard_expansions(char *str);
 int		make_new_envp(char **new_envp, char **envp);
 void	free_2d_static_arr(char **arr);
-char    *remove_quotes(char *old_str);
+char	*remove_quotes(char *old_str);
 char	**logical_split(char *str);
 int		check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
 

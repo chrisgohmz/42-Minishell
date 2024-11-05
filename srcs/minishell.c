@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:44:42 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/20 21:09:32 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/05 18:31:31 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,19 @@ int	main(int argc, char **argv, char **envp)
 			free(line);
 			continue ;
 		}
-		if (!create_syntax_tree(&stree, line, new_envp))
+		if (!create_syntax_tree(&stree, line))
 		{
 			free(line);
 			free_2d_static_arr(new_envp);
 			exit(EXIT_FAILURE);
 		}
 		free(line);
-		parse_tree(stree);
+		if (!parse_tree(stree, new_envp))
+		{
+			free_syntax_tree(stree);
+			free_2d_static_arr(new_envp);
+			exit(EXIT_FAILURE);
+		}
 		free_syntax_tree(stree);
 	}
 	rl_clear_history();

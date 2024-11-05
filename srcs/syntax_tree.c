@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/31 17:32:53 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/05 18:31:07 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,8 @@
 int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir_split_arr)
 {
 	int		i;
-	int		cmd_name_found;
 
 	i = 0;
-	cmd_name_found = 0;
 	while (redir_split_arr[i])
 	{
 		if (ft_strncmp(redir_split_arr[i], "<<", 2) == 0)
@@ -36,37 +34,21 @@ int	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir
 		else if (i != 0 && (redir_branches[i - 1]->type == SINGLE_LEFT
 		|| redir_branches[i - 1]->type == DOUBLE_RIGHT || redir_branches[i - 1]->type == SINGLE_RIGHT))
 			redir_branches[i]->type = T_FILE;
-		else if (!cmd_name_found)
-		{
-			cmd_name_found = 1;
-			redir_branches[i]->type = CMD_NAME;
-		}
 		else
-			redir_branches[i]->type = CMD_ARGUMENT;
-		if (redir_branches[i]->type == HEREDOC_QUOTED_DELIMITER)
-			redir_split_arr[i] = remove_quotes(redir_split_arr[i]);
-		if (!redir_split_arr[i])
-			return (0);
-		redir_branches[i]->value = revert_transform(redir_split_arr[i]);
+			redir_branches[i]->type = WORD;
+		redir_branches[i]->value = redir_split_arr[i];
 		i++;
 	}
 	return (1);
 }
 
-int	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, char **new_envp)
+int	create_redirection_branches(t_syntax_tree *stree, char *pipe_split)
 {
 	char	**redir_split_arr;
-	char	*expanded_str;
 	int		i;
 
 	stree->type = REDIRECTION;
-	expanded_str = perform_parameter_expansions(pipe_split, new_envp);
-	if (!expanded_str)
-		return (0);
-	expanded_str = perform_wildcard_expansions(expanded_str);
-	if (!expanded_str)
-		return (0);
-	redir_split_arr = redirection_split(expanded_str);
+	redir_split_arr = redirection_split(pipe_split);
 	if (!redir_split_arr)
 	{
 		printf("Malloc failed for redirection_split\n");
@@ -98,7 +80,6 @@ int	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, char **n
 	}
 	free(redir_split_arr[stree->num_branches]);
 	free(redir_split_arr);
-	free(expanded_str);
 	return (1);
 }
 
@@ -112,7 +93,7 @@ int	count_split_elements(char **split)
 	return (i);
 }
 
-int	create_pipe_branches(t_syntax_tree *stree, char **new_envp)
+int	create_pipe_branches(t_syntax_tree *stree)
 {
 	char	**pipe_split;
 	int		i;
@@ -133,7 +114,7 @@ int	create_pipe_branches(t_syntax_tree *stree, char **new_envp)
 			free_2d_malloc_array(&pipe_split);
 			return (0);
 		}
-		if (!(create_redirection_branches(stree->branches[i], pipe_split[i], new_envp)))
+		if (!(create_redirection_branches(stree->branches[i], pipe_split[i])))
 			return (0);
 		i++;
 	}
@@ -141,7 +122,7 @@ int	create_pipe_branches(t_syntax_tree *stree, char **new_envp)
 	return (1);
 }
 
-int	create_logical_branches(t_syntax_tree **stree, char *line, char **new_envp)
+int	create_logical_branches(t_syntax_tree **stree, char *line)
 {
 	char	**logical_split_arr;
 	int		i;
@@ -170,13 +151,13 @@ int	create_logical_branches(t_syntax_tree **stree, char *line, char **new_envp)
 		else if (ft_strchr(logical_split_arr[i], '('))
 		{
 			(*stree)->branches[i]->type = BRACKETS;
-			if (!create_logical_branches(&(*stree)->branches[i], logical_split_arr[i], new_envp))
+			if (!create_logical_branches(&(*stree)->branches[i], logical_split_arr[i]))
 				return (0);
 		}
 		else
 		{
 			(*stree)->branches[i]->type = PIPE;
-			if (!create_pipe_branches((*stree)->branches[i], new_envp))
+			if (!create_pipe_branches((*stree)->branches[i]))
 				return (0);
 		}
 		i++;
@@ -186,7 +167,7 @@ int	create_logical_branches(t_syntax_tree **stree, char *line, char **new_envp)
 	return (1);
 }
 
-int	create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp)
+int	create_syntax_tree(t_syntax_tree **stree, char *line)
 {
 	*stree = ft_calloc(1, sizeof(t_syntax_tree));
 	if (!*stree)
@@ -195,7 +176,7 @@ int	create_syntax_tree(t_syntax_tree **stree, char *line, char **new_envp)
 		return (0);
 	}
 	(*stree)->type = ROOT;
-	if (!create_logical_branches(stree, line, new_envp))
+	if (!create_logical_branches(stree, line))
 		return (0);
 	return (1);
 }
