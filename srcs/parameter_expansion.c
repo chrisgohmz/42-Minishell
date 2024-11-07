@@ -12,6 +12,19 @@
 
 #include "../includes/minishell.h"
 
+static size_t	get_exit_value_len(unsigned char exit_value)
+{
+	size_t	len;
+
+	len = 1;
+	while (exit_value >= 10)
+	{
+		exit_value /= 10;
+		len++;
+	}
+	return (len);
+}
+
 static size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t size, char dollar_char)
 {
 	size_t	src_n;
@@ -39,7 +52,7 @@ static size_t	ft_strlcat_transform_metachar(char *dest, const char *src, size_t 
 	return (ft_strlen(dest) + ft_strlen(&src[src_n]));
 }
 
-static void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, size_t expanded_size)
+static void	fill_expanded_str(char *old_str, char *new_str, t_ms_vars *ms_vars, size_t expanded_size)
 {
 	int	i;
 	int	j;
@@ -62,10 +75,18 @@ static void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, siz
 		if (!is_heredoc_delim && (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR) && (ft_isalnum(old_str[i + 1]) || old_str[i + 1] == '_'))
 		{
 			if (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR)
-				j = ft_strlcat_transform_metachar(new_str, find_env_value(new_envp, old_str + i), expanded_size + 1, old_str[i]);
+				j = ft_strlcat_transform_metachar(new_str, find_env_value(ms_vars->new_envp, old_str + i), expanded_size + 1, old_str[i]);
 			i++;
 			while (ft_isalnum(old_str[i]) || old_str[i] == '_')
 				i++;
+		}
+		else if (!is_heredoc_delim && (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR) && old_str[i + 1] == '?')
+		{
+			if (ms_vars->exit_value == 0)
+				new_str[j++] = '0';
+			else
+				insert_exit_value(ms_vars->exit_value, new_str, &j);
+			i += 2;
 		}
 		else if (old_str[i] != '"' && old_str[i] != '\'')
 		{
@@ -85,7 +106,7 @@ static void	fill_expanded_str(char *old_str, char *new_str, char **new_envp, siz
 	}
 }
 
-static char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_size)
+static char	*allocate_expanded_str(char *str, t_ms_vars *ms_vars, size_t *expanded_size)
 {
 	int		i;
 	char	*expanded_str;
@@ -107,10 +128,15 @@ static char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_
 		}
 		if (!is_heredoc_delim && (str[i] == '$' || str[i] == DQUOTE_DOLLAR) && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
-			*expanded_size += ft_strlen(find_env_value(new_envp, str + i));
+			*expanded_size += ft_strlen(find_env_value(ms_vars->new_envp, str + i));
 			i++;
 			while (ft_isalnum(str[i]) || str[i] == '_')
 				i++;
+		}
+		else if (!is_heredoc_delim && (str[i] == '$' || str[i] == DQUOTE_DOLLAR) && str[i + 1] == '?')
+		{
+			*expanded_size += get_exit_value_len(ms_vars->exit_value);
+			i += 2;
 		}
 		else if (str[i] != '"' && str[i] != '\'')
 		{
@@ -136,17 +162,17 @@ static char	*allocate_expanded_str(char *str, char **new_envp, size_t *expanded_
 	return (expanded_str);
 }
 
-char	*perform_parameter_expansions(char *str, char **new_envp)
+char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars)
 {
 	char	*expanded_str;
 	size_t	expanded_size;
 
-	expanded_str = allocate_expanded_str(str, new_envp, &expanded_size);
+	expanded_str = allocate_expanded_str(str, ms_vars, &expanded_size);
 	if (!expanded_str)
 	{
 		printf("Malloc failed for expanded_str\n");
 		return (NULL);
 	}
-	fill_expanded_str(str, expanded_str, new_envp, expanded_size);
+	fill_expanded_str(str, expanded_str, ms_vars, expanded_size);
 	return (expanded_str);
 }

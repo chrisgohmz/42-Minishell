@@ -15,10 +15,11 @@
 int	main(int argc, char **argv, char **envp)
 {
 	char			*line;
-	char			*new_envp[ENV_MAX_VARS];
 	t_syntax_tree	*stree;
+	t_ms_vars		ms_vars;
 
-	if (!make_new_envp(new_envp, envp))
+	ms_vars.exit_value = 0;
+	if (!make_new_envp(ms_vars.new_envp, envp))
 		exit(EXIT_FAILURE);
 	while (1 || argc || argv)
 	{
@@ -34,24 +35,26 @@ int	main(int argc, char **argv, char **envp)
 		add_history(line);
 		if (check_syntax_and_transform_line(line))
 		{
+			ms_vars.exit_value = 2;
 			free(line);
 			continue ;
 		}
 		if (!create_syntax_tree(&stree, line))
 		{
+			ms_vars.exit_value = EXIT_FAILURE;
 			free(line);
-			free_2d_static_arr(new_envp);
-			exit(EXIT_FAILURE);
+			break;
 		}
 		free(line);
-		if (!parse_tree(stree, new_envp))
+		if (!parse_tree(stree, &ms_vars))
 		{
+			ms_vars.exit_value = EXIT_FAILURE;
 			free_syntax_tree(stree);
-			free_2d_static_arr(new_envp);
-			exit(EXIT_FAILURE);
+			break;
 		}
 		free_syntax_tree(stree);
 	}
 	rl_clear_history();
-	free_2d_static_arr(new_envp);
+	free_2d_static_arr(ms_vars.new_envp);
+	exit(ms_vars.exit_value);
 }

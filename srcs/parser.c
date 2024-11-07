@@ -32,7 +32,7 @@ static int	get_cmd(char *expanded_str)
 	return (1);
 }
 
-int	parse_tree(t_syntax_tree *stree, char **new_envp)
+int	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
 	char	*expanded_str;
@@ -42,7 +42,7 @@ int	parse_tree(t_syntax_tree *stree, char **new_envp)
 	{
 		if (stree->branches[branch]->type == DOUBLE_LEFT || stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
 		{
-			if (!parse_tree(stree->branches[branch], new_envp))
+			if (!parse_tree(stree->branches[branch], ms_vars))
 				return (0);
 		}
 		branch++;
@@ -52,14 +52,14 @@ int	parse_tree(t_syntax_tree *stree, char **new_envp)
 	{
 		if (stree->branches[branch]->type != DOUBLE_LEFT && stree->branches[branch]->type != HEREDOC_DELIMITER && stree->branches[branch]->type != HEREDOC_QUOTED_DELIMITER)
 		{
-			if (!parse_tree(stree->branches[branch], new_envp))
+			if (!parse_tree(stree->branches[branch], ms_vars))
 				return (0);
 		}
 		branch++;
 	}
 	while (stree->branches && branch < stree->num_branches && stree->type != REDIRECTION)
 	{
-		if (!parse_tree(stree->branches[branch], new_envp))
+		if (!parse_tree(stree->branches[branch], ms_vars))
 			return (0);
 		branch++;
 		if (branch < stree->num_branches && stree->type != REDIRECTION && stree->type != ROOT && stree->type != BRACKETS)
@@ -67,7 +67,7 @@ int	parse_tree(t_syntax_tree *stree, char **new_envp)
 	}
 	if (stree->type == WORD)
 	{
-		expanded_str = perform_parameter_expansions(stree->value, new_envp);
+		expanded_str = perform_parameter_expansions(stree->value, ms_vars);
 		if (!expanded_str)
 			return (0);
 		expanded_str = perform_wildcard_expansions(expanded_str);

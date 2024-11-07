@@ -63,6 +63,11 @@ typedef struct s_syntax_tree
 	int						num_branches;
 	struct s_syntax_tree	**branches;
 }	t_syntax_tree;
+typedef struct s_ms_vars
+{
+	char			*new_envp[ENV_MAX_VARS];
+	unsigned char	exit_value;
+}	t_ms_vars;
 char	**redirection_split(char *str);
 int		create_syntax_tree(t_syntax_tree **stree, char *line);
 int		count_split_elements(char **split);
@@ -71,13 +76,14 @@ char	*revert_transform(char *token);
 int		check_syntax_and_transform_line(char *line);
 char	*find_env_value(char **new_envp, char *key);
 void	free_2d_malloc_array(char ***split);
-int		parse_tree(t_syntax_tree *stree, char **new_envp);
-char	*perform_parameter_expansions(char *str, char **new_envp);
+int		parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
+char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
 char	*perform_wildcard_expansions(char *str);
 int		make_new_envp(char **new_envp, char **envp);
 void	free_2d_static_arr(char **arr);
 char	*remove_quotes(char *old_str);
 char	**logical_split(char *str);
 int		check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
+void	insert_exit_value(unsigned char exit_value, char *new_str, int *j);
 
 #endif
