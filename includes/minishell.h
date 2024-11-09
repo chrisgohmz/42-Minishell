@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/05 18:31:15 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/09 16:41:07 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,16 @@
 # include <readline/history.h>
 # include <dirent.h>
 # include <errno.h>
+# include <sys/wait.h>
 # define ENV_MAX_VARS 100000
 # define MAX_WILDCARD_EXPANSIONS 1000
+# define MAX_EXEC_ARGS 1000
+# define MAX_FORKS 100000
 
 typedef enum e_token_type
 {
 	ROOT,
 	BRACKETS,
-	CMD_NAME,
-	CMD_ARGUMENT,
 	REDIRECTION,
 	SINGLE_LEFT,
 	SINGLE_RIGHT,
@@ -67,23 +68,34 @@ typedef struct s_ms_vars
 {
 	char			*new_envp[ENV_MAX_VARS];
 	unsigned char	exit_value;
+	char			*exec_argv[MAX_EXEC_ARGS];
+	unsigned int	argv_index;
+	t_token_type	redirect;
+	t_syntax_tree	*stree;
+	char			*line;
+	pid_t			pid_arr[MAX_FORKS];
 }	t_ms_vars;
-char	**redirection_split(char *str);
-int		create_syntax_tree(t_syntax_tree **stree, char *line);
-int		count_split_elements(char **split);
-void	free_syntax_tree(t_syntax_tree *stree);
-char	*revert_transform(char *token);
-int		check_syntax_and_transform_line(char *line);
-char	*find_env_value(char **new_envp, char *key);
-void	free_2d_malloc_array(char ***split);
-int		parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
-char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
-char	*perform_wildcard_expansions(char *str);
-int		make_new_envp(char **new_envp, char **envp);
-void	free_2d_static_arr(char **arr);
-char	*remove_quotes(char *old_str);
-char	**logical_split(char *str);
-int		check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
-void	insert_exit_value(unsigned char exit_value, char *new_str, int *j);
+char			**redirection_split(char *str);
+void			create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
+int				count_split_elements(char **split);
+void			free_syntax_tree(t_syntax_tree *stree);
+char			*revert_transform(char *token);
+int				check_syntax_and_transform_line(char *line);
+char			*find_env_value(char **new_envp, char *key);
+void			free_2d_malloc_array(char ***split);
+void				parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
+char			*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
+char			*perform_wildcard_expansions(char *str);
+int				make_new_envp(char **new_envp, char **envp);
+void			free_2d_static_arr(char **arr);
+char			*remove_quotes(char *old_str);
+char			**logical_split(char *str);
+int				check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
+void			insert_exit_value(unsigned char exit_value, char *new_str, int *j);
+int				perform_redirection(char *filename, t_ms_vars *ms_vars);
+void			perform_heredoc(char *delimiter, t_ms_vars *ms_vars, t_token_type delim_type);
+void			error_cleanup(t_ms_vars *ms_vars);
+void			*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars);
+void			exec_cmd(t_ms_vars *ms_vars);
 
 #endif
