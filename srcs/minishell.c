@@ -12,12 +12,12 @@
 
 #include "../includes/minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv)
 {
 	t_ms_vars	ms_vars;
 
 	ms_vars.exit_value = 0;
-	if (!make_new_envp(ms_vars.new_envp, envp))
+	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
 	while (1 || argc || argv)
 	{
@@ -47,6 +47,6 @@ int	main(int argc, char **argv, char **envp)
 		free_syntax_tree(ms_vars.stree);
 	}
 	rl_clear_history();
-	free_2d_static_arr(ms_vars.new_envp);
+	free_2d_malloc_array(&ms_vars.ep);
 	exit(ms_vars.exit_value);
 }

@@ -21,7 +21,7 @@ void	error_cleanup(t_ms_vars *ms_vars)
 		free(ms_vars->exec_argv[i++]);
 	free_syntax_tree(ms_vars->stree);
 	free(ms_vars->line);
-	free_2d_static_arr(ms_vars->new_envp);
+	free_2d_malloc_array(&ms_vars->ep);
 	rl_clear_history();
 	exit(EXIT_FAILURE);
 }

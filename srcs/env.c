@@ -25,54 +25,37 @@ void	free_2d_static_arr(char **arr)
 	}
 }
 
-static char	*find_key_value(char *env, char *key)
+char	*ft_getenv(const char *name)
 {
-	while (*env && *key && *env == *key && (ft_isalnum(*key) || *key == '_'))
-	{
-		env++;
-		key++;
-	}
-	if (*env == '=' && (!*key || (!ft_isalnum(*key) && *key != '_')))
-		return (++env);
-	return (NULL);
+	char	*env;
+
+	env = getenv(name);
+	if (!env)
+		return ("\0");
+	return env;
 }
 
-char	*find_env_value(char **new_envp, char *key)
+int	make_new_envp(t_ms_vars *ms_vars)
 {
-	int		i;
-	char	*value;
-
-	i = 0;
-	key++;
-	while (new_envp[i])
-	{
-		value = find_key_value(new_envp[i], key);
-		if (value)
-			return (value);
-		i++;
-	}
-	return ("\0");
-}
-
-int	make_new_envp(char **new_envp, char **envp)
-{
-	int		i;
+	size_t	size;
 	size_t	env_len;
 
-	i = 0;
-	while (envp[i])
+	size = 0;
+	while (__environ[size])
+		size++;
+	ms_vars->ep = ft_calloc(size + 1, sizeof(char *));
+	if (!ms_vars->ep)
+		return (0);
+	size = 0;
+	while (__environ[size])
 	{
-		env_len = ft_strlen(envp[i]);
-		new_envp[i] = ft_calloc(env_len + 1, sizeof(char));
-		if (!new_envp[i])
-		{
-			printf("Malloc failed for new_envp\n");
-			free_2d_static_arr(new_envp);
-			return (0);
-		}
-		ft_strlcpy(new_envp[i], envp[i], env_len + 1);
-		i++;
+		env_len = ft_strlen(__environ[size]);
+		ms_vars->ep[size] = malloc((env_len + 1) * sizeof(char));
+		if (!ms_vars->ep[size])
+			return (free_2d_malloc_array(&ms_vars->ep), 0);
+		ft_strlcpy(ms_vars->ep[size], __environ[size], env_len + 1);
+		size++;
 	}
-	new_envp[i] = NULL;
+	__environ = ms_vars->ep;
 	return (1);
 }

@@ -75,7 +75,7 @@ static void	fill_expanded_str(char *old_str, char *new_str, t_ms_vars *ms_vars, 
 		if (!is_heredoc_delim && (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR) && (ft_isalnum(old_str[i + 1]) || old_str[i + 1] == '_'))
 		{
 			if (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR)
-				j = ft_strlcat_transform_metachar(new_str, find_env_value(ms_vars->new_envp, old_str + i), expanded_size + 1, old_str[i]);
+				j = ft_strlcat_transform_metachar(new_str, ft_getenv(old_str + i), expanded_size + 1, old_str[i]);
 			i++;
 			while (ft_isalnum(old_str[i]) || old_str[i] == '_')
 				i++;
@@ -128,7 +128,7 @@ static char	*allocate_expanded_str(char *str, t_ms_vars *ms_vars, size_t *expand
 		}
 		if (!is_heredoc_delim && (str[i] == '$' || str[i] == DQUOTE_DOLLAR) && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
-			*expanded_size += ft_strlen(find_env_value(ms_vars->new_envp, str + i));
+			*expanded_size += ft_strlen(ft_getenv(str + i));
 			i++;
 			while (ft_isalnum(str[i]) || str[i] == '_')
 				i++;

@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRCS = $(addprefix srcs/, minishell.c redirection_split.c syntax_tree.c syntax_tree2.c\
+SRCS = $(addprefix srcs/, minishell.c redirection_split.c syntax_tree.c\
 		check_syntax_and_transform.c check_syntax_and_transform2.c parser.c env.c\
 		logical_split.c parameter_expansion.c parameter_expansion2.c wildcard_expansion.c\
 		redirections.c error.c tree_utils.c exec.c)

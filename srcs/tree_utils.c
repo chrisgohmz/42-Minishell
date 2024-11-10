@@ -21,3 +21,20 @@ void	*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars)
 		error_cleanup(ms_vars);
 	return (node);
 }
+
+void	free_syntax_tree(t_syntax_tree *stree)
+{
+	int	i;
+
+	if (!stree)
+		return ;
+	i = 0;
+	while (i < stree->num_branches)
+	{
+		free_syntax_tree(stree->branches[i]);
+		i++;
+	}
+	free(stree->value);
+	free(stree->branches);
+	free(stree);
+}
