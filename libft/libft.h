@@ -62,6 +62,7 @@ int				ft_atoi_base(char *str, char *base);
 int				ft_printf(const char *format, ...);
 char			**ft_multi_split(char *str, char *charset);
 char			*ft_multi_strjoin(int size, char **strs, char *sep);
+char			**ft_realloc_str_arr(char **old_arr, size_t new_size);
 
 typedef struct s_list
 {

@@ -19,8 +19,6 @@
 # include <dirent.h>
 # include <errno.h>
 # include <sys/wait.h>
-# define MAX_WILDCARD_EXPANSIONS 1000
-# define MAX_EXEC_ARGS 1000
 # define MAX_FORKS 100000
 
 typedef enum e_token_type
@@ -67,7 +65,7 @@ typedef struct s_ms_vars
 {
 	unsigned char	exit_value;
 	char			**ep;
-	char			*exec_argv[MAX_EXEC_ARGS];
+	char			**exec_argv;
 	unsigned int	argv_index;
 	t_token_type	redirect;
 	t_syntax_tree	*stree;

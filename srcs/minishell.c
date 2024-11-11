@@ -23,7 +23,7 @@ int	main(int argc, char **argv)
 	{
 		ms_vars.stree = NULL;
 		ms_vars.argv_index = 0;
-		ft_bzero(ms_vars.exec_argv, sizeof(char *) * MAX_EXEC_ARGS);
+		ms_vars.exec_argv = NULL;
 		ft_bzero(ms_vars.pid_arr, sizeof(ms_vars.pid_arr));
 		ms_vars.line = readline("Minishell$ ");
 		if (!ms_vars.line)

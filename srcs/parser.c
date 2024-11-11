@@ -29,18 +29,35 @@ static void	check_ambigious_redirections(char *expanded_str, t_ms_vars *ms_vars)
 	free_2d_malloc_array(&split_arr);
 }
 
+static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
+{
+	int	i;
+
+	i = 0;
+	while (split_arr[i])
+	{
+		ms_vars->exec_argv[ms_vars->argv_index++] = split_arr[i];
+		i++;
+	}
+}
+
 static void	get_exec_args(char *expanded_str, t_ms_vars *ms_vars)
 {
-	int		i;
 	char	**split_arr;
+	int		num_elements;
 
 	split_arr = ft_multi_split(expanded_str, " \t");
 	free(expanded_str);
 	if (!split_arr)
 		error_cleanup(ms_vars);
-	i = 0;
-	while (split_arr[i])
-		ms_vars->exec_argv[ms_vars->argv_index++] = revert_transform(split_arr[i++]);
+	num_elements = count_split_elements(split_arr);
+	ms_vars->exec_argv = ft_realloc_str_arr(ms_vars->exec_argv, ms_vars->argv_index + num_elements + 1);
+	if (!ms_vars->exec_argv)
+	{
+		free_2d_malloc_array(&split_arr);
+		error_cleanup(ms_vars);
+	}
+	add_to_argv(split_arr, ms_vars);
 	free(split_arr);
 }
 
@@ -133,9 +150,15 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				if (WIFEXITED(status))
 					ms_vars->exit_value = WEXITSTATUS(status);
 				else if (WIFSIGNALED(status))
-					ms_vars->exit_value = WTERMSIG(status);
+					ms_vars->exit_value = 128 + WTERMSIG(status);
 				i++;
 			}
+		}
+		else
+		{
+			/*todo: if command is a builtin, execute as per normal, otherwise 
+			fork a child process and do execve*/
+			return ;
 		}
 	}
 	while (stree->branches && branch < stree->num_branches && stree->type != PIPE)

@@ -48,7 +48,7 @@ static char	*expand_wildcard(char *pattern)
 	DIR				*dirptr;
 	struct dirent	*entry;
 	char			*expanded_str;
-	char			*expansions[MAX_WILDCARD_EXPANSIONS];
+	char			**expansions;
 	int				expansions_count;
 	int				include_dot;
 	int				i;
@@ -63,6 +63,7 @@ static char	*expand_wildcard(char *pattern)
 	}
 	errno = 0;
 	expansions_count = 0;
+	expansions = NULL;
 	entry = readdir(dirptr);
 	include_dot = (pattern[0] == '.');
 	while (entry)
@@ -100,21 +101,23 @@ static char	*expand_wildcard(char *pattern)
 			else
 				break;
 		}
-		if (!entry->d_name[i] && !pattern[j] && expansions_count < MAX_WILDCARD_EXPANSIONS)
+		if (!entry->d_name[i] && !pattern[j])
 		{
-			expansions[expansions_count] = entry->d_name;
-			expansions_count++;
+			expansions = ft_realloc_str_arr(expansions, expansions_count + 2);
+			if (!expansions)
+				return (closedir(dirptr), free(pattern), NULL);
+			expansions[expansions_count++] = entry->d_name;
 		}
 		errno = 0;
 		entry = readdir(dirptr);
 	}
 	if (errno)
-		return (perror("readdir"), free(pattern), closedir(dirptr), NULL);
+		return (perror("readdir"), free(pattern), closedir(dirptr), free(expansions), NULL);
 	if (!expansions_count)
-		return (closedir(dirptr), pattern);
+		return (closedir(dirptr), free(expansions), pattern);
 	sort_expansions(expansions, expansions_count);
 	expanded_str = ft_multi_strjoin(expansions_count, expansions, " ");
-	return (closedir(dirptr), free(pattern), expanded_str);
+	return (closedir(dirptr), free(pattern), free(expansions), expanded_str);
 }
 
 char	*perform_wildcard_expansions(char *str)
