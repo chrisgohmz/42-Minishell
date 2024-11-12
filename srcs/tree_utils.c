@@ -18,8 +18,21 @@ void	*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars)
 
 	node = ft_calloc(nmemb, size);
 	if (!node)
+	{
+		perror("malloc");
 		error_cleanup(ms_vars);
+	}
 	return (node);
+}
+
+int	count_split_elements(char **split)
+{
+	int	i;
+
+	i = 0;
+	while (split[i])
+		i++;
+	return (i);
 }
 
 void	free_syntax_tree(t_syntax_tree *stree)

@@ -12,19 +12,6 @@
 
 #include "../includes/minishell.h"
 
-void	free_2d_static_arr(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i] && arr[i] != (void *)0x1)
-	{
-		free(arr[i]);
-		arr[i] = (void *)0x1;
-		i++;
-	}
-}
-
 char	*ft_getenv(const char *name)
 {
 	char	*env;

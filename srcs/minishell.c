@@ -23,8 +23,8 @@ int	main(int argc, char **argv)
 	{
 		ms_vars.stree = NULL;
 		ms_vars.argv_index = 0;
+		ms_vars.pid_arr = NULL;
 		ms_vars.exec_argv = NULL;
-		ft_bzero(ms_vars.pid_arr, sizeof(ms_vars.pid_arr));
 		ms_vars.line = readline("Minishell$ ");
 		if (!ms_vars.line)
 			break ;
@@ -45,6 +45,7 @@ int	main(int argc, char **argv)
 		ms_vars.line = NULL;
 		parse_tree(ms_vars.stree, &ms_vars);
 		free_syntax_tree(ms_vars.stree);
+		free(ms_vars.pid_arr);
 	}
 	rl_clear_history();
 	free_2d_malloc_array(&ms_vars.ep);

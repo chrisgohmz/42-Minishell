@@ -16,6 +16,8 @@ void	free_2d_malloc_array(char ***split)
 {
 	int	i;
 
+	if (!*split)
+		return ;
 	i = 0;
 	while ((*split)[i])
 	{

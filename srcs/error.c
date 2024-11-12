@@ -18,6 +18,7 @@ void	error_cleanup(t_ms_vars *ms_vars)
 	free(ms_vars->line);
 	free_2d_malloc_array(&ms_vars->exec_argv);
 	free_2d_malloc_array(&ms_vars->ep);
+	free(ms_vars->pid_arr);
 	rl_clear_history();
 	exit(EXIT_FAILURE);
 }

@@ -63,16 +63,6 @@ void	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, t_ms_va
 	free(redir_split_arr);
 }
 
-int	count_split_elements(char **split)
-{
-	int	i;
-
-	i = 0;
-	while (split[i])
-		i++;
-	return (i);
-}
-
 void	create_pipe_branches(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	char	**pipe_split;

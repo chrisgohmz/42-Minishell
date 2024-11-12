@@ -23,6 +23,7 @@ static void	check_ambigious_redirections(char *expanded_str, t_ms_vars *ms_vars)
 	{
 		printf("Error: Ambigious redirection\n");
 		free_2d_malloc_array(&split_arr);
+		free(expanded_str);
 		error_cleanup(ms_vars);
 		exit(EXIT_FAILURE);
 	}
@@ -96,6 +97,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				error_cleanup(ms_vars);
 			check_ambigious_redirections(expanded_str, ms_vars);
 			perform_redirection(revert_transform(expanded_str), ms_vars);
+			free(expanded_str);
 		}
 		else if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
 			perform_redirection(revert_transform(stree->branches[branch]->value), ms_vars);
@@ -126,6 +128,9 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	{
 		if (stree->num_branches > 1)
 		{
+			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
+			if (!ms_vars->pid_arr)
+				error_cleanup(ms_vars);
 			while (branch < stree->num_branches)
 			{
 				pid = fork();
@@ -144,7 +149,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				branch++;
 			}
 			i = 0;
-			while (ms_vars->pid_arr[i] != 0)
+			while (i < stree->num_branches)
 			{
 				waitpid(ms_vars->pid_arr[i], &status, 0);
 				if (WIFEXITED(status))

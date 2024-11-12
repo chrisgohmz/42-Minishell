@@ -19,7 +19,6 @@
 # include <dirent.h>
 # include <errno.h>
 # include <sys/wait.h>
-# define MAX_FORKS 100000
 
 typedef enum e_token_type
 {
@@ -70,7 +69,7 @@ typedef struct s_ms_vars
 	t_token_type	redirect;
 	t_syntax_tree	*stree;
 	char			*line;
-	pid_t			pid_arr[MAX_FORKS];
+	pid_t			*pid_arr;
 }	t_ms_vars;
 char			**redirection_split(char *str);
 void			create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
@@ -84,7 +83,6 @@ void			parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
 char			*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
 char			*perform_wildcard_expansions(char *str);
 int				make_new_envp(t_ms_vars *ms_vars);
-void			free_2d_static_arr(char **arr);
 char			*remove_quotes(char *old_str);
 char			**logical_split(char *str);
 int				check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
