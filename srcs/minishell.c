@@ -12,20 +12,35 @@
 
 #include "../includes/minishell.h"
 
+static void	init_vars(t_ms_vars *ms_vars)
+{
+	char	*prompt;
+
+	ms_vars->stree = NULL;
+	ms_vars->argv_index = 0;
+	ms_vars->pid_arr = NULL;
+	ms_vars->exec_argv = NULL;
+	prompt = getcwd(ms_vars->prompt + sizeof(PROMPT_START) - 1, PATH_MAX);
+	if (!prompt)
+	{
+		perror("getcwd");
+		error_cleanup(ms_vars);
+	}
+	ft_strlcat(ms_vars->prompt, PROMPT_END, sizeof(ms_vars->prompt));
+}
+
 int	main(int argc, char **argv)
 {
 	t_ms_vars	ms_vars;
 
 	ms_vars.exit_value = 0;
+	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
 	while (1 || argc || argv)
 	{
-		ms_vars.stree = NULL;
-		ms_vars.argv_index = 0;
-		ms_vars.pid_arr = NULL;
-		ms_vars.exec_argv = NULL;
-		ms_vars.line = readline("Minishell$ ");
+		init_vars(&ms_vars);
+		ms_vars.line = readline(ms_vars.prompt);
 		if (!ms_vars.line)
 			break ;
 		if (!ms_vars.line[0])

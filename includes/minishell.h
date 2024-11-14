@@ -19,6 +19,9 @@
 # include <dirent.h>
 # include <errno.h>
 # include <sys/wait.h>
+# include <linux/limits.h>
+# define PROMPT_START "\e[1;95mLynetteChriShell:"
+# define PROMPT_END "> \e[0m"
 
 typedef enum e_token_type
 {
@@ -70,6 +73,7 @@ typedef struct s_ms_vars
 	t_syntax_tree	*stree;
 	char			*line;
 	pid_t			*pid_arr;
+	char			prompt[PATH_MAX + sizeof(PROMPT_START) + sizeof(PROMPT_END) - 2];
 }	t_ms_vars;
 char			**redirection_split(char *str);
 void			create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
