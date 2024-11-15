@@ -30,7 +30,7 @@ char	*remove_quotes(char *old_str)
     new_str = ft_calloc(new_len + 1, sizeof(char));
     if (!new_str)
 	{
-        printf("Malloc failed for new_str\n");
+        perror("malloc");
         return (free(old_str), NULL);
 	}
     i = 0;
@@ -49,12 +49,12 @@ int	check_bracket_syntax(char *line, int bracket_level, int empty_brackets)
 {
 	if (bracket_level < 0)
 	{
-		printf("Syntax Error: Missing opening parenthesis\n");
+		printf("\e[1;91mSyntax Error: Missing opening parenthesis\n\e[0m");
 		return (0);
 	}
 	else if (empty_brackets && line[0] == ')')
 	{
-		printf("Syntax Error: Empty parenthesis\n");
+		printf("\e[1;91mSyntax Error: Empty parenthesis\n\e[0m");
 		return (0);
 	}
 	return (1);

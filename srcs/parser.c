@@ -21,7 +21,7 @@ static void	check_ambigious_redirections(char *expanded_str, t_ms_vars *ms_vars)
 		error_cleanup(ms_vars);
 	if (count_split_elements(split_arr) > 1)
 	{
-		printf("Error: Ambigious redirection\n");
+		printf("\e[1;91mError: Ambigious redirection\n\e[0m");
 		free_2d_malloc_array(&split_arr);
 		free(expanded_str);
 		error_cleanup(ms_vars);
@@ -158,6 +158,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 					ms_vars->exit_value = 128 + WTERMSIG(status);
 				i++;
 			}
+			free(ms_vars->pid_arr);
 		}
 		else
 		{

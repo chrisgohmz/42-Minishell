@@ -12,28 +12,62 @@
 
 #include "../includes/minishell.h"
 
-static void	sort_expansions(char **expansions, int expansions_count)
+static char	**mergesort_expansions(char **expansions, int expansions_count)
 {
+	int		pivot_index;
 	int		i;
 	int		j;
-	char	*temp;
+	int		k;
+	char	**left_half;
+	char	**right_half;
 
-	i = 0;
-	while (i < expansions_count)
+	if (expansions_count < 2)
+		return (expansions);
+	pivot_index = expansions_count / 2;
+	left_half = malloc(pivot_index * sizeof(char *));
+	if (!left_half)
 	{
-		j = 0;
-		while (j < expansions_count - i - 1)
-		{
-			if (ft_strncmp(expansions[j + 1], expansions[j], 256) < 0)
-			{
-				temp = expansions[j];
-				expansions[j] = expansions[j + 1];
-				expansions[j + 1] = temp;
-			}
-			j++;
-		}
+		perror("malloc");
+		return (free_2d_malloc_array(&expansions), NULL);
+	}
+	i = 0;
+	while (i < pivot_index)
+	{
+		left_half[i] = expansions[i];
 		i++;
 	}
+	left_half = mergesort_expansions(left_half, pivot_index);
+	if (!left_half)
+		return (free_2d_malloc_array(&expansions), NULL);
+	right_half = malloc((expansions_count - pivot_index) * sizeof(char *));
+	if (!right_half)
+	{
+		perror("malloc");
+		return (free_2d_malloc_array(&expansions), free(left_half), NULL);
+	}
+	while (i < expansions_count)
+	{
+		right_half[i - pivot_index] = expansions[i];
+		i++;
+	}
+	right_half = mergesort_expansions(right_half, expansions_count - pivot_index);
+	if (!right_half)
+		return (free_2d_malloc_array(&expansions), free(left_half), NULL);
+	i = 0;
+	j = 0;
+	k = 0;
+	while (i < pivot_index && j < expansions_count - pivot_index)
+	{
+		if (ft_strncmp(left_half[i], right_half[j], 256) <= 0)
+			expansions[k++] = left_half[i++];
+		else
+			expansions[k++] = right_half[j++];
+	}
+	while (i < pivot_index)
+		expansions[k++] = left_half[i++];
+	while (j < expansions_count - pivot_index)
+		expansions[k++] = right_half[j++];
+	return (free(left_half), free(right_half), expansions);
 }
 
 static int	check_wildcard_match(char *entry_name, char delimiter, int *i)
@@ -115,7 +149,9 @@ static char	*expand_wildcard(char *pattern)
 		return (perror("readdir"), free(pattern), closedir(dirptr), free(expansions), NULL);
 	if (!expansions_count)
 		return (closedir(dirptr), free(expansions), pattern);
-	sort_expansions(expansions, expansions_count);
+	expansions = mergesort_expansions(expansions, expansions_count);
+	if (!expansions)
+		return (closedir(dirptr), free(pattern), NULL);
 	expanded_str = ft_multi_strjoin(expansions_count, expansions, " ");
 	return (closedir(dirptr), free(pattern), free(expansions), expanded_str);
 }

@@ -18,17 +18,17 @@ int	check_first_word(char *line, int *i, int *sfw, int *is_export)
 		(*i)++;
 	if (line[*i] == '|' && line[*i + 1] == '|')
 	{
-		printf("Syntax Error: Missing command before ||\n");
+		printf("\e[1;91mSyntax Error: Missing command before ||\n\e[0m");
 		return (0);
 	}
 	else if (line[*i] == '&' && line[*i + 1] == '&')
 	{
-		printf("Syntax Error: Missing command before &&\n");
+		printf("\e[1;91mSyntax Error: Missing command before &&\n\e[0m");
 		return (0);
 	}
 	else if (line[*i] == '|')
 	{
-		printf("Syntax Error: Missing command before |\n");
+		printf("\e[1;91mSyntax Error: Missing command before |\n\e[0m");
 		return (0);
 	}
 	else if (line[*i] == '(')
@@ -80,22 +80,22 @@ int	check_redirection_pipe_syntax(char *line, int sfw, int srf, int pfw)
 {
 	if (ft_strchr("|&", line[0]) && sfw)
 	{
-		printf("Syntax Error: Missing command after |, ||, or &&\n");
+		printf("\e[1;91mSyntax Error: Missing command after |, ||, or &&\n\e[0m");
 		return (0);
 	}
 	else if (ft_strchr("<>|&", line[0]) && srf)
 	{
-		printf("Syntax Error: Missing file name after redirection operator\n");
+		printf("\e[1;91mSyntax Error: Missing file name after redirection operator\n\e[0m");
 		return (0);
 	}
 	else if (line[0] == '&' && line[1] != '&')
 	{
-		printf("Syntax Error: Invalid operator &, please use && instead\n");
+		printf("\e[1;91mSyntax Error: Invalid operator &, please use && instead\n\e[0m");
 		return (0);
 	}
 	else if (line[0] == '(' && (!sfw || pfw))
 	{
-		printf("Syntax Error: unexpected '(' found\n");
+		printf("\e[1;91mSyntax Error: unexpected '(' found\n\e[0m");
 		return (0);
 	}
 	return (1);
@@ -205,22 +205,22 @@ int	check_syntax_and_transform_line(char *line)
 	}
 	if (within_squotes || within_dquotes)
 	{
-		printf("Syntax Error: unclosed quotes\n");
+		printf("\e[1;91mSyntax Error: unclosed quotes\n\e[0m");
 		return (1);
 	}
 	if (searching_first_word)
 	{
-		printf("Syntax Error: Missing command after |, ||, or &&\n");
+		printf("\e[1;91mSyntax Error: Missing command after |, ||, or &&\n\e[0m");
 		return (1);
 	}
 	else if (searching_redir_file)
 	{
-		printf("Syntax Error: Missing file name after redirection operator\n");
+		printf("\e[1;91mSyntax Error: Missing file name after redirection operator\n\e[0m");
 		return (1);
 	}
 	else if (bracket_level)
 	{
-		printf("Syntax Error: Missing closing parenthesis\n");
+		printf("\e[1;91mSyntax Error: Missing closing parenthesis\n\e[0m");
 		return (1);
 	}
 	return (0);
