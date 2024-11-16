@@ -6,69 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:16:34 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/30 21:55:02 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/16 10:39:28 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static char	**mergesort_expansions(char **expansions, int expansions_count)
-{
-	int		pivot_index;
-	int		i;
-	int		j;
-	int		k;
-	char	**left_half;
-	char	**right_half;
-
-	if (expansions_count < 2)
-		return (expansions);
-	pivot_index = expansions_count / 2;
-	left_half = malloc(pivot_index * sizeof(char *));
-	if (!left_half)
-	{
-		perror("malloc");
-		return (free_2d_malloc_array(&expansions), NULL);
-	}
-	i = 0;
-	while (i < pivot_index)
-	{
-		left_half[i] = expansions[i];
-		i++;
-	}
-	left_half = mergesort_expansions(left_half, pivot_index);
-	if (!left_half)
-		return (free_2d_malloc_array(&expansions), NULL);
-	right_half = malloc((expansions_count - pivot_index) * sizeof(char *));
-	if (!right_half)
-	{
-		perror("malloc");
-		return (free_2d_malloc_array(&expansions), free(left_half), NULL);
-	}
-	while (i < expansions_count)
-	{
-		right_half[i - pivot_index] = expansions[i];
-		i++;
-	}
-	right_half = mergesort_expansions(right_half, expansions_count - pivot_index);
-	if (!right_half)
-		return (free_2d_malloc_array(&expansions), free(left_half), NULL);
-	i = 0;
-	j = 0;
-	k = 0;
-	while (i < pivot_index && j < expansions_count - pivot_index)
-	{
-		if (ft_strncmp(left_half[i], right_half[j], 256) <= 0)
-			expansions[k++] = left_half[i++];
-		else
-			expansions[k++] = right_half[j++];
-	}
-	while (i < pivot_index)
-		expansions[k++] = left_half[i++];
-	while (j < expansions_count - pivot_index)
-		expansions[k++] = right_half[j++];
-	return (free(left_half), free(right_half), expansions);
-}
 
 static int	check_wildcard_match(char *entry_name, char delimiter, int *i)
 {

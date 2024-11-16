@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/09 16:41:07 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/16 16:26:43 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,12 @@ typedef struct s_ms_vars
 	pid_t			*pid_arr;
 	char			prompt[PATH_MAX + sizeof(PROMPT_START) + sizeof(PROMPT_END) - 2];
 }	t_ms_vars;
+typedef struct s_mergesort_vars
+{
+	int	start;
+	int	middle;
+	int	end;
+}	t_mergesort_vars;
 char			**redirection_split(char *str);
 void			create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
 int				count_split_elements(char **split);
@@ -96,5 +102,6 @@ void			perform_heredoc(char *delimiter, t_ms_vars *ms_vars, t_token_type delim_t
 void			error_cleanup(t_ms_vars *ms_vars);
 void			*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars);
 void			exec_cmd(t_ms_vars *ms_vars);
+char			**mergesort_expansions(char **expansions, int expansions_count);
 
 #endif
