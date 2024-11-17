@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/27 20:17:10 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/17 15:11:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ static int	count_words(char *str)
 				words++;
 			within_brackets++;
 			in_word = 1;
+			in_delimiter = 0;
 		}
 		else if (*str == ')')
 			within_brackets--;

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/09 18:15:59 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/17 14:49:47 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			ms_vars->redirect = DOUBLE_LEFT;
 		branch++;
 	}
-	if (ms_vars->exec_argv[0])
+	if (ms_vars->exec_argv)
 		exec_cmd(ms_vars);
 }
 
@@ -162,7 +162,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		}
 		else
 		{
-			/*todo: if command is a builtin, execute as per normal, otherwise 
+			/*todo: if command is a builtin, execute as per normal, otherwise
 			fork a child process and do execve*/
 			return ;
 		}
