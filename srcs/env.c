@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 21:09:38 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/05 18:33:30 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/17 18:11:46 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,26 @@
 char	*ft_getenv(const char *name)
 {
 	char	*env;
+	char	*key;
+	char	*key_end;
 
-	env = getenv(name);
+	key = NULL;
+	key_end = (char *)name;
+	while (ft_isalnum(*key_end) || *key_end == '_')
+		key_end++;
+	if (*key_end)
+	{
+		key = ft_substr(name, 0, key_end - name);
+		if (!key)
+			return (NULL);
+		env = getenv(key);
+	}
+	else
+		env = getenv(name);
+	free(key);
 	if (!env)
 		return ("\0");
-	return env;
+	return (env);
 }
 
 int	make_new_envp(t_ms_vars *ms_vars)
