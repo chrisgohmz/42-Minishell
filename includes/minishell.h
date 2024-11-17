@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/16 16:26:43 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/17 21:37:14 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <errno.h>
 # include <sys/wait.h>
 # include <linux/limits.h>
+# include <stdbool.h>
 # define PROMPT_START "\e[1;95mLynetteChriShell:"
 # define PROMPT_END "> \e[0m"
 
@@ -103,5 +104,13 @@ void			error_cleanup(t_ms_vars *ms_vars);
 void			*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars);
 void			exec_cmd(t_ms_vars *ms_vars);
 char			**mergesort_expansions(char **expansions, int expansions_count);
+int				check_cmd_is_builtin(t_ms_vars *ms_vars);
+void			echo_builtin(t_ms_vars *ms_vars);
+void			cd_builtin(t_ms_vars *ms_vars);
+void			pwd_builtin(void);
+void			export_builtin(t_ms_vars *ms_vars);
+void			unset_builtin(t_ms_vars *ms_vars);
+void			env_builtin(void);
+void			exit_builtin(t_ms_vars *ms_vars);
 
 #endif

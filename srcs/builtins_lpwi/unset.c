@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lpwi <lpwi@student.42singapore.sg>         +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:42 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/17 14:36:44 by lpwi             ###   ########.fr       */
+/*   Updated: 2024/11/17 21:47:02 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../includes/minishell.h"
 /** unset **/
 /* undefine a variable during the program execution. */
-void	unset_env(char *var)
+void	unset_builtin(t_ms_vars *ms_vars)
 {
-	if(ft_isalnum(var) && var_index(var) != -1)
-		free(__environ[var_index(var)]);
+	(void)ms_vars;
 }

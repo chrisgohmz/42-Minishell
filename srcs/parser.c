@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/17 14:49:47 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/17 19:33:15 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,11 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		branch++;
 	}
 	if (ms_vars->exec_argv)
-		exec_cmd(ms_vars);
+	{
+		if (!check_cmd_is_builtin(ms_vars))
+			exec_cmd(ms_vars);
+		free_2d_malloc_array(&ms_vars->exec_argv);
+	}
 }
 
 void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
@@ -162,8 +166,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		}
 		else
 		{
-			/*todo: if command is a builtin, execute as per normal, otherwise
-			fork a child process and do execve*/
+			parse_cmd_redirects(stree->branches[0], ms_vars);
 			return ;
 		}
 	}

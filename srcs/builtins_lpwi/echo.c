@@ -3,40 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lpwi <lpwi@student.42singapore.sg>         +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:05 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/17 14:36:07 by lpwi             ###   ########.fr       */
+/*   Updated: 2024/11/17 19:36:22 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../includes/minishell.h"
 /** echo **/
 /* outputs the args separated by spaces, terminated with newline.
    if successful, return status is 0.
    if write error, return status is non 0.
    -n flag suppresses the newline */
-   
-void	echo(char **string)
+
+
+/*
+echo by itself segfaults.
+echo -n word still prints the extra -n
+*/
+void	echo_builtin(t_ms_vars *ms_vars)
 {
 	int	n_flag;
-	int	args_count;
+	int	j;
 
 	n_flag = 0;
-	args_count = 0;
-	while(string[args_count])
-		args_count++;
-	if(ft_strcmp(string[1], "-n") == 0)
+	j = 1;
+	if(ft_strncmp(ms_vars->exec_argv[1], "-n", 3) == 0)
 		n_flag = 1;
-	if (args_count > 2)
+	while(ms_vars->exec_argv[j])
 	{
-		while(string[j])
-		{
-			ft_putstr_fd(string[j], 1);
-			if(string[j + 1] != "\0")
-				ft_putstr_fd(" ", 1);
-			j++;
-		}
+		ft_putstr_fd(ms_vars->exec_argv[j], 1);
+		if(ms_vars->exec_argv[j + 1])
+			ft_putstr_fd(" ", 1);
+		j++;
 	}
 	if (n_flag == 0)
-		write(1, "\n", 1);	
+		write(1, "\n", 1);
 }
