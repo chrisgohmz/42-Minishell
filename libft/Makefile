@@ -1,16 +1,16 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -Ofast -g
 -include Makefile.variables
 
-FT_PRINTF_DIR = ft_printf
-FT_PRINTF_SRCS = $(FT_PRINTF_DIR)/ft_printf.c $(FT_PRINTF_DIR)/parse_str/parse_str.c\
-				$(FT_PRINTF_DIR)/print_types/print_char.c $(FT_PRINTF_DIR)/print_types/print_s.c\
-				$(FT_PRINTF_DIR)/print_types/print_d.c $(FT_PRINTF_DIR)/print_types/print_p.c\
-				$(FT_PRINTF_DIR)/print_types/print_u.c $(FT_PRINTF_DIR)/print_types/print_x.c\
-				$(FT_PRINTF_DIR)/print_types/print_pct.c $(FT_PRINTF_DIR)/print_types/print_specifier.c
+FT_PRINTF_DIR = ft_printf/
+FT_PRINTF_SRCS = $(addprefix $(FT_PRINTF_DIR), ft_printf.c parse_str/parse_str.c\
+				print_types/print_char.c print_types/print_s.c\
+				print_types/print_d.c print_types/print_p.c\
+				print_types/print_u.c print_types/print_x.c\
+				print_types/print_pct.c print_types/print_specifier.c)
 
-GNL_DIR = get_next_line
-GNL_SRCS = $(GNL_DIR)/get_next_line.c $(GNL_DIR)/get_next_line_utils.c
+GNL_DIR = get_next_line/
+GNL_SRCS = $(addprefix $(GNL_DIR), get_next_line.c get_next_line_utils.c)
 
 LIBFT_OBJS = $(LIBFT_SRCS:.c=.o)
 FT_PRINTF_OBJS = $(FT_PRINTF_SRCS:.c=.o)
@@ -26,7 +26,7 @@ $(NAME): $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS)
 	ar rcs $(NAME) $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@ -g
+	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 -include $(LIBFT_DEPS) $(FT_PRINTF_DEPS) $(GNL_DEPS)
 

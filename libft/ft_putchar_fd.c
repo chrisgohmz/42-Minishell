@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 18:30:46 by cgoh              #+#    #+#             */
-/*   Updated: 2024/09/18 20:31:44 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/18 18:15:00 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,8 @@
 
 void	ft_putchar_fd(char c, int fd)
 {
-	write(fd, &c, 1);
+	ssize_t	chars;
+	
+	chars = write(fd, &c, 1);
+	(void)chars;
 }

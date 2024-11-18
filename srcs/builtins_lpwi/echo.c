@@ -35,9 +35,9 @@ void	echo_builtin(t_ms_vars *ms_vars)
 	{
 		ft_putstr_fd(ms_vars->exec_argv[j], 1);
 		if(ms_vars->exec_argv[j + 1])
-			ft_putstr_fd(" ", 1);
+			ft_putchar_fd(' ', 1);
 		j++;
 	}
 	if (n_flag == 0)
-		write(1, "\n", 1);
+		ft_putchar_fd('\n', 1);
 }
