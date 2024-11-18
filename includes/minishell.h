@@ -57,6 +57,11 @@ typedef enum e_escaped_type
 	ESC_CLOSE_BRACKET,
 	ESC_WILDCARD
 }	t_escaped_type;
+typedef enum e_process_type
+{
+	PARENT,
+	CHILD
+}	t_process_type;
 typedef struct s_syntax_tree
 {
 	t_token_type			type;
@@ -68,6 +73,7 @@ typedef struct s_ms_vars
 {
 	unsigned char	exit_value;
 	char			**ep;
+	size_t			env_size;
 	char			**exec_argv;
 	unsigned int	argv_index;
 	t_token_type	redirect;
@@ -75,6 +81,7 @@ typedef struct s_ms_vars
 	char			*line;
 	pid_t			*pid_arr;
 	char			prompt[PATH_MAX + sizeof(PROMPT_START) + sizeof(PROMPT_END) - 2];
+	t_process_type	proc_type;
 }	t_ms_vars;
 typedef struct s_mergesort_vars
 {

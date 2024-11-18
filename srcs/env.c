@@ -39,24 +39,23 @@ char	*ft_getenv(const char *name)
 
 int	make_new_envp(t_ms_vars *ms_vars)
 {
-	size_t	size;
 	size_t	env_len;
 
-	size = 0;
-	while (__environ[size])
-		size++;
-	ms_vars->ep = ft_calloc(size + 1, sizeof(char *));
+	ms_vars->env_size = 0;
+	while (__environ[ms_vars->env_size])
+		ms_vars->env_size++;
+	ms_vars->ep = ft_calloc(ms_vars->env_size + 1, sizeof(char *));
 	if (!ms_vars->ep)
 		return (0);
-	size = 0;
-	while (__environ[size])
+	ms_vars->env_size = 0;
+	while (__environ[ms_vars->env_size])
 	{
-		env_len = ft_strlen(__environ[size]);
-		ms_vars->ep[size] = malloc((env_len + 1) * sizeof(char));
-		if (!ms_vars->ep[size])
+		env_len = ft_strlen(__environ[ms_vars->env_size]);
+		ms_vars->ep[ms_vars->env_size] = malloc((env_len + 1) * sizeof(char));
+		if (!ms_vars->ep[ms_vars->env_size])
 			return (free_2d_malloc_array(&ms_vars->ep), 0);
-		ft_strlcpy(ms_vars->ep[size], __environ[size], env_len + 1);
-		size++;
+		ft_strlcpy(ms_vars->ep[ms_vars->env_size], __environ[ms_vars->env_size], env_len + 1);
+		ms_vars->env_size++;
 	}
 	__environ = ms_vars->ep;
 	return (1);

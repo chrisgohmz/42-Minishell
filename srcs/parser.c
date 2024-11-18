@@ -12,22 +12,23 @@
 
 #include "../includes/minishell.h"
 
-static void	check_ambigious_redirections(char *expanded_str, t_ms_vars *ms_vars)
+static int	check_ambiguous_redirections(char *expanded_str)
 {
-	char	**split_arr;
+	int	i;
 
-	split_arr = ft_multi_split(expanded_str, " \t");
-	if (!split_arr)
-		error_cleanup(ms_vars);
-	if (count_split_elements(split_arr) > 1)
+	i = 0;
+	while (expanded_str[i] == ' ' || expanded_str[i] == '\t')
+		i++;
+	while (expanded_str[i] && !ft_strchr(" \t", expanded_str[i]))
+		i++;
+	while (expanded_str[i] == ' ' || expanded_str[i] == '\t')
+		i++;
+	if (expanded_str[i])
 	{
-		printf("\e[1;91mError: Ambigious redirection\n\e[0m");
-		free_2d_malloc_array(&split_arr);
-		free(expanded_str);
-		error_cleanup(ms_vars);
-		exit(EXIT_FAILURE);
+		printf("\e[1;91mError: Ambiguous redirection\n\e[0m");
+		return (1);
 	}
-	free_2d_malloc_array(&split_arr);
+	return (0);
 }
 
 static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
@@ -95,7 +96,14 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			expanded_str = perform_wildcard_expansions(expanded_str);
 			if (!expanded_str)
 				error_cleanup(ms_vars);
-			check_ambigious_redirections(expanded_str, ms_vars);
+			if (check_ambiguous_redirections(expanded_str))
+			{
+				free(expanded_str);
+				if (ms_vars->proc_type == CHILD)
+					error_cleanup(ms_vars);
+				else
+					return (free_2d_malloc_array(&ms_vars->exec_argv));
+			}
 			perform_redirection(revert_transform(expanded_str), ms_vars);
 			free(expanded_str);
 		}
@@ -145,9 +153,9 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				}
 				else if (pid == 0)
 				{
+					ms_vars->proc_type = CHILD;
 					parse_cmd_redirects(stree->branches[branch], ms_vars);
 					error_cleanup(ms_vars);
-					exit(EXIT_SUCCESS);
 				}
 				ms_vars->pid_arr[i++] = pid;
 				branch++;

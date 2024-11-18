@@ -24,6 +24,8 @@
 
 /*
 Infinite loop when running export command.
+ms_vars->env_size contains the number of entries in env, so don't need to recalculate env_size again.
+Remember to account for the +1 size required for the NULL pointer when passing new_size to ft_realloc_str_arr.
 */
 static int	arr_size(char **arr)
 {

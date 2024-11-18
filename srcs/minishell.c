@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:44:42 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/09 18:02:31 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/19 01:46:00 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static void	init_vars(t_ms_vars *ms_vars)
 {
 	char	*prompt;
-
+	
 	ms_vars->stree = NULL;
 	ms_vars->argv_index = 0;
 	ms_vars->pid_arr = NULL;
@@ -32,8 +32,9 @@ static void	init_vars(t_ms_vars *ms_vars)
 int	main(int argc, char **argv)
 {
 	t_ms_vars	ms_vars;
-
+	
 	ms_vars.exit_value = 0;
+	ms_vars.proc_type = PARENT;
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
