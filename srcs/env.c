@@ -12,26 +12,24 @@
 
 #include "../includes/minishell.h"
 
-char	*ft_getenv(const char *name)
+char	*ft_getenv(char *name)
 {
 	char	*env;
-	char	*key;
 	char	*key_end;
+	char	save_char;
 
-	key = NULL;
-	key_end = (char *)name;
+	key_end = name;
 	while (ft_isalnum(*key_end) || *key_end == '_')
 		key_end++;
 	if (*key_end)
 	{
-		key = ft_substr(name, 0, key_end - name);
-		if (!key)
-			return (NULL);
-		env = getenv(key);
+		save_char = *key_end;
+		*key_end = '\0';
+		env = getenv(name);
+		*key_end = save_char;
 	}
 	else
 		env = getenv(name);
-	free(key);
 	if (!env)
 		return ("\0");
 	return (env);

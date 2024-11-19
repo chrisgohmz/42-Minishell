@@ -100,7 +100,7 @@ void	free_syntax_tree(t_syntax_tree *stree);
 char	*revert_transform(char *token);
 int		check_syntax_and_transform_line(char *line);
 void	free_2d_malloc_array(char ***split);
-char	*ft_getenv(const char *name);
+char	*ft_getenv(char *name);
 void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
 char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
 char	*perform_wildcard_expansions(char *str);

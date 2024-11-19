@@ -79,19 +79,19 @@ int	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 
 int	check_cmd_is_builtin(t_ms_vars *ms_vars)
 {
-	if (ft_strncmp(ms_vars->exec_argv[0], "cd", 3) == 0)
+	if (ft_strncmp(ms_vars->exec_argv[0], "cd", sizeof("cd")) == 0)
 		return (cd_builtin(ms_vars), 1);
-	else if (ft_strncmp(ms_vars->exec_argv[0], "pwd", 4) == 0)
+	else if (ft_strncmp(ms_vars->exec_argv[0], "pwd", sizeof("pwd")) == 0)
 		return (pwd_builtin(), 1);
-	else if (ft_strncmp(ms_vars->exec_argv[0], "echo", 5) == 0)
+	else if (ft_strncmp(ms_vars->exec_argv[0], "echo", sizeof("echo")) == 0)
 		return (echo_builtin(ms_vars), 1);
-	else if (ft_strncmp(ms_vars->exec_argv[0], "export", 7) == 0)
+	else if (ft_strncmp(ms_vars->exec_argv[0], "export", sizeof("export")) == 0)
 		return (export_builtin(ms_vars), 1);
-	else if (ft_strncmp(ms_vars->exec_argv[0], "unset", 6) == 0)
+	else if (ft_strncmp(ms_vars->exec_argv[0], "unset", sizeof("unset")) == 0)
 		return (unset_builtin(ms_vars), 1);
-	else if (ft_strncmp(ms_vars->exec_argv[0], "env", 4) == 0)
+	else if (ft_strncmp(ms_vars->exec_argv[0], "env", sizeof("env")) == 0)
 		return (env_builtin(), 1);
-	else if (ft_strncmp(ms_vars->exec_argv[0], "exit", 5) == 0)
+	else if (ft_strncmp(ms_vars->exec_argv[0], "exit", sizeof("exit")) == 0)
 		return (exit_builtin(ms_vars), 1);
 	return (0);
 }
