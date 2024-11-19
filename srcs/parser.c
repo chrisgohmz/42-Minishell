@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/17 19:33:15 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/19 19:15:14 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,14 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				else
 					return (free_2d_malloc_array(&ms_vars->exec_argv));
 			}
-			perform_redirection(revert_transform(expanded_str), ms_vars);
+			if (!perform_redirection(revert_transform(expanded_str), ms_vars))
+			{
+				free(expanded_str);
+				if (ms_vars->proc_type == CHILD)
+					error_cleanup(ms_vars);
+				else
+					return (free_2d_malloc_array(&ms_vars->exec_argv));
+			}
 			free(expanded_str);
 		}
 		else if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)

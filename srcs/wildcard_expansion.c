@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:16:34 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/16 10:39:28 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/19 18:44:01 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,20 +82,22 @@ static char	*expand_wildcard(char *pattern)
 			expansions = ft_realloc_str_arr(expansions, expansions_count + 2);
 			if (!expansions)
 				return (closedir(dirptr), free(pattern), NULL);
-			expansions[expansions_count++] = entry->d_name;
+			expansions[expansions_count++] = ft_strdup(entry->d_name);
+			if (!expansions[expansions_count - 1])
+				return (closedir(dirptr), free(pattern), free_2d_malloc_array(&expansions), NULL);
 		}
 		errno = 0;
 		entry = readdir(dirptr);
 	}
 	if (errno)
-		return (perror("readdir"), free(pattern), closedir(dirptr), free(expansions), NULL);
+		return (perror("readdir"), free(pattern), closedir(dirptr), free_2d_malloc_array(&expansions), NULL);
 	if (!expansions_count)
-		return (closedir(dirptr), free(expansions), pattern);
+		return (closedir(dirptr), free_2d_malloc_array(&expansions), pattern);
 	expansions = mergesort_expansions(expansions, expansions_count);
 	if (!expansions)
 		return (closedir(dirptr), free(pattern), NULL);
 	expanded_str = ft_multi_strjoin(expansions_count, expansions, " ");
-	return (closedir(dirptr), free(pattern), free(expansions), expanded_str);
+	return (closedir(dirptr), free(pattern), free_2d_malloc_array(&expansions), expanded_str);
 }
 
 char	*perform_wildcard_expansions(char *str)

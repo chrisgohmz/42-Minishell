@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/17 21:37:14 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/19 19:30:53 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # include <sys/wait.h>
 # include <linux/limits.h>
 # include <stdbool.h>
+# include <fcntl.h>
+# include <sys/stat.h>
 # define PROMPT_START "\e[1;95mLynetteChriShell:"
 # define PROMPT_END "> \e[0m"
 
@@ -82,6 +84,8 @@ typedef struct s_ms_vars
 	pid_t			*pid_arr;
 	char			prompt[PATH_MAX + sizeof(PROMPT_START) + sizeof(PROMPT_END) - 2];
 	t_process_type	proc_type;
+	int				fd_in;
+	int				fd_out;
 }	t_ms_vars;
 typedef struct s_mergesort_vars
 {

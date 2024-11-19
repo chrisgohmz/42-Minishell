@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lpwi <lpwi@student.42singapore.sg>         +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 15:03:30 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/17 17:20:14 by lpwi             ###   ########.fr       */
+/*   Updated: 2024/11/19 19:39:16 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdio.h>
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,31 +20,15 @@
 /* > - standard output
    < - standard input */
 
-int	redir_single_right(char *file_name, char **content)
-{
-	int	fd1;
-
-	fd1 = open(file_name, O_WRONLY | O_CREAT | O_TRUNC);
-	if (fd1 == -1)
-		return (-1);
-	dup2(fd1, 1);
-	int	i;
-
-	i = 0;
-	while(content[i])
-	{
-		printf("%s\n", content[i]);
-		i++;
-	}
-	close(fd1);
-	return (1);
-}
-
+/*
+I have transferred redir_single_right to redirections.c and edited it for integration.
+Do the same with single_left and double_right.
+*/
 int	redir_single_left(char *file_name)
 {
 	int	fd1;
 	char	*line;
-	
+
 	fd1 = open(file_name, O_RDONLY);
 	if (fd1 == -1)
 		return (-1);
@@ -73,7 +57,7 @@ int	redir_double_right(char *file_name, char **content)
 		printf("%s\n", content[i]);
 		i++;
 	}
-	close(fd1);	
+	close(fd1);
 	return 1;
 }
 
@@ -174,21 +158,21 @@ void	heredoc_unquoted(char **content)
 			printf("%s\n", content[i]);
 		i++;
 	}
-	
+
 }
 
 int main(void)
 {
-	
+
 	char **array = malloc(sizeof(char *) * 2 + 1);
 	array[0] = strdup("hi");
 	array[1] = strdup("world");
 	printf("array[0] is %s\n", array[0]);
 	printf("array[1] is %s\n", array[1]);
-	
+
 	int result = redir_double_right("test.txt", array);
-	
-		
+
+
 	// int result = redir_single_left("file.txt");
 	if (result == -1)
 		printf("no read permission\n");
@@ -197,4 +181,3 @@ int main(void)
 /** redirection - append **/
 /* >> - standard output: append the output to the file
    << - heredoc: take a delimiter to mark the end of the document. the delimiter must be a single word that does not contain spaces or tabs. */
-   

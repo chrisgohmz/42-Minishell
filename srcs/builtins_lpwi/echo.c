@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:05 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/17 19:36:22 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/19 19:29:37 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ void	echo_builtin(t_ms_vars *ms_vars)
 		n_flag = 1;
 	while(ms_vars->exec_argv[j])
 	{
-		ft_putstr_fd(ms_vars->exec_argv[j], 1);
+		ft_putstr_fd(ms_vars->exec_argv[j], ms_vars->fd_out);
 		if(ms_vars->exec_argv[j + 1])
-			ft_putchar_fd(' ', 1);
+			ft_putchar_fd(' ', ms_vars->fd_out);
 		j++;
 	}
 	if (n_flag == 0)
-		ft_putchar_fd('\n', 1);
+		ft_putchar_fd('\n', ms_vars->fd_out);
 }
