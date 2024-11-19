@@ -14,27 +14,26 @@
 
 static int	redir_single_right(char *filename, t_ms_vars *ms_vars)
 {
-	int	fd1;
-
-	fd1 = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IRGRP
+	if (ms_vars->fd_out != STDOUT_FILENO)
+		close(ms_vars->fd_out);
+	ms_vars->fd_out = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IRGRP
 			| S_IROTH | S_IWUSR);
-	if (fd1 == -1)
+	if (ms_vars->fd_out == -1)
 	{
 		perror(filename);
 		return (0);
 	}
 	if (ms_vars->proc_type == CHILD)
 	{
-		if (dup2(fd1, 1) < 0)
+		if (dup2(ms_vars->fd_out, 1) < 0)
 		{
 			perror("dup2");
-			close(fd1);
+			close(ms_vars->fd_out);
 			return (0);
 		}
-		close(fd1);
+		close(ms_vars->fd_out);
+		ms_vars->fd_out = 1;
 	}
-	else
-		ms_vars->fd_out = fd1;
 	return (1);
 }
 

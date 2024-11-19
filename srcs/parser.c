@@ -129,7 +129,12 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	if (ms_vars->exec_argv)
 	{
 		if (!check_cmd_is_builtin(ms_vars))
-			exec_cmd(ms_vars);
+		{
+			if (ms_vars->proc_type == PARENT)
+				fork_wait_single_process(ms_vars);
+			else
+				exec_cmd(ms_vars);	
+		}
 		free_2d_malloc_array(&ms_vars->exec_argv);
 	}
 }
@@ -137,46 +142,17 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
-	pid_t	pid;
-	int		i;
-	int		status;
 
 	branch = 0;
-	i = 0;
 	if (stree->type == PIPE)
 	{
 		if (stree->num_branches > 1)
 		{
-			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
+			ms_vars->pid_arr = malloc(stree->num_branches * sizeof(pid_t));
 			if (!ms_vars->pid_arr)
 				error_cleanup(ms_vars);
-			while (branch < stree->num_branches)
-			{
-				pid = fork();
-				if (pid < 0)
-				{
-					perror("fork");
-					error_cleanup(ms_vars);
-				}
-				else if (pid == 0)
-				{
-					ms_vars->proc_type = CHILD;
-					parse_cmd_redirects(stree->branches[branch], ms_vars);
-					error_cleanup(ms_vars);
-				}
-				ms_vars->pid_arr[i++] = pid;
-				branch++;
-			}
-			i = 0;
-			while (i < stree->num_branches)
-			{
-				waitpid(ms_vars->pid_arr[i], &status, 0);
-				if (WIFEXITED(status))
-					ms_vars->exit_value = WEXITSTATUS(status);
-				else if (WIFSIGNALED(status))
-					ms_vars->exit_value = 128 + WTERMSIG(status);
-				i++;
-			}
+			fork_child_processes(stree, ms_vars);
+			wait_child_processes(stree, ms_vars);
 			free(ms_vars->pid_arr);
 		}
 		else

@@ -63,6 +63,7 @@ int	main(int argc, char **argv)
 		ms_vars.line = NULL;
 		parse_tree(ms_vars.stree, &ms_vars);
 		free_syntax_tree(ms_vars.stree);
+		close_fds(&ms_vars);
 	}
 	rl_clear_history();
 	free_2d_malloc_array(&ms_vars.ep);
