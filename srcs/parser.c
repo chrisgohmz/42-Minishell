@@ -38,7 +38,7 @@ static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
 	i = 0;
 	while (split_arr[i])
 	{
-		ms_vars->exec_argv[ms_vars->argv_index++] = split_arr[i];
+		ms_vars->exec_argv[ms_vars->argv_index++] = revert_transform(split_arr[i]);
 		i++;
 	}
 }
