@@ -170,7 +170,7 @@ char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars)
 	expanded_str = allocate_expanded_str(str, ms_vars, &expanded_size);
 	if (!expanded_str)
 	{
-		printf("Malloc failed for expanded_str\n");
+		perror("malloc");
 		return (NULL);
 	}
 	fill_expanded_str(str, expanded_str, ms_vars, expanded_size);

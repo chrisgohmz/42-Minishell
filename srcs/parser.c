@@ -25,7 +25,8 @@ static int	check_ambiguous_redirections(char *expanded_str)
 		i++;
 	if (expanded_str[i])
 	{
-		printf("\e[1;91mError: Ambiguous redirection\n\e[0m");
+		ft_putendl_fd("\e[1;91mError: Ambiguous redirection\n\e[0m",
+			STDERR_FILENO);
 		return (1);
 	}
 	return (0);
