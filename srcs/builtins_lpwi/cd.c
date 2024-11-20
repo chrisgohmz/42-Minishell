@@ -25,8 +25,11 @@ void	cd_builtin(t_ms_vars *ms_vars)
 	int	chdir_ret;
 
 	chdir_ret = chdir(ms_vars->exec_argv[1]);
-	if(chdir_ret == 0)
-		printf("cd successful.\n");
+	if (chdir_ret < 0)
+	{
+		perror(ms_vars->exec_argv[1]);
+		ms_vars->exit_value = EXIT_FAILURE;
+	}
 	else
-		printf("cd failure.\n");
+		ms_vars->exit_value = EXIT_SUCCESS;
 }

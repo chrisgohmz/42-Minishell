@@ -96,17 +96,11 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			expanded_str = perform_wildcard_expansions(expanded_str);
 			if (!expanded_str)
 				error_cleanup(ms_vars);
-			if (check_ambiguous_redirections(expanded_str))
+			if (check_ambiguous_redirections(expanded_str) || !perform_redirection\
+			(revert_transform(expanded_str), ms_vars))
 			{
 				free(expanded_str);
-				if (ms_vars->proc_type == CHILD)
-					error_cleanup(ms_vars);
-				else
-					return (free_2d_malloc_array(&ms_vars->exec_argv));
-			}
-			if (!perform_redirection(revert_transform(expanded_str), ms_vars))
-			{
-				free(expanded_str);
+				ms_vars->exit_value = EXIT_FAILURE;
 				if (ms_vars->proc_type == CHILD)
 					error_cleanup(ms_vars);
 				else

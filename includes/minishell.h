@@ -25,6 +25,7 @@
 # include <sys/stat.h>
 # define PROMPT_START "\e[1;95mLynetteChriShell:"
 # define PROMPT_END "> \e[0m"
+# define SYNTAX_ERROR 2
 
 typedef enum e_token_type
 {
@@ -118,10 +119,10 @@ char	**mergesort_expansions(char **expansions, int expansions_count);
 int		check_cmd_is_builtin(t_ms_vars *ms_vars);
 void	echo_builtin(t_ms_vars *ms_vars);
 void	cd_builtin(t_ms_vars *ms_vars);
-void	pwd_builtin(void);
+void	pwd_builtin(t_ms_vars *ms_vars);
 void	export_builtin(t_ms_vars *ms_vars);
 void	unset_builtin(t_ms_vars *ms_vars);
-void	env_builtin(void);
+void	env_builtin(t_ms_vars *ms_vars);
 void	exit_builtin(t_ms_vars *ms_vars);
 void	close_fds(t_ms_vars *ms_vars);
 int		fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);

@@ -18,10 +18,11 @@
 /*
 Check for error return from getcwd().
 */
-void	pwd_builtin(void)
+void	pwd_builtin(t_ms_vars *ms_vars)
 {
 	char	cwd[PATH_MAX];
 
 	if(getcwd(cwd, sizeof(cwd)))
-		ft_putendl_fd(cwd, 1);
+		ft_putendl_fd(cwd, ms_vars->fd_out);
+	ms_vars->exit_value = EXIT_SUCCESS;
 }

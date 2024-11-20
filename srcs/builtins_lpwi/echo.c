@@ -40,4 +40,5 @@ void	echo_builtin(t_ms_vars *ms_vars)
 	}
 	if (n_flag == 0)
 		ft_putchar_fd('\n', ms_vars->fd_out);
+	ms_vars->exit_value = EXIT_SUCCESS;
 }

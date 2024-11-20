@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 20:10:18 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/20 01:24:52 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/20 21:57:04 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,5 @@ void	error_cleanup(t_ms_vars *ms_vars)
 	free(ms_vars->pid_arr);
 	close_fds(ms_vars);
 	rl_clear_history();
-	exit(EXIT_FAILURE);
+	exit(ms_vars->exit_value);
 }

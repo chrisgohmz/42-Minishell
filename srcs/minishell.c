@@ -54,7 +54,7 @@ int	main(int argc, char **argv)
 		add_history(ms_vars.line);
 		if (check_syntax_and_transform_line(ms_vars.line))
 		{
-			ms_vars.exit_value = 2;
+			ms_vars.exit_value = SYNTAX_ERROR;
 			free(ms_vars.line);
 			continue ;
 		}

@@ -14,14 +14,15 @@
 /** env **/
 /* output a list of all environment variabless.
    environment variables are dynamic values that affect the behaviour of proccesses on a system. They are available to the shell and any child processes spawned from the shell. */
-void	env_builtin(void)
+void	env_builtin(t_ms_vars *ms_vars)
 {
 	int	i;
 
 	i = 0;
 	while(__environ[i])
 	{
-		ft_putendl_fd(__environ[i], 1);
+		ft_putendl_fd(__environ[i], ms_vars->fd_out);
 		i++;
 	}
+	ms_vars->exit_value = EXIT_SUCCESS;
 }
