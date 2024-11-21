@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Ofast -g
+CFLAGS = -Wall -Wextra -Werror -Og -g
 -include Makefile.variables
 
 FT_PRINTF_DIR = ft_printf/

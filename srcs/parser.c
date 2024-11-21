@@ -54,13 +54,16 @@ static void	get_exec_args(char *expanded_str, t_ms_vars *ms_vars)
 	if (!split_arr)
 		error_cleanup(ms_vars);
 	num_elements = count_split_elements(split_arr);
-	ms_vars->exec_argv = ft_realloc_str_arr(ms_vars->exec_argv, ms_vars->argv_index + num_elements + 1);
-	if (!ms_vars->exec_argv)
+	if (num_elements > 0)
 	{
-		free_2d_malloc_array(&split_arr);
-		error_cleanup(ms_vars);
+		ms_vars->exec_argv = ft_realloc_str_arr(ms_vars->exec_argv, ms_vars->argv_index + num_elements + 1);
+		if (!ms_vars->exec_argv)
+		{
+			free_2d_malloc_array(&split_arr);
+			error_cleanup(ms_vars);
+		}
+		add_to_argv(split_arr, ms_vars);
 	}
-	add_to_argv(split_arr, ms_vars);
 	free(split_arr);
 }
 

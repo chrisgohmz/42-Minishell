@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Ofast -g
+CFLAGS = -Wall -Wextra -Werror -Og -g
 
 SRCS_DIR = srcs/
 SRCS = $(addprefix $(SRCS_DIR), minishell.c redirection_split.c syntax_tree.c\
