@@ -1,5 +1,7 @@
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -Og -g
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -Og -g
+SPEEDFLAGS = -Wall -Wextra -Werror -Ofast
+LDFLAGS = -Llibft
+LDLIBS = -lft -lreadline -ltinfo
 
 SRCS_DIR = srcs/
 SRCS = $(addprefix $(SRCS_DIR), minishell.c redirection_split.c syntax_tree.c\
@@ -9,7 +11,7 @@ SRCS = $(addprefix $(SRCS_DIR), minishell.c redirection_split.c syntax_tree.c\
 DEPS = $(SRCS:.c=.d)
 OBJS = $(SRCS:.c=.o)
 
-BUILTIN_SRCS = $(addprefix $(SRCS_DIR)/builtins_lpwi/, echo.c cd.c pwd.c env.c export.c\
+BUILTIN_SRCS = $(addprefix $(SRCS_DIR)builtins_lpwi/, echo.c cd.c pwd.c env.c export.c\
 				unset.c exit.c)
 BUILTIN_DEPS = $(BUILTIN_SRCS:.c=.d)
 BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
@@ -24,28 +26,28 @@ NAME = minishell
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJS) $(BUILTIN_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(BUILTIN_OBJS) $(LIBFT) -o $(NAME) -lreadline -ltinfo
+	$(CC) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
 $(LIBFT): $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS) libft.h)
 	$(MAKE) -C $(LIBFT_DIR)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
-
--include $(DEPS) $(BUILTIN_DEPS)
-
 clean:
 	$(MAKE) clean -C $(LIBFT_DIR)
-	rm -f $(OBJS) $(DEPS) $(BUILTIN_OBJS) $(BUILTIN_DEPS)
+	$(RM) $(OBJS) $(DEPS) $(BUILTIN_OBJS) $(BUILTIN_DEPS)
 
 fclean:
 	$(MAKE) fclean -C $(LIBFT_DIR)
-	rm -f $(OBJS) $(DEPS) $(BUILTIN_OBJS) $(BUILTIN_DEPS)
-	rm -f $(NAME)
+	$(RM) $(OBJS) $(DEPS) $(BUILTIN_OBJS) $(BUILTIN_DEPS)
+	$(RM) $(NAME)
 
 re: fclean all
 
 vg:
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./minishell
+
+speed: $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS))
+	$(CC) $(SPEEDFLAGS) $^ -o $(NAME) -lreadline -ltinfo
+
+-include $(DEPS) $(BUILTIN_DEPS)
 
 .PHONY: all clean fclean re vg

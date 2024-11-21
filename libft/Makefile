@@ -1,5 +1,5 @@
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -Og -g
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -Og -g
+ARFLAGS = rcs
 -include Makefile.variables
 
 FT_PRINTF_DIR = ft_printf/
@@ -23,18 +23,15 @@ NAME = libft.a
 all: $(NAME)
 
 $(NAME): $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS)
-	ar rcs $(NAME) $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+	$(AR) $(ARFLAGS) $(NAME) $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS)
 
 -include $(LIBFT_DEPS) $(FT_PRINTF_DEPS) $(GNL_DEPS)
 
 clean:
-	rm -f $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS) $(LIBFT_DEPS) $(FT_PRINTF_DEPS) $(GNL_DEPS)
+	$(RM) $(LIBFT_OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS) $(LIBFT_DEPS) $(FT_PRINTF_DEPS) $(GNL_DEPS)
 
 fclean: clean
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
 re: fclean all
 
