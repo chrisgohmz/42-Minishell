@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 02:40:30 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/21 02:42:26 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/22 19:58:06 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ int	check_bracket_syntax(char *line, int bracket_level, int empty_brackets)
 {
 	if (bracket_level < 0)
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing opening parenthesis\n\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Missing opening parenthesis\e[0m", STDERR_FILENO);
 		return (0);
 	}
 	else if (empty_brackets && line[0] == ')')
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Empty parenthesis\n\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Empty parenthesis\e[0m", STDERR_FILENO);
 		return (0);
 	}
 	return (1);
