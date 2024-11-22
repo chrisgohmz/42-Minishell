@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgoh <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/05/20 20:40:22 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/23 01:54:08 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,12 @@ static void	free_arr(char **split)
 static char	*alloc_word(char *start, char *end)
 {
 	char	*word;
-	int		i;
 
 	word = malloc((end - start + 1) * sizeof(char));
 	if (!word)
 		return (NULL);
-	i = 0;
-	while (start + i < end)
-	{
-		*(word + i) = *(start + i);
-		i++;
-	}
-	*(word + i) = '\0';
+	ft_memcpy(word, start, end - start);
+	word[end - start] = '\0';
 	return (word);
 }
 

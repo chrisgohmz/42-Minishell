@@ -37,8 +37,6 @@ char	*ft_getenv(char *name)
 
 int	make_new_envp(t_ms_vars *ms_vars)
 {
-	size_t	env_len;
-
 	ms_vars->env_size = 0;
 	while (__environ[ms_vars->env_size])
 		ms_vars->env_size++;
@@ -48,11 +46,9 @@ int	make_new_envp(t_ms_vars *ms_vars)
 	ms_vars->env_size = 0;
 	while (__environ[ms_vars->env_size])
 	{
-		env_len = ft_strlen(__environ[ms_vars->env_size]);
-		ms_vars->ep[ms_vars->env_size] = malloc((env_len + 1) * sizeof(char));
+		ms_vars->ep[ms_vars->env_size] = ft_strdup(__environ[ms_vars->env_size]);
 		if (!ms_vars->ep[ms_vars->env_size])
 			return (free_2d_malloc_array(&ms_vars->ep), 0);
-		ft_strlcpy(ms_vars->ep[ms_vars->env_size], __environ[ms_vars->env_size], env_len + 1);
 		ms_vars->env_size++;
 	}
 	__environ = ms_vars->ep;

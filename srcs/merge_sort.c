@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 10:37:10 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/16 16:33:23 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/23 00:18:16 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ static void	split_merge(char **arr2, char **arr1, int start, int end)
 static char	**copy_expansions(char **expansions, int expansions_count)
 {
 	char	**expansions_copy;
-	int		i;
 
 	expansions_copy = malloc(expansions_count * sizeof(char *));
 	if (!expansions_copy)
@@ -59,12 +58,7 @@ static char	**copy_expansions(char **expansions, int expansions_count)
 		free_2d_malloc_array(&expansions);
 		return (NULL);
 	}
-	i = 0;
-	while (i < expansions_count)
-	{
-		expansions_copy[i] = expansions[i];
-		i++;
-	}
+	ft_memcpy(expansions_copy, expansions, expansions_count * sizeof(char *));
 	return (expansions_copy);
 }
 
