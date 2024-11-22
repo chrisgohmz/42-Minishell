@@ -22,6 +22,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 -include $(LIBFT_DIR)/Makefile.variables
 
 NAME = minishell
+SPEED_NAME = minishell-speed
 
 all: $(NAME)
 
@@ -37,17 +38,21 @@ clean:
 
 fclean:
 	$(MAKE) fclean -C $(LIBFT_DIR)
-	$(RM) $(OBJS) $(DEPS) $(BUILTIN_OBJS) $(BUILTIN_DEPS)
-	$(RM) $(NAME)
+	$(RM) $(OBJS) $(DEPS) $(BUILTIN_OBJS) $(BUILTIN_DEPS) $(NAME) $(SPEED_NAME)
 
 re: fclean all
 
 vg:
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./minishell
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./$(NAME)
 
-speed: $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS))
-	$(CC) $(SPEEDFLAGS) $^ -o $(NAME) -lreadline -ltinfo
+vg_speed:
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./$(SPEED_NAME)
+
+speed: $(SPEED_NAME)
+
+$(SPEED_NAME): $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS))
+	$(CC) $(SPEEDFLAGS) $^ -o $@ -lreadline -ltinfo
 
 -include $(DEPS) $(BUILTIN_DEPS)
 
-.PHONY: all clean fclean re vg
+.PHONY: all clean fclean re vg vg_speed speed
