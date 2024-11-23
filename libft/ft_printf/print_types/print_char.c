@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 19:13:05 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:11 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:37:35 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,17 @@ int	print_char(t_format *format_lst, char c)
 	left = 0;
 	if (ft_strchr(flags, '-'))
 		left = 1;
-	print_formatted_char(c, width, left);
+	print_formatted_char(c, width, left, format_lst);
 	if (width > 0)
 		return (width);
 	return (1);
 }
 
-void	print_formatted_char(char c, int width, int left)
+void	print_formatted_char(char c, int width, int left, t_format *format_lst)
 {
 	while (!left && width-- > 1)
-		ft_putchar_fd(' ', 1);
-	ft_putchar_fd(c, 1);
+		ft_putchar_fd(' ', format_lst->fd);
+	ft_putchar_fd(c, format_lst->fd);
 	while (width-- > 1)
-		ft_putchar_fd(' ', 1);
+		ft_putchar_fd(' ', format_lst->fd);
 }

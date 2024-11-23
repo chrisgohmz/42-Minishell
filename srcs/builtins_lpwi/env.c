@@ -19,9 +19,9 @@ void	env_builtin(t_ms_vars *ms_vars)
 	int	i;
 
 	i = 0;
-	while(__environ[i])
+	while(ms_vars->ep[i])
 	{
-		ft_putendl_fd(__environ[i], ms_vars->fd_out);
+		ft_putendl_fd(ms_vars->ep[i], ms_vars->fd_out);
 		i++;
 	}
 	ms_vars->exit_value = EXIT_SUCCESS;

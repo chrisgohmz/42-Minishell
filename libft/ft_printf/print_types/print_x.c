@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:57 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:50:00 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,16 @@ void	print_formatted_x(char *formatted_x, t_format *format_lst)
 	left = (ft_strchr(flags, '-') != NULL);
 	fill_zeroes = (format_lst->precision < 0 && ft_strchr(flags, '0'));
 	if (fill_zeroes && ft_strchr(flags, '#'))
-		ft_putstr_fd("0x", 1);
+		ft_putstr_fd("0x", format_lst->fd);
 	while (!left && width-- > (int)ft_strlen(formatted_x))
 	{
 		if (fill_zeroes)
-			ft_putchar_fd('0', 1);
+			ft_putchar_fd('0', format_lst->fd);
 		else
-			ft_putchar_fd(' ', 1);
+			ft_putchar_fd(' ', format_lst->fd);
 	}
-	ft_putstr_fd(formatted_x + 2 * (fill_zeroes && ft_strchr(flags, '#')), 1);
+	ft_putstr_fd(formatted_x + 2 * (fill_zeroes && ft_strchr(flags, '#')),
+		format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_x))
-		ft_putchar_fd(' ', 1);
+		ft_putchar_fd(' ', format_lst->fd);
 }

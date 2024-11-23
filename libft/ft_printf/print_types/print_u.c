@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:51 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:49:02 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,11 @@ void	print_formatted_u(char *formatted_u, t_format *format_lst)
 	while (!left && width-- > (int)ft_strlen(formatted_u))
 	{
 		if (format_lst->precision < 0 && ft_strchr(flags, '0'))
-			ft_putchar_fd('0', 1);
+			ft_putchar_fd('0', format_lst->fd);
 		else
-			ft_putchar_fd(' ', 1);
+			ft_putchar_fd(' ', format_lst->fd);
 	}
-	ft_putstr_fd(formatted_u, 1);
+	ft_putstr_fd(formatted_u, format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_u))
-		ft_putchar_fd(' ', 1);
+		ft_putchar_fd(' ', format_lst->fd);
 }

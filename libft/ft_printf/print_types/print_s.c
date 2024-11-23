@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 20:00:49 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:39 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:52:10 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,40 +15,36 @@
 int	print_s(t_format *format_lst, char *str)
 {
 	char	*flags;
-	int		width;
-	int		precision;
 	int		left;
 	int		total_len;
 
 	flags = format_lst->flags;
-	width = format_lst->width;
-	precision = format_lst->precision;
 	left = 0;
 	if (ft_strchr(flags, '-'))
 		left = 1;
-	total_len = print_formatted_s(str, width, precision, left);
+	total_len = print_formatted_s(str, format_lst, left);
 	return (total_len);
 }
 
-int	print_formatted_s(char *str, int width, int precision, int left)
+int	print_formatted_s(char *str, t_format *format_lst, int left)
 {
 	char	*substr;
 	int		total_len;
 	int		substr_len;
 
-	substr = get_substr(str, precision);
+	substr = get_substr(str, format_lst->precision);
 	if (!substr)
 		return (-1);
 	substr_len = (int)ft_strlen(substr);
-	if (width > substr_len)
-		total_len = width;
+	if (format_lst->width > substr_len)
+		total_len = format_lst->width;
 	else
 		total_len = substr_len;
-	while (!left && width-- > substr_len)
-		ft_putchar_fd(' ', 1);
-	ft_putstr_fd(substr, 1);
-	while (width-- > substr_len)
-		ft_putchar_fd(' ', 1);
+	while (!left && format_lst->width-- > substr_len)
+		ft_putchar_fd(' ', format_lst->fd);
+	ft_putstr_fd(substr, format_lst->fd);
+	while (format_lst->width-- > substr_len)
+		ft_putchar_fd(' ', format_lst->fd);
 	free(substr);
 	return (total_len);
 }

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:45:49 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/30 18:06:56 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:33:45 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ unsigned long	ft_abs(long n);
 int				ft_max(int a, int b);
 int				ft_min(int a, int b);
 int				ft_atoi_base(char *str, char *base);
-int				ft_printf(const char *format, ...);
+int				ft_dprintf(int fd, const char *format, ...);
 char			**ft_multi_split(char *str, char *charset);
 char			*ft_multi_strjoin(int size, char **strs, char *sep);
 char			**ft_realloc_str_arr(char **old_arr, size_t new_size);

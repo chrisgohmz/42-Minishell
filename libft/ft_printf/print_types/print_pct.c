@@ -6,14 +6,14 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:53:19 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:32 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:40:34 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 
-int	print_pct(void)
+int	print_pct(t_format *format_lst)
 {
-	ft_putchar_fd('%', 1);
+	ft_putchar_fd('%', format_lst->fd);
 	return (1);
 }

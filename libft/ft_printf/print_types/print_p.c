@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:24 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:40:07 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,18 +97,18 @@ void	print_formatted_p(char *formatted_p, t_format *format_lst)
 			&& ft_strncmp(formatted_p, "(nil)", 6) != 0);
 	if (sign_first)
 	{
-		ft_putchar_fd(formatted_p[0], 1);
-		ft_putchar_fd('0', 1);
-		ft_putchar_fd('x', 1);
+		ft_putchar_fd(formatted_p[0], format_lst->fd);
+		ft_putchar_fd('0', format_lst->fd);
+		ft_putchar_fd('x', format_lst->fd);
 	}
 	while (!left && width-- > (int)ft_strlen(formatted_p))
 	{
 		if (format_lst->precision < 0 && ft_strchr(format_lst->flags, '0'))
-			ft_putchar_fd('0', 1);
+			ft_putchar_fd('0', format_lst->fd);
 		else
-			ft_putchar_fd(' ', 1);
+			ft_putchar_fd(' ', format_lst->fd);
 	}
-	ft_putstr_fd(formatted_p + 3 * sign_first, 1);
+	ft_putstr_fd(formatted_p + 3 * sign_first, format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_p))
-		ft_putchar_fd(' ', 1);
+		ft_putchar_fd(' ', format_lst->fd);
 }

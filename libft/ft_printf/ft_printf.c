@@ -6,25 +6,22 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 19:00:19 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:13:54 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:36:16 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/ft_printf.h"
 
-int	ft_printf(const char *format, ...)
+int	ft_dprintf(int fd, const char *format, ...)
 {
 	int			len;
 	va_list		va_ptr;
-	t_format	*format_lst;
+	t_format	format_lst;
 
 	va_start(va_ptr, format);
-	format_lst = malloc(sizeof(t_format));
-	if (!format_lst)
-		return (-1);
-	len = get_length(va_ptr, format, format_lst);
+	format_lst.fd = fd;
+	len = get_length(va_ptr, format, &format_lst);
 	va_end(va_ptr);
-	free(format_lst);
 	return (len);
 }
 

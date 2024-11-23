@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:27 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/24 00:01:56 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:59:38 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,20 +79,16 @@ void	export_builtin(t_ms_vars *ms_vars)
 	int	i;
 	int	j;
 	int	new_vars_count;
+	int	err;
 
 	i = 1;
 	new_vars_count = 0;
+	err = 0;
 	while (ms_vars->exec_argv[i])
 	{
-		if(!ft_valid_key_value(ms_vars->exec_argv[i]))
-			i++;
-		else if(var_index(ms_vars->exec_argv[i]) == -1)
-		{
+		if(ft_valid_key_value(ms_vars->exec_argv[i]) && var_index(ms_vars->exec_argv[i]) == -1)
 			new_vars_count++;
-			i++;
-		}
-		else
-			i++;
+		i++;
 	}
 	j = ms_vars->env_size;
 	ms_vars->ep = ft_realloc_str_arr(ms_vars->ep, new_vars_count + j + 1);
@@ -101,7 +97,10 @@ void	export_builtin(t_ms_vars *ms_vars)
 	while(ms_vars->exec_argv[i])
 	{
 		if(!ft_valid_key_value(ms_vars->exec_argv[i]))
-			printf("'%s': invalid", ms_vars->exec_argv[i]);
+		{
+			ft_dprintf(STDERR_FILENO, "\e[1;91mexport: %s: not a valid identifier\n\e[1;91m", ms_vars->exec_argv[i]);
+			err = 1;
+		}
 		else if(var_index(ms_vars->exec_argv[i]) == -1)
 		{
 			ms_vars->ep[j] = ft_strdup(ms_vars->exec_argv[i]);
@@ -112,4 +111,5 @@ void	export_builtin(t_ms_vars *ms_vars)
 		i++;
 	}
 	ms_vars->env_size = j;
+	ms_vars->exit_value = err;
 }

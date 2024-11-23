@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 16:49:14 by cgoh              #+#    #+#             */
-/*   Updated: 2024/06/26 20:12:03 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:51:06 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	print_replacement(t_format *format_lst, char specifier, va_list va_ptr)
 	else if (specifier == 'X')
 		len = print_x(format_lst, va_arg(va_ptr, unsigned int), 'X');
 	else if (specifier == '%')
-		len = print_pct();
+		len = print_pct(format_lst);
 	else
 		len = -2;
 	return (len);
@@ -45,7 +45,7 @@ int	parse_str(va_list va_ptr, int *i, const char *format, t_format *format_lst)
 
 	if (format[*i] != '%')
 	{
-		ft_putchar_fd(format[*i], 1);
+		ft_putchar_fd(format[*i], format_lst->fd);
 		return (1);
 	}
 	if (!format[(*i) + 1])
@@ -58,7 +58,7 @@ int	parse_str(va_list va_ptr, int *i, const char *format, t_format *format_lst)
 		return (-1);
 	str_len = print_replacement(format_lst, format[*i], va_ptr);
 	if (str_len == -2)
-		str_len = print_specifier(format, start, *i);
+		str_len = print_specifier(format, start, *i, format_lst);
 	free(format_lst->flags);
 	return (str_len);
 }

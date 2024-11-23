@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 19:05:14 by cgoh              #+#    #+#             */
-/*   Updated: 2024/09/20 18:32:49 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 01:50:28 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ typedef struct s_format
 	char	*flags;
 	int		width;
 	int		precision;
+	int		fd;
 }	t_format;
-int		ft_printf(const char *format, ...);
+int		ft_dprintf(int fd, const char *format, ...);
 int		get_length(va_list va_ptr, const char *format, t_format *format_lst);
 int		print_replacement(t_format *f_lst, char specifier, va_list va_ptr);
 int		parse_str(va_list va_ptr, int *i, const char *format,
@@ -32,7 +33,7 @@ int		parse_flags(t_format *format_lst, int *i, const char *format);
 int		parse_width(t_format *format_lst, int *i, const char *format);
 int		parse_precision(t_format *format_lst, int *i, const char *format);
 int		print_char(t_format *format_lst, char c);
-void	print_formatted_char(char c, int width, int left);
+void	print_formatted_char(char c, int width, int left, t_format *format_lst);
 int		print_d(t_format *format_lst, int n);
 char	*malloc_str_d(int n, char *flags, int precision);
 int		fill_formatted_d(char *formatted_d, t_format *format_lst, int n);
@@ -41,11 +42,12 @@ int		print_p(t_format *format_lst, void *p);
 char	*malloc_str_p(void *p, char *flags, int precision);
 int		fill_formatted_p(char *formatted_p, t_format *format_lst, void *p);
 void	print_formatted_p(char *formatted_p, t_format *format_lst);
-int		print_pct(void);
+int		print_pct(t_format *format_lst);
 int		print_s(t_format *format_lst, char *str);
-int		print_formatted_s(char *str, int width, int precision, int left);
+int		print_formatted_s(char *str, t_format *format_lst, int left);
 char	*get_substr(char *str, int precision);
-int		print_specifier(const char *format, int start, int end);
+int		print_specifier(const char *format, int start, int end,
+			t_format *format_lst);
 int		print_u(t_format *format_lst, unsigned int n);
 char	*malloc_str_u(unsigned int n, int precision);
 int		fill_formatted_u(char *formatted_u, unsigned int n);
