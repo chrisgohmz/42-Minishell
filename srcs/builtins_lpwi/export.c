@@ -27,15 +27,16 @@ Infinite loop when running export command.
 ms_vars->env_size contains the number of entries in env, so don't need to recalculate env_size again.
 Remember to account for the +1 size required for the NULL pointer when passing new_size to ft_realloc_str_arr.
 */
-static int	arr_size(char **arr)
-{
-	int	i;
 
-	i = 0;
-	while(arr[i])
-		i++;
-	return(i);
-}
+// static int	arr_size(char **arr)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while(arr[i])
+// 		i++;
+// 	return(i);
+// }
 
 static bool	ft_valid_key_value(char *str)
 {
@@ -49,22 +50,31 @@ static bool	ft_valid_key_value(char *str)
 	return(false);
 }
 
+static int ft_new_strlen(char *str)
+{
+	int i = 0;
+	while (str[i] != '=')
+		i++;
+	return (i);
+}
+
 static int	var_index(char *var)
 {
 	int	i;
 	int	j;
 
 	i = 0;
+	j = ft_new_strlen(var);
 	while(__environ[i])
 	{
-		j = 0;
-		while(var[j] != '=')
+		if(ft_strncmp(var, __environ[i], j) == 0)
 		{
-			if(__environ[i][j] == var[j])
-				j++;
+			if(__environ[i][j] == '=')
+			{
+				// printf("i is %i\n", i);
+				return (i);
+			}
 		}
-		if(__environ[i][j] == '=')
-			return (i);
 		i++;
 	}
 	return (-1);
@@ -88,9 +98,13 @@ void	export_builtin(t_ms_vars *ms_vars)
 			new_vars_count++;
 			i++;
 		}
+		else
+			i++;
 	}
-	j = arr_size(__environ);
-	temp = ft_realloc_str_arr(__environ, new_vars_count + j);
+	printf("var count %i\n", new_vars_count);
+	j = ms_vars->env_size;
+	printf("j %i\n", j);
+	temp = ft_realloc_str_arr(ms_vars->ep, new_vars_count + j + 1);
 	i = 1;
 	while(ms_vars->exec_argv[i])
 	{
@@ -105,5 +119,6 @@ void	export_builtin(t_ms_vars *ms_vars)
 			ft_strlcpy(temp[var_index(ms_vars->exec_argv[i])], ms_vars->exec_argv[i], ft_strlen(ms_vars->exec_argv[i]));
 		i++;
 	}
+	temp[j] = NULL;
 	__environ = temp;
 }

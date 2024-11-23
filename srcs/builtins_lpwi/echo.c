@@ -29,14 +29,20 @@ void	echo_builtin(t_ms_vars *ms_vars)
 
 	n_flag = 0;
 	j = 1;
-	if(ft_strncmp(ms_vars->exec_argv[1], "-n", 3) == 0)
-		n_flag = 1;
-	while(ms_vars->exec_argv[j])
+	if(ms_vars->exec_argv[1])
 	{
-		ft_putstr_fd(ms_vars->exec_argv[j], ms_vars->fd_out);
-		if(ms_vars->exec_argv[j + 1])
-			ft_putchar_fd(' ', ms_vars->fd_out);
-		j++;
+		if(ft_strncmp(ms_vars->exec_argv[1], "-n", 3) == 0)
+		{	
+			n_flag = 1;
+			j++;
+		}
+		while(ms_vars->exec_argv[j])
+		{
+			ft_putstr_fd(ms_vars->exec_argv[j], ms_vars->fd_out);
+			if(ms_vars->exec_argv[j + 1])
+				ft_putchar_fd(' ', ms_vars->fd_out);
+			j++;
+		}
 	}
 	if (n_flag == 0)
 		ft_putchar_fd('\n', ms_vars->fd_out);

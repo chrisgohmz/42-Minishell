@@ -23,6 +23,10 @@ void	pwd_builtin(t_ms_vars *ms_vars)
 	char	cwd[PATH_MAX];
 
 	if(getcwd(cwd, sizeof(cwd)))
+	{
 		ft_putendl_fd(cwd, ms_vars->fd_out);
-	ms_vars->exit_value = EXIT_SUCCESS;
+		ms_vars->exit_value = EXIT_SUCCESS;
+	}
+	else
+		ms_vars->exit_value = EXIT_FAILURE;
 }
