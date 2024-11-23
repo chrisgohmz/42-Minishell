@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -MMD -MP -Og -g
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -g
 SPEEDFLAGS = -Wall -Wextra -Werror -Ofast
 LDFLAGS = -Llibft
 LDLIBS = -lft -lreadline -ltinfo

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:05 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/19 19:29:37 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/23 19:18:58 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,6 @@
    if write error, return status is non 0.
    -n flag suppresses the newline */
 
-
-/*
-echo by itself segfaults.
-echo -n word still prints the extra -n
-*/
 void	echo_builtin(t_ms_vars *ms_vars)
 {
 	int	n_flag;
@@ -32,7 +27,7 @@ void	echo_builtin(t_ms_vars *ms_vars)
 	if(ms_vars->exec_argv[1])
 	{
 		if(ft_strncmp(ms_vars->exec_argv[1], "-n", 3) == 0)
-		{	
+		{
 			n_flag = 1;
 			j++;
 		}

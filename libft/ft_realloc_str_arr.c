@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:56:49 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/11 23:04:36 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/23 12:02:43 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static void	copy_old_to_new(char **new_arr, char **old_arr)
 {
 	size_t	i;
-	
+
 	i = 0;
 	while (old_arr[i])
 	{

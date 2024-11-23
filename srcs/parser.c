@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/19 19:15:14 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/23 12:01:42 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@ static int	check_ambiguous_redirections(char *expanded_str)
 	i = 0;
 	while (expanded_str[i] == ' ' || expanded_str[i] == '\t')
 		i++;
+	if (!expanded_str[i])
+	{
+		ft_putendl_fd("\e[1;91mError: Ambiguous redirection\e[0m",
+			STDERR_FILENO);
+		return (1);
+	}
 	while (expanded_str[i] && !ft_strchr(" \t", expanded_str[i]))
 		i++;
 	while (expanded_str[i] == ' ' || expanded_str[i] == '\t')
@@ -131,7 +137,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			if (ms_vars->proc_type == PARENT)
 				fork_wait_single_process(ms_vars);
 			else
-				exec_cmd(ms_vars);	
+				exec_cmd(ms_vars);
 		}
 		free_2d_malloc_array(&ms_vars->exec_argv);
 	}

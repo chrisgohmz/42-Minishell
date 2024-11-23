@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -MMD -MP -Og -g
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -g
 ARFLAGS = rcs
 -include Makefile.variables
 
