@@ -27,7 +27,6 @@ Not able to export a variable with _ in it.
 The rule for an identifier is:
 1. first character must be alphabet or _
 2. Second character onwards must be alphanumeric or _
-
 Exporting an existing variable with a longer length than the current one results in invalid write.
 Hint: Does ft_strlcpy work when the array size is different?
 */
@@ -37,7 +36,11 @@ static bool	ft_valid_key_value(char *str)
 	int	i;
 
 	i = 0;
-	while(ft_isalnum(str[i]))
+	if(ft_isalpha(str[i]) || str[i] == '_')
+		i++;
+	else
+		return (false);
+	while(ft_isalnum(str[i]) || str[i] == '_')
 		i++;
 	if (str[i] == '=')
 		return (true);
@@ -52,22 +55,19 @@ static int ft_new_strlen(char *str)
 	return (i);
 }
 
-static int	var_index(char *var)
+static int	var_index(int env_size, char *var)
 {
 	int	i;
 	int	j;
 
 	i = 0;
 	j = ft_new_strlen(var);
-	while(__environ[i])
+	while(i < env_size)
 	{
 		if(ft_strncmp(var, __environ[i], j) == 0)
 		{
 			if(__environ[i][j] == '=')
-			{
-				// printf("i is %i\n", i);
 				return (i);
-			}
 		}
 		i++;
 	}
@@ -86,7 +86,7 @@ void	export_builtin(t_ms_vars *ms_vars)
 	err = 0;
 	while (ms_vars->exec_argv[i])
 	{
-		if(ft_valid_key_value(ms_vars->exec_argv[i]) && var_index(ms_vars->exec_argv[i]) == -1)
+		if(ft_valid_key_value(ms_vars->exec_argv[i]) && var_index(ms_vars->env_size, ms_vars->exec_argv[i]) == -1)
 			new_vars_count++;
 		i++;
 	}
@@ -101,13 +101,13 @@ void	export_builtin(t_ms_vars *ms_vars)
 			ft_dprintf(STDERR_FILENO, "\e[1;91mexport: %s: not a valid identifier\n\e[1;91m", ms_vars->exec_argv[i]);
 			err = 1;
 		}
-		else if(var_index(ms_vars->exec_argv[i]) == -1)
+		else if(var_index(ms_vars->env_size, ms_vars->exec_argv[i]) == -1)
 		{
 			ms_vars->ep[j] = ft_strdup(ms_vars->exec_argv[i]);
 			j++;
 		}
 		else
-			ft_strlcpy(ms_vars->ep[var_index(ms_vars->exec_argv[i])], ms_vars->exec_argv[i], ft_strlen(ms_vars->exec_argv[i]) + 1);
+			ms_vars->ep[var_index(ms_vars->env_size, ms_vars->exec_argv[i])] = ft_strdup(ms_vars->exec_argv[i]);
 		i++;
 	}
 	ms_vars->env_size = j;

@@ -24,7 +24,16 @@ void	cd_builtin(t_ms_vars *ms_vars)
 {
 	int	chdir_ret;
 
-	chdir_ret = chdir(ms_vars->exec_argv[1]);
+	if(ms_vars->exec_argv[2])
+	{
+		printf("cd: too many arguments\n");
+		ms_vars->exit_value = EXIT_FAILURE;
+		return ;
+	}
+	if (!ms_vars->exec_argv[1])
+		chdir_ret = chdir(getenv("HOME"));
+	else
+		chdir_ret = chdir(ms_vars->exec_argv[1]);
 	if (chdir_ret < 0)
 	{
 		perror(ms_vars->exec_argv[1]);

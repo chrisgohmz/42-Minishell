@@ -28,5 +28,8 @@ void	pwd_builtin(t_ms_vars *ms_vars)
 		ms_vars->exit_value = EXIT_SUCCESS;
 	}
 	else
+	{
+		perror(getcwd(cwd, sizeof(cwd)));
 		ms_vars->exit_value = EXIT_FAILURE;
+	}
 }

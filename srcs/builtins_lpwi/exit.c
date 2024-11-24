@@ -21,5 +21,6 @@ Make sure there's no leaks, error.c gives an idea of what needs to be freed.
 */
 void	exit_builtin(t_ms_vars *ms_vars)
 {
-	(void)ms_vars;
+	error_cleanup(ms_vars);
+   exit(1);
 }
