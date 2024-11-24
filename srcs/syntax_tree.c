@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/09 13:38:50 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 15:40:27 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	create_logical_branches(t_syntax_tree **stree, char *line, t_ms_vars *ms_va
 {
 	char	**logical_split_arr;
 	int		i;
+	size_t	len;
 
 	logical_split_arr = logical_split(line);
 	if (!logical_split_arr)
@@ -96,13 +97,16 @@ void	create_logical_branches(t_syntax_tree **stree, char *line, t_ms_vars *ms_va
 	i = 0;
 	while (i < (*stree)->num_branches)
 	{
+		len = ft_strlen(logical_split_arr[i]);
 		(*stree)->branches[i] = allocate_new_node(1, sizeof(t_syntax_tree), ms_vars);
 		(*stree)->branches[i]->value = logical_split_arr[i];
-		if (ft_strncmp(logical_split_arr[i], "&&", 2) == 0)
+		if (ft_strncmp(logical_split_arr[i], "&&", sizeof("&&")) == 0)
 			(*stree)->branches[i]->type = AND;
-		else if (ft_strncmp(logical_split_arr[i], "||", 2) == 0)
+		else if (ft_strncmp(logical_split_arr[i], "||", sizeof("||")) == 0)
 			(*stree)->branches[i]->type = OR;
-		else if (ft_strchr(logical_split_arr[i], '('))
+		else if (ft_strnstr(logical_split_arr[i], "&&", len)
+			|| ft_strnstr(logical_split_arr[i], "||", len)
+			|| ft_strchr(logical_split_arr[i], '('))
 		{
 			(*stree)->branches[i]->type = BRACKETS;
 			create_logical_branches(&(*stree)->branches[i], logical_split_arr[i], ms_vars);

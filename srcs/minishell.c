@@ -17,7 +17,6 @@ static void	init_vars(t_ms_vars *ms_vars)
 	char	*prompt;
 
 	ms_vars->stree = NULL;
-	ms_vars->argv_index = 0;
 	ms_vars->pid_arr = NULL;
 	ms_vars->exec_argv = NULL;
 	ms_vars->fd_in = STDIN_FILENO;

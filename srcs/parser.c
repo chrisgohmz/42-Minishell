@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 00:03:15 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 15:09:04 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		branch++;
 	}
 	branch = 0;
+	ms_vars->argv_index = 0;
 	while (branch < stree->num_branches)
 	{
 		if (stree->branches[branch]->type == WORD)

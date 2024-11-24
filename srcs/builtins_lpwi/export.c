@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:27 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/24 01:59:38 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/24 21:39:56 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,35 +22,26 @@
 /* size_t size should consider variables that already exists in environ */
 /* use ft_alloc_str_arr to create a new and bigger array to store all environ vars and the new vars. then redefine __environ to the new array */
 
-/*
-Not able to export a variable with _ in it.
-The rule for an identifier is:
-1. first character must be alphabet or _
-2. Second character onwards must be alphanumeric or _
-Exporting an existing variable with a longer length than the current one results in invalid write.
-Hint: Does ft_strlcpy work when the array size is different?
-*/
-
-static bool	ft_valid_key_value(char *str)
+static int	ft_valid_key_value(char *str)
 {
 	int	i;
 
 	i = 0;
-	if(ft_isalpha(str[i]) || str[i] == '_')
+	if (ft_isalpha(str[i]) || str[i] == '_')
 		i++;
 	else
-		return (false);
-	while(ft_isalnum(str[i]) || str[i] == '_')
+		return (0);
+	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
 	if (str[i] == '=')
-		return (true);
-	return(false);
+		return (1);
+	return (2);
 }
 
 static int ft_new_strlen(char *str)
 {
 	int i = 0;
-	while (str[i] != '=')
+	while (str[i] != '=' && str[i])
 		i++;
 	return (i);
 }
@@ -80,34 +71,47 @@ void	export_builtin(t_ms_vars *ms_vars)
 	int	j;
 	int	new_vars_count;
 	int	err;
+	int	v_index;
+	int	is_valid_key;
 
 	i = 1;
 	new_vars_count = 0;
 	err = 0;
 	while (ms_vars->exec_argv[i])
 	{
-		if(ft_valid_key_value(ms_vars->exec_argv[i]) && var_index(ms_vars->env_size, ms_vars->exec_argv[i]) == -1)
+		if (ft_valid_key_value(ms_vars->exec_argv[i]) == 1 && var_index(ms_vars->env_size, ms_vars->exec_argv[i]) == -1)
 			new_vars_count++;
 		i++;
 	}
 	j = ms_vars->env_size;
-	ms_vars->ep = ft_realloc_str_arr(ms_vars->ep, new_vars_count + j + 1);
-	__environ = ms_vars->ep;
+	if (new_vars_count)
+	{
+		ms_vars->ep = ft_realloc_str_arr(ms_vars->ep, new_vars_count + j + 1);
+		__environ = ms_vars->ep;
+	}
 	i = 1;
 	while(ms_vars->exec_argv[i])
 	{
-		if(!ft_valid_key_value(ms_vars->exec_argv[i]))
+		is_valid_key = ft_valid_key_value(ms_vars->exec_argv[i]);
+		if(!is_valid_key)
 		{
 			ft_dprintf(STDERR_FILENO, "\e[1;91mexport: %s: not a valid identifier\n\e[1;91m", ms_vars->exec_argv[i]);
 			err = 1;
 		}
-		else if(var_index(ms_vars->env_size, ms_vars->exec_argv[i]) == -1)
+		else if (is_valid_key == 1)
 		{
-			ms_vars->ep[j] = ft_strdup(ms_vars->exec_argv[i]);
-			j++;
+			v_index = var_index(ms_vars->env_size, ms_vars->exec_argv[i]);
+			if (v_index == -1)
+			{
+				ms_vars->ep[j] = ft_strdup(ms_vars->exec_argv[i]);
+				j++;
+			}
+			else
+			{
+				free(ms_vars->ep[v_index]);
+				ms_vars->ep[v_index] = ft_strdup(ms_vars->exec_argv[i]);
+			}
 		}
-		else
-			ms_vars->ep[var_index(ms_vars->env_size, ms_vars->exec_argv[i])] = ft_strdup(ms_vars->exec_argv[i]);
 		i++;
 	}
 	ms_vars->env_size = j;
