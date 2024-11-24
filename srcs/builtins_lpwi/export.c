@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:27 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/24 21:39:56 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/25 01:58:49 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,8 @@ void	export_builtin(t_ms_vars *ms_vars)
 	if (new_vars_count)
 	{
 		ms_vars->ep = ft_realloc_str_arr(ms_vars->ep, new_vars_count + j + 1);
-		__environ = ms_vars->ep;
 	}
+	__environ = ms_vars->ep;
 	i = 1;
 	while(ms_vars->exec_argv[i])
 	{

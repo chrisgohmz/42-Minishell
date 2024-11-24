@@ -17,7 +17,7 @@
 
 /*
 hint: ms_vars->exit_value.
-Make sure there's no leaks, error.c gives an idea of what needs to be freed.
+Arguments and options aren't the same, exit does take arguments.
 */
 void	exit_builtin(t_ms_vars *ms_vars)
 {

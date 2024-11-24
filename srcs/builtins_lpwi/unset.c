@@ -16,6 +16,7 @@
 
 /*
 lpwi - export A B C D. unset A ok. unset D after causes segfault. to check again.
+cgoh - don't overcomplicate unset, it can be done without allocating a new env.
 */
 
 static int	key_len(char *key)
@@ -83,11 +84,11 @@ static void copy_invalid_keys(t_ms_vars *ms_vars, char **new_ep)
 {
 	int i;
 	int k;
-	int pos;
+	//int pos;
 
 	i = 0;
 	k = 0;
-	pos = -1;
+	//pos = -1;
 	while (ms_vars->ep[i])
 	{
 		if(to_keep(ms_vars, i))

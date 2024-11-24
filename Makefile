@@ -50,8 +50,8 @@ vg_speed:
 
 speed: $(SPEED_NAME)
 
-$(SPEED_NAME): $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS))
-	$(CC) $(SPEEDFLAGS) $^ -o $@ -lreadline -ltinfo
+$(SPEED_NAME): $(LIBFT) $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS))
+	$(CC) $(SPEEDFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
 -include $(DEPS) $(BUILTIN_DEPS)
 
