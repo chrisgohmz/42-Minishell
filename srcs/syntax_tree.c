@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 15:40:27 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/27 02:33:59 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir_split_arr)
+void	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir_split_arr, t_ms_vars *ms_vars)
 {
 	int		i;
 
@@ -27,7 +27,7 @@ void	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redi
 			redir_branches[i]->type = DOUBLE_RIGHT;
 		else if (ft_strncmp(redir_split_arr[i], ">", 1) == 0)
 			redir_branches[i]->type = SINGLE_RIGHT;
-		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && ft_strchr("'\"", redir_split_arr[i][0]))
+		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT && (ft_strchr(redir_split_arr[i], '"') || ft_strchr(redir_split_arr[i], '\'')))
 			redir_branches[i]->type = HEREDOC_QUOTED_DELIMITER;
 		else if (i != 0 && redir_branches[i - 1]->type == DOUBLE_LEFT)
 			redir_branches[i]->type = HEREDOC_DELIMITER;
@@ -36,7 +36,18 @@ void	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redi
 			redir_branches[i]->type = T_FILE;
 		else
 			redir_branches[i]->type = WORD;
-		redir_branches[i]->value = redir_split_arr[i];
+		if (redir_branches[i]->type == HEREDOC_QUOTED_DELIMITER)
+		{
+			redir_branches[i]->value = remove_quotes(redir_split_arr[i]);
+			if (!redir_branches[i]->value)
+			{
+				free_2d_malloc_array(&redir_split_arr);
+				ms_vars->exit_value = EXIT_FAILURE;
+				error_cleanup(ms_vars);
+			}
+		}
+		else
+			redir_branches[i]->value = redir_split_arr[i];
 		i++;
 	}
 }
@@ -58,7 +69,7 @@ void	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, t_ms_va
 		stree->branches[i] = allocate_new_node(1, sizeof(t_syntax_tree), ms_vars);
 		i++;
 	}
-	create_cmd_redirection_branches(stree->branches, redir_split_arr);
+	create_cmd_redirection_branches(stree->branches, redir_split_arr, ms_vars);
 	free(redir_split_arr[stree->num_branches]);
 	free(redir_split_arr);
 }
