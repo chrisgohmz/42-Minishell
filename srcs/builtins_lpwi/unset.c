@@ -17,6 +17,7 @@
 /*
 lpwi - export A B C D. unset A ok. unset D after causes segfault. to check again.
 cgoh - don't overcomplicate unset, it can be done without allocating a new env.
+edit: actually nevermind, u just need a few small changes to finish it.
 */
 
 static int	key_len(char *key)
