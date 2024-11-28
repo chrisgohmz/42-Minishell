@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/23 01:54:08 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 03:55:58 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	free_arr(char **split)
 	free(split);
 }
 
-static char	*alloc_word(char *start, char *end)
+static char	*alloc_word(char *restrict start, char *restrict end)
 {
 	char	*word;
 
@@ -37,7 +37,7 @@ static char	*alloc_word(char *start, char *end)
 	return (word);
 }
 
-static int	count_words(const char *s, char c)
+static int	count_words(const char *restrict s, char c)
 {
 	int	words;
 	int	in_word;
@@ -60,7 +60,7 @@ static int	count_words(const char *s, char c)
 	return (words);
 }
 
-static int	insert_words(char **split, char *s, char c, int words)
+static int	insert_words(char **split, char *restrict s, char c, int words)
 {
 	int		index;
 	char	*start;

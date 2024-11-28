@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 17:26:28 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/22 23:57:11 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 03:43:25 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *str)
+char	*ft_strdup(const char *restrict str)
 {
 	size_t	len;
 	char	*dup;

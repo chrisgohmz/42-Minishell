@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/23 01:52:18 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 03:53:33 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char	*alloc_word(char *start, char *end)
+static char	*alloc_word(char *restrict start, char *restrict end)
 {
 	char	*word;
 
@@ -24,7 +24,7 @@ static char	*alloc_word(char *start, char *end)
 	return (word);
 }
 
-static int	count_words(char *str, char *charset)
+static int	count_words(char *restrict str, char *restrict charset)
 {
 	int	words;
 	int	in_word;
@@ -47,7 +47,7 @@ static int	count_words(char *str, char *charset)
 	return (words);
 }
 
-static void	insert_words(char **split, char *str, char *charset, int words)
+static void	insert_words(char **split, char *restrict str, char *restrict charset, int words)
 {
 	int		index;
 	char	*start;

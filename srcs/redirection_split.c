@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/20 20:29:08 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 03:50:14 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	free_2d_malloc_array(char ***split)
 	*split = NULL;
 }
 
-static char	*alloc_word(char *start, char *end)
+static char	*alloc_word(char *restrict start, char *restrict end)
 {
 	char	*word;
 	int		i;
@@ -47,7 +47,7 @@ static char	*alloc_word(char *start, char *end)
 	return (word);
 }
 
-static int	count_words(char *str)
+static int	count_words(char *restrict str)
 {
 	int	words;
 	int	in_word;
@@ -80,7 +80,7 @@ static int	count_words(char *str)
 	return (words);
 }
 
-static void	insert_words(char **split, char *str, int words)
+static void	insert_words(char **split, char *restrict str, int words)
 {
 	int		index;
 	char	*start;

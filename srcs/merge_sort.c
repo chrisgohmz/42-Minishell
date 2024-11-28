@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 10:37:10 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/23 00:18:16 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 04:05:47 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static void	merge(char **arr2, char **arr1, t_mergesort_vars ms_vars)
+static void	merge(char **restrict arr2, char **restrict arr1, t_mergesort_vars ms_vars)
 {
 	int	i;
 	int	j;

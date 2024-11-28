@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static void	copy_old_to_new(char **new_arr, char **old_arr)
+static void	copy_old_to_new(char **restrict new_arr, char **restrict old_arr)
 {
 	size_t	i;
 

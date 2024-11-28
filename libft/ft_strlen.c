@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgoh <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:54:41 by cgoh              #+#    #+#             */
-/*   Updated: 2024/05/14 16:11:27 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 03:42:31 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-size_t	ft_strlen(const char *str)
+size_t	ft_strlen(const char *restrict str)
 {
 	int	i;
 

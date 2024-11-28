@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static char	*alloc_word(char *start, char *end)
+static char	*alloc_word(char *restrict start, char *restrict end)
 {
 	char	*word;
 	int		i;
@@ -42,7 +42,7 @@ static char	*alloc_word(char *start, char *end)
 	return (word);
 }
 
-static int	count_words(char *str)
+static int	count_words(char *restrict str)
 {
 	int	words;
 	int	in_word;
@@ -83,7 +83,7 @@ static int	count_words(char *str)
 	return (words);
 }
 
-static void	insert_words(char **split, char *str, int words)
+static void	insert_words(char **split, char *restrict str, int words)
 {
 	int		index;
 	int		within_brackets;

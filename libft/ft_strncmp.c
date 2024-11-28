@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cgoh <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 20:22:39 by cgoh              #+#    #+#             */
-/*   Updated: 2024/05/18 21:06:15 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 03:52:24 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-int	ft_strncmp(const char *str1, const char *str2, size_t n)
+int	ft_strncmp(const char *restrict str1, const char *restrict str2, size_t n)
 {
 	size_t			i;
 	unsigned char	*u_str1;
