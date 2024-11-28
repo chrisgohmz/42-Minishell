@@ -43,15 +43,15 @@ fclean:
 re: fclean all
 
 vg:
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./$(NAME)
+	$(MAKE) && valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./$(NAME)
 
 vg_speed:
-	valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./$(SPEED_NAME)
+	$(MAKE) && valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp --trace-children=yes --track-fds=yes ./$(SPEED_NAME)
 
 speed: $(SPEED_NAME)
 
-$(SPEED_NAME): $(LIBFT) $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS))
-	$(CC) $(SPEEDFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+$(SPEED_NAME): $(SRCS) $(BUILTIN_SRCS) $(addprefix $(LIBFT_DIR)/, $(LIBFT_SRCS) $(FT_PRINTF_SRCS) $(GNL_SRCS))
+	$(CC) $(SPEEDFLAGS) $^ -o $@ -lreadline -ltinfo
 
 -include $(DEPS) $(BUILTIN_DEPS)
 
