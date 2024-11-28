@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:36:27 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/25 01:58:49 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:05:08 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
    handle path and any new variable. */
 
 /* loop through ms_vars->exec_argv[1] onwards to identify the __envrion variables to change */
-/* in each loop, look for = (key=value), if key exists in environ, overwite the value with value otherwise add key=value pair to __environ. */
+/* in each loop, look for = (key=value), if key exists in environ, overwite the value with value otherwise add key=value pair to environ. */
 /* store each key-value pair as an array */
 /* size_t size should consider variables that already exists in environ */
-/* use ft_alloc_str_arr to create a new and bigger array to store all environ vars and the new vars. then redefine __environ to the new array */
+/* use ft_alloc_str_arr to create a new and bigger array to store all environ vars and the new vars. then redefine environ to the new array */
 
 static int	ft_valid_key_value(char *str)
 {
@@ -55,9 +55,9 @@ static int	var_index(int env_size, char *var)
 	j = ft_new_strlen(var);
 	while(i < env_size)
 	{
-		if(ft_strncmp(var, __environ[i], j) == 0)
+		if(ft_strncmp(var, environ[i], j) == 0)
 		{
-			if(__environ[i][j] == '=')
+			if(environ[i][j] == '=')
 				return (i);
 		}
 		i++;
@@ -88,7 +88,7 @@ void	export_builtin(t_ms_vars *ms_vars)
 	{
 		ms_vars->ep = ft_realloc_str_arr(ms_vars->ep, new_vars_count + j + 1);
 	}
-	__environ = ms_vars->ep;
+	environ = ms_vars->ep;
 	i = 1;
 	while(ms_vars->exec_argv[i])
 	{

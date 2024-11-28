@@ -6,36 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:40:07 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:30:12 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 
-int	print_p(t_format *format_lst, void *p)
-{
-	char	*flags;
-	char	*formatted_p;
-	int		len;
-
-	flags = format_lst->flags;
-	formatted_p = malloc_str_p(p, flags, format_lst->precision);
-	if (!formatted_p)
-		return (-1);
-	if (formatted_p[0] == 2)
-		ft_strlcpy(formatted_p, "(nil)", 6);
-	else if (!fill_formatted_p(formatted_p, format_lst, p))
-		return (-1);
-	print_formatted_p(formatted_p, format_lst);
-	if (format_lst->width > (int)ft_strlen(formatted_p))
-		len = format_lst->width;
-	else
-		len = ft_strlen(formatted_p);
-	free(formatted_p);
-	return (len);
-}
-
-char	*malloc_str_p(void *p, char *flags, int precision)
+static char	*malloc_str_p(void *p, char *flags, int precision)
 {
 	int		len;
 	char	*p_str;
@@ -60,7 +37,7 @@ char	*malloc_str_p(void *p, char *flags, int precision)
 	return (formatted_p);
 }
 
-int	fill_formatted_p(char *formatted_p, t_format *format_lst, void *p)
+static int	fill_formatted_p(char *formatted_p, t_format *format_lst, void *p)
 {
 	char	*p_str;
 	int		i;
@@ -85,7 +62,7 @@ int	fill_formatted_p(char *formatted_p, t_format *format_lst, void *p)
 	return (1);
 }
 
-void	print_formatted_p(char *formatted_p, t_format *format_lst)
+static void	print_formatted_p(char *formatted_p, t_format *format_lst)
 {
 	int		left;
 	int		sign_first;
@@ -111,4 +88,27 @@ void	print_formatted_p(char *formatted_p, t_format *format_lst)
 	ft_putstr_fd(formatted_p + 3 * sign_first, format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_p))
 		ft_putchar_fd(' ', format_lst->fd);
+}
+
+int	print_p(t_format *format_lst, void *p)
+{
+	char	*flags;
+	char	*formatted_p;
+	int		len;
+
+	flags = format_lst->flags;
+	formatted_p = malloc_str_p(p, flags, format_lst->precision);
+	if (!formatted_p)
+		return (-1);
+	if (formatted_p[0] == 2)
+		ft_strlcpy(formatted_p, "(nil)", 6);
+	else if (!fill_formatted_p(formatted_p, format_lst, p))
+		return (-1);
+	print_formatted_p(formatted_p, format_lst);
+	if (format_lst->width > (int)ft_strlen(formatted_p))
+		len = format_lst->width;
+	else
+		len = ft_strlen(formatted_p);
+	free(formatted_p);
+	return (len);
 }

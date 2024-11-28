@@ -6,32 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:50:00 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:30:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 
-int	print_x(t_format *format_lst, unsigned int n, char format)
-{
-	char	*formatted_x;
-	int		len;
-
-	formatted_x = malloc_str_x(n, format_lst, format);
-	if (!formatted_x)
-		return (-1);
-	if (!fill_formatted_x(formatted_x, n, format, format_lst))
-		return (-1);
-	print_formatted_x(formatted_x, format_lst);
-	if (format_lst->width > (int)ft_strlen(formatted_x))
-		len = format_lst->width;
-	else
-		len = ft_strlen(formatted_x);
-	free(formatted_x);
-	return (len);
-}
-
-char	*malloc_str_x(unsigned int n, t_format *format_lst, char format)
+static char	*malloc_str_x(unsigned int n, t_format *format_lst, char format)
 {
 	int		len;
 	char	*x_str;
@@ -54,7 +35,7 @@ char	*malloc_str_x(unsigned int n, t_format *format_lst, char format)
 	return (formatted_x);
 }
 
-int	fill_formatted_x(char *formatted_x, unsigned int n
+static int	fill_formatted_x(char *formatted_x, unsigned int n
 , char format, t_format *format_lst)
 {
 	char	*x_str;
@@ -79,7 +60,7 @@ int	fill_formatted_x(char *formatted_x, unsigned int n
 	return (1);
 }
 
-void	print_formatted_x(char *formatted_x, t_format *format_lst)
+static void	print_formatted_x(char *formatted_x, t_format *format_lst)
 {
 	int		left;
 	char	*flags;
@@ -103,4 +84,23 @@ void	print_formatted_x(char *formatted_x, t_format *format_lst)
 		format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_x))
 		ft_putchar_fd(' ', format_lst->fd);
+}
+
+int	print_x(t_format *format_lst, unsigned int n, char format)
+{
+	char	*formatted_x;
+	int		len;
+
+	formatted_x = malloc_str_x(n, format_lst, format);
+	if (!formatted_x)
+		return (-1);
+	if (!fill_formatted_x(formatted_x, n, format, format_lst))
+		return (-1);
+	print_formatted_x(formatted_x, format_lst);
+	if (format_lst->width > (int)ft_strlen(formatted_x))
+		len = format_lst->width;
+	else
+		len = ft_strlen(formatted_x);
+	free(formatted_x);
+	return (len);
 }

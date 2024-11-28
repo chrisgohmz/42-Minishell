@@ -6,32 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:49:02 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:30:43 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 
-int	print_u(t_format *format_lst, unsigned int n)
-{
-	char	*formatted_u;
-	int		len;
-
-	formatted_u = malloc_str_u(n, format_lst->precision);
-	if (!formatted_u)
-		return (-1);
-	if (!fill_formatted_u(formatted_u, n))
-		return (-1);
-	print_formatted_u(formatted_u, format_lst);
-	if (format_lst->width > (int)ft_strlen(formatted_u))
-		len = format_lst->width;
-	else
-		len = ft_strlen(formatted_u);
-	free(formatted_u);
-	return (len);
-}
-
-char	*malloc_str_u(unsigned int n, int precision)
+static char	*malloc_str_u(unsigned int n, int precision)
 {
 	int		len;
 	char	*n_str;
@@ -52,7 +33,7 @@ char	*malloc_str_u(unsigned int n, int precision)
 	return (formatted_u);
 }
 
-int	fill_formatted_u(char *formatted_u, unsigned int n)
+static int	fill_formatted_u(char *formatted_u, unsigned int n)
 {
 	char	*n_str;
 	int		i;
@@ -71,7 +52,7 @@ int	fill_formatted_u(char *formatted_u, unsigned int n)
 	return (1);
 }
 
-void	print_formatted_u(char *formatted_u, t_format *format_lst)
+static void	print_formatted_u(char *formatted_u, t_format *format_lst)
 {
 	int		left;
 	char	*flags;
@@ -92,4 +73,23 @@ void	print_formatted_u(char *formatted_u, t_format *format_lst)
 	ft_putstr_fd(formatted_u, format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_u))
 		ft_putchar_fd(' ', format_lst->fd);
+}
+
+int	print_u(t_format *format_lst, unsigned int n)
+{
+	char	*formatted_u;
+	int		len;
+
+	formatted_u = malloc_str_u(n, format_lst->precision);
+	if (!formatted_u)
+		return (-1);
+	if (!fill_formatted_u(formatted_u, n))
+		return (-1);
+	print_formatted_u(formatted_u, format_lst);
+	if (format_lst->width > (int)ft_strlen(formatted_u))
+		len = format_lst->width;
+	else
+		len = ft_strlen(formatted_u);
+	free(formatted_u);
+	return (len);
 }

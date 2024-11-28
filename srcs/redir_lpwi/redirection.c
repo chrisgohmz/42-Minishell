@@ -148,8 +148,8 @@ void	heredoc_unquoted(char **content)
 				j++;
 				k++;
 			}
-			if(__environ(var_index(env_to_find)) != -1)
-				printf("%s\n", __environ(var_index(env_to_find)));
+			if(environ(var_index(env_to_find)) != -1)
+				printf("%s\n", environ(var_index(env_to_find)));
 			//then print all other remaining characters
 			while(new[i][j])
 				printf("%c", new[i][j]);

@@ -6,27 +6,37 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 20:00:49 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:52:10 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:31:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 
-int	print_s(t_format *format_lst, char *str)
+static char	*get_substr(char *str, int precision)
 {
-	char	*flags;
-	int		left;
-	int		total_len;
+	char	*substr;
 
-	flags = format_lst->flags;
-	left = 0;
-	if (ft_strchr(flags, '-'))
-		left = 1;
-	total_len = print_formatted_s(str, format_lst, left);
-	return (total_len);
+	if (!str)
+	{
+		substr = malloc((6 * (precision >= 6
+						|| precision == -1) + 1) * sizeof(char));
+		if (!substr)
+			return (NULL);
+		if (precision >= 6 || precision == -1)
+			ft_strlcpy(substr, "(null)", 7);
+		else
+			substr[0] = '\0';
+	}
+	else
+	{
+		substr = ft_substr(str, 0, precision);
+		if (!substr)
+			return (NULL);
+	}
+	return (substr);
 }
 
-int	print_formatted_s(char *str, t_format *format_lst, int left)
+static int	print_formatted_s(char *str, t_format *format_lst, int left)
 {
 	char	*substr;
 	int		total_len;
@@ -49,26 +59,16 @@ int	print_formatted_s(char *str, t_format *format_lst, int left)
 	return (total_len);
 }
 
-char	*get_substr(char *str, int precision)
+int	print_s(t_format *format_lst, char *str)
 {
-	char	*substr;
+	char	*flags;
+	int		left;
+	int		total_len;
 
-	if (!str)
-	{
-		substr = malloc((6 * (precision >= 6
-						|| precision == -1) + 1) * sizeof(char));
-		if (!substr)
-			return (NULL);
-		if (precision >= 6 || precision == -1)
-			ft_strlcpy(substr, "(null)", 7);
-		else
-			substr[0] = '\0';
-	}
-	else
-	{
-		substr = ft_substr(str, 0, precision);
-		if (!substr)
-			return (NULL);
-	}
-	return (substr);
+	flags = format_lst->flags;
+	left = 0;
+	if (ft_strchr(flags, '-'))
+		left = 1;
+	total_len = print_formatted_s(str, format_lst, left);
+	return (total_len);
 }

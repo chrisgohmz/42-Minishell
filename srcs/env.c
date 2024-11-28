@@ -38,19 +38,19 @@ char	*ft_getenv(char *name)
 int	make_new_envp(t_ms_vars *ms_vars)
 {
 	ms_vars->env_size = 0;
-	while (__environ[ms_vars->env_size])
+	while (environ[ms_vars->env_size])
 		ms_vars->env_size++;
 	ms_vars->ep = ft_calloc(ms_vars->env_size + 1, sizeof(char *));
 	if (!ms_vars->ep)
 		return (0);
 	ms_vars->env_size = 0;
-	while (__environ[ms_vars->env_size])
+	while (environ[ms_vars->env_size])
 	{
-		ms_vars->ep[ms_vars->env_size] = ft_strdup(__environ[ms_vars->env_size]);
+		ms_vars->ep[ms_vars->env_size] = ft_strdup(environ[ms_vars->env_size]);
 		if (!ms_vars->ep[ms_vars->env_size])
 			return (free_2d_malloc_array(&ms_vars->ep), 0);
 		ms_vars->env_size++;
 	}
-	__environ = ms_vars->ep;
+	environ = ms_vars->ep;
 	return (1);
 }

@@ -6,11 +6,20 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 19:13:05 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:37:35 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:29:44 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
+
+static void	print_formatted_char(char c, int width, int left, t_format *format_lst)
+{
+	while (!left && width-- > 1)
+		ft_putchar_fd(' ', format_lst->fd);
+	ft_putchar_fd(c, format_lst->fd);
+	while (width-- > 1)
+		ft_putchar_fd(' ', format_lst->fd);
+}
 
 int	print_char(t_format *format_lst, char c)
 {
@@ -27,13 +36,4 @@ int	print_char(t_format *format_lst, char c)
 	if (width > 0)
 		return (width);
 	return (1);
-}
-
-void	print_formatted_char(char c, int width, int left, t_format *format_lst)
-{
-	while (!left && width-- > 1)
-		ft_putchar_fd(' ', format_lst->fd);
-	ft_putchar_fd(c, format_lst->fd);
-	while (width-- > 1)
-		ft_putchar_fd(' ', format_lst->fd);
 }

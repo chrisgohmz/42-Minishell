@@ -121,5 +121,5 @@ void	unset_builtin(t_ms_vars *ms_vars)
 	temp = ms_vars->ep;
 	ms_vars->ep = new_ep;
 	free_old_ep(temp);
-	__environ = ms_vars->ep;
+	environ = ms_vars->ep;
 }

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 15:43:35 by cgoh              #+#    #+#             */
-/*   Updated: 2024/10/07 19:44:00 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:34:16 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,8 @@ typedef struct s_vars
 	unsigned int	line_size;
 }	t_vars;
 char	*get_next_line(int fd);
-int		append_lst(t_buffer *buf);
-void	fill_line(t_buffer *buf, t_vars *vars);
-int		do_buffer_reading(int fd, t_buffer *buf, t_vars *vars);
 t_lst	*gnl_newlst(void);
 void	gnl_lstclear(t_lst **begin);
 void	reset_buf(t_buffer *buf);
-void	gnl_find_end(t_buffer *buf, t_vars *vars);
 
 #endif

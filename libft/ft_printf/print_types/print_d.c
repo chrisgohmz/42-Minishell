@@ -6,34 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 16:39:08 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:38:48 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:29:58 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 
-int	print_d(t_format *format_lst, int n)
-{
-	char	*flags;
-	char	*formatted_d;
-	int		len;
-
-	flags = format_lst->flags;
-	formatted_d = malloc_str_d(n, flags, format_lst->precision);
-	if (!formatted_d)
-		return (-1);
-	if (!fill_formatted_d(formatted_d, format_lst, n))
-		return (-1);
-	print_formatted_d(formatted_d, format_lst);
-	if (format_lst->width > (int)ft_strlen(formatted_d))
-		len = format_lst->width;
-	else
-		len = ft_strlen(formatted_d);
-	free(formatted_d);
-	return (len);
-}
-
-char	*malloc_str_d(int n, char *flags, int precision)
+static char	*malloc_str_d(int n, char *flags, int precision)
 {
 	int		len;
 	char	*n_str;
@@ -59,7 +38,7 @@ char	*malloc_str_d(int n, char *flags, int precision)
 	return (formatted_d);
 }
 
-int	fill_formatted_d(char *formatted_d, t_format *format_lst, int n)
+static int	fill_formatted_d(char *formatted_d, t_format *format_lst, int n)
 {
 	char	*n_str;
 	int		i;
@@ -87,7 +66,7 @@ int	fill_formatted_d(char *formatted_d, t_format *format_lst, int n)
 	return (1);
 }
 
-void	print_formatted_d(char *formatted_d, t_format *format_lst)
+static void	print_formatted_d(char *formatted_d, t_format *format_lst)
 {
 	int		left;
 	char	*flags;
@@ -114,4 +93,25 @@ void	print_formatted_d(char *formatted_d, t_format *format_lst)
 	ft_putstr_fd(formatted_d + sign_first, format_lst->fd);
 	while (width-- > (int)ft_strlen(formatted_d))
 		ft_putchar_fd(' ', format_lst->fd);
+}
+
+int	print_d(t_format *format_lst, int n)
+{
+	char	*flags;
+	char	*formatted_d;
+	int		len;
+
+	flags = format_lst->flags;
+	formatted_d = malloc_str_d(n, flags, format_lst->precision);
+	if (!formatted_d)
+		return (-1);
+	if (!fill_formatted_d(formatted_d, format_lst, n))
+		return (-1);
+	print_formatted_d(formatted_d, format_lst);
+	if (format_lst->width > (int)ft_strlen(formatted_d))
+		len = format_lst->width;
+	else
+		len = ft_strlen(formatted_d);
+	free(formatted_d);
+	return (len);
 }

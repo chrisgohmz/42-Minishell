@@ -6,26 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 19:00:19 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:36:16 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:28:38 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/ft_printf.h"
 
-int	ft_dprintf(int fd, const char *format, ...)
-{
-	int			len;
-	va_list		va_ptr;
-	t_format	format_lst;
-
-	va_start(va_ptr, format);
-	format_lst.fd = fd;
-	len = get_length(va_ptr, format, &format_lst);
-	va_end(va_ptr);
-	return (len);
-}
-
-int	get_length(va_list va_ptr, const char *format, t_format *format_lst)
+static int	get_length(va_list va_ptr, const char *format, t_format *format_lst)
 {
 	int		i;
 	int		len;
@@ -44,5 +31,18 @@ int	get_length(va_list va_ptr, const char *format, t_format *format_lst)
 		len += str_len;
 		i++;
 	}
+	return (len);
+}
+
+int	ft_dprintf(int fd, const char *format, ...)
+{
+	int			len;
+	va_list		va_ptr;
+	t_format	format_lst;
+
+	va_start(va_ptr, format);
+	format_lst.fd = fd;
+	len = get_length(va_ptr, format, &format_lst);
+	va_end(va_ptr);
 	return (len);
 }

@@ -12,6 +12,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+# define _GNU_SOURCE
 # include "../libft/libft.h"
 # include <stdio.h>
 # include <readline/readline.h>

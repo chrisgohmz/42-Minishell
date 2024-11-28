@@ -6,14 +6,14 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 16:49:14 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:51:06 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/11/29 02:29:16 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 #define MAX_FLAGS	5
 
-int	print_replacement(t_format *format_lst, char specifier, va_list va_ptr)
+static int	print_replacement(t_format *format_lst, char specifier, va_list va_ptr)
 {
 	int		len;
 
@@ -38,32 +38,7 @@ int	print_replacement(t_format *format_lst, char specifier, va_list va_ptr)
 	return (len);
 }
 
-int	parse_str(va_list va_ptr, int *i, const char *format, t_format *format_lst)
-{
-	int			str_len;
-	int			start;
-
-	if (format[*i] != '%')
-	{
-		ft_putchar_fd(format[*i], format_lst->fd);
-		return (1);
-	}
-	if (!format[(*i) + 1])
-		return (-1);
-	(*i)++;
-	start = *i;
-	if (!parse_flags(format_lst, i, format)
-		|| !parse_width(format_lst, i, format)
-		|| !parse_precision(format_lst, i, format))
-		return (-1);
-	str_len = print_replacement(format_lst, format[*i], va_ptr);
-	if (str_len == -2)
-		str_len = print_specifier(format, start, *i, format_lst);
-	free(format_lst->flags);
-	return (str_len);
-}
-
-int	parse_flags(t_format *format_lst, int *i, const char *format)
+static int	parse_flags(t_format *format_lst, int *i, const char *format)
 {
 	char	*flags;
 	char	possible_flags[MAX_FLAGS + 1];
@@ -88,7 +63,7 @@ int	parse_flags(t_format *format_lst, int *i, const char *format)
 	return (1);
 }
 
-int	parse_width(t_format *format_lst, int *i, const char *format)
+static int	parse_width(t_format *format_lst, int *i, const char *format)
 {
 	int		len;
 	char	*width_str;
@@ -110,7 +85,7 @@ int	parse_width(t_format *format_lst, int *i, const char *format)
 	return (1);
 }
 
-int	parse_precision(t_format *format_lst, int *i, const char *format)
+static int	parse_precision(t_format *format_lst, int *i, const char *format)
 {
 	int		len;
 	char	*precision_str;
@@ -136,4 +111,29 @@ int	parse_precision(t_format *format_lst, int *i, const char *format)
 	free(precision_str);
 	*i += len;
 	return (1);
+}
+
+int	parse_str(va_list va_ptr, int *i, const char *format, t_format *format_lst)
+{
+	int			str_len;
+	int			start;
+
+	if (format[*i] != '%')
+	{
+		ft_putchar_fd(format[*i], format_lst->fd);
+		return (1);
+	}
+	if (!format[(*i) + 1])
+		return (-1);
+	(*i)++;
+	start = *i;
+	if (!parse_flags(format_lst, i, format)
+		|| !parse_width(format_lst, i, format)
+		|| !parse_precision(format_lst, i, format))
+		return (-1);
+	str_len = print_replacement(format_lst, format[*i], va_ptr);
+	if (str_len == -2)
+		str_len = print_specifier(format, start, *i, format_lst);
+	free(format_lst->flags);
+	return (str_len);
 }
