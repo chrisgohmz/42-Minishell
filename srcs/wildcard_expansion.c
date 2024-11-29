@@ -19,13 +19,11 @@ static int	check_wildcard_match(char *entry_name, char delimiter, int *i)
 	return (entry_name[*i] == delimiter);
 }
 
-static char	*expand_wildcard(char *pattern)
+static char	**expand_wildcard(char *pattern, size_t *expansions_count)
 {
 	DIR				*dirptr;
 	struct dirent	*entry;
-	char			*expanded_str;
 	char			**expansions;
-	int				expansions_count;
 	int				include_dot;
 	int				i;
 	int				j;
@@ -35,10 +33,9 @@ static char	*expand_wildcard(char *pattern)
 	if (!dirptr)
 	{
 		perror("opendir");
-		return (free(pattern), NULL);
+		return (NULL);
 	}
 	errno = 0;
-	expansions_count = 0;
 	expansions = NULL;
 	entry = readdir(dirptr);
 	include_dot = (pattern[0] == '.');
@@ -81,48 +78,70 @@ static char	*expand_wildcard(char *pattern)
 		}
 		if (!pattern[j])
 		{
-			expansions = ft_realloc_str_arr(expansions, expansions_count + 2);
+			expansions = ft_realloc_str_arr(expansions, *expansions_count + 2);
 			if (!expansions)
-				return (closedir(dirptr), free(pattern), NULL);
-			expansions[expansions_count++] = ft_strdup(entry->d_name);
-			if (!expansions[expansions_count - 1])
-				return (closedir(dirptr), free(pattern), free_2d_malloc_array(&expansions), NULL);
+				return (closedir(dirptr), NULL);
+			expansions[(*expansions_count)++] = ft_strdup(entry->d_name);
+			if (!expansions[*expansions_count - 1])
+				return (closedir(dirptr), free_2d_malloc_array(&expansions), NULL);
 		}
 		errno = 0;
 		entry = readdir(dirptr);
 	}
+	closedir(dirptr);
 	if (errno)
-		return (perror("readdir"), free(pattern), closedir(dirptr), free_2d_malloc_array(&expansions), NULL);
-	if (!expansions_count)
-		return (closedir(dirptr), free_2d_malloc_array(&expansions), pattern);
-	expansions = mergesort_expansions(expansions, expansions_count);
-	if (!expansions)
-		return (closedir(dirptr), free(pattern), NULL);
-	expanded_str = ft_multi_strjoin(expansions_count, expansions, " ");
-	return (closedir(dirptr), free(pattern), free_2d_malloc_array(&expansions), expanded_str);
+		return (perror("readdir"), free_2d_malloc_array(&expansions), NULL);
+	if (!*expansions_count)
+	{
+		expansions = ft_realloc_str_arr(expansions, *expansions_count + 2);
+		if (!expansions)
+			return (NULL);
+		expansions[(*expansions_count)++] = ft_strdup(pattern);
+		if (!expansions[*expansions_count - 1])
+			return (free_2d_malloc_array(&expansions), NULL);
+	}
+	expansions = mergesort_expansions(expansions, *expansions_count);
+	return (expansions);
 }
 
-char	*perform_wildcard_expansions(char *str)
+char	**perform_wildcard_expansions(char *str)
 {
-	char	*expanded_str;
 	char	**split_arr;
+	char	**new_split_arr;
+	char	**expansions;
+	size_t	expansions_count;
+	size_t	new_size;
 	int		i;
+	int		j;
 
 	split_arr = ft_multi_split(str, " \t");
 	if (!split_arr)
 		return (free(str), NULL);
+	new_split_arr = NULL;
 	i = 0;
+	new_size = 0;
 	while (split_arr[i])
 	{
+		expansions_count = 0;
 		if (ft_strchr(split_arr[i], '*'))
 		{
-			split_arr[i] = expand_wildcard(split_arr[i]);
-			if (!split_arr[i])
+			expansions = expand_wildcard(split_arr[i], &expansions_count);
+			if (!expansions)
 				return (free_2d_malloc_array(&split_arr), free(str), NULL);
+			new_split_arr = ft_realloc_str_arr(new_split_arr, new_size + expansions_count + 1);
+			if (!new_split_arr)
+				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
+			j = 0;
+			while (expansions[j])
+				new_split_arr[new_size++] = expansions[j++];
+			free(expansions);
+		}
+		else
+		{
+			new_split_arr = ft_realloc_str_arr(new_split_arr, ++new_size + 1);
+			new_split_arr[new_size - 1] = ft_strdup(split_arr[i]);
 		}
 		i++;
 	}
-	expanded_str = ft_multi_strjoin(i, split_arr, " ");
-	free_2d_malloc_array(&split_arr);
-	return (free(str), expanded_str);
+	return (free(str), free_2d_malloc_array(&split_arr), new_split_arr);
 }

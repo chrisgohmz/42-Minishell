@@ -108,7 +108,7 @@ void	free_2d_malloc_array(char ***split);
 char	*ft_getenv(char *name);
 void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
 char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
-char	*perform_wildcard_expansions(char *str);
+char	**perform_wildcard_expansions(char *str);
 int		make_new_envp(t_ms_vars *ms_vars);
 char	*remove_quotes(char *old_str);
 char	**logical_split(char *str);

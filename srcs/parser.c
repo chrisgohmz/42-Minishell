@@ -12,24 +12,14 @@
 
 #include "../includes/minishell.h"
 
-static int	check_ambiguous_redirections(char *expanded_str)
+static int	check_ambiguous_redirections(char **split_arr)
 {
 	int	i;
 
 	i = 0;
-	while (expanded_str[i] == ' ' || expanded_str[i] == '\t')
+	while (split_arr[i] && i < 2)
 		i++;
-	if (!expanded_str[i])
-	{
-		ft_putendl_fd("\e[1;91mError: Ambiguous redirection\e[0m",
-			STDERR_FILENO);
-		return (1);
-	}
-	while (expanded_str[i] && !ft_strchr(" \t", expanded_str[i]))
-		i++;
-	while (expanded_str[i] == ' ' || expanded_str[i] == '\t')
-		i++;
-	if (expanded_str[i])
+	if (i != 1)
 	{
 		ft_putendl_fd("\e[1;91mError: Ambiguous redirection\e[0m",
 			STDERR_FILENO);
@@ -50,15 +40,10 @@ static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
 	}
 }
 
-static void	get_exec_args(char *expanded_str, t_ms_vars *ms_vars)
+static void	get_exec_args(char **split_arr, t_ms_vars *ms_vars)
 {
-	char	**split_arr;
 	int		num_elements;
 
-	split_arr = ft_multi_split(expanded_str, " \t");
-	free(expanded_str);
-	if (!split_arr)
-		error_cleanup(ms_vars);
 	num_elements = count_split_elements(split_arr);
 	if (num_elements > 0)
 	{
@@ -77,6 +62,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
 	char	*expanded_str;
+	char	**split_arr;
 
 	branch = 0;
 	while (stree->branches && branch < stree->num_branches && stree->type == REDIRECTION)
@@ -94,30 +80,29 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			expanded_str = perform_parameter_expansions(stree->branches[branch]->value, ms_vars);
 			if (!expanded_str)
 				error_cleanup(ms_vars);
-			expanded_str = perform_wildcard_expansions(expanded_str);
-			if (!expanded_str)
+			split_arr = perform_wildcard_expansions(expanded_str);
+			if (!split_arr)
 				error_cleanup(ms_vars);
-			get_exec_args(expanded_str, ms_vars);
+			get_exec_args(split_arr, ms_vars);
 		}
 		else if (stree->branches[branch]->type == T_FILE)
 		{
 			expanded_str = perform_parameter_expansions(stree->branches[branch]->value, ms_vars);
 			if (!expanded_str)
 				error_cleanup(ms_vars);
-			expanded_str = perform_wildcard_expansions(expanded_str);
-			if (!expanded_str)
+			split_arr = perform_wildcard_expansions(expanded_str);
+			if (!split_arr)
 				error_cleanup(ms_vars);
-			if (check_ambiguous_redirections(expanded_str) || !perform_redirection\
-			(revert_transform(expanded_str), ms_vars))
+			if (check_ambiguous_redirections(split_arr) || !perform_redirection\
+			(revert_transform(split_arr[0]), ms_vars))
 			{
-				free(expanded_str);
 				ms_vars->exit_value = EXIT_FAILURE;
+				free_2d_malloc_array(&split_arr);
 				if (ms_vars->proc_type == CHILD)
 					error_cleanup(ms_vars);
 				else
 					return (free_2d_malloc_array(&ms_vars->exec_argv));
 			}
-			free(expanded_str);
 		}
 		else if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
 			perform_redirection(revert_transform(stree->branches[branch]->value), ms_vars);
