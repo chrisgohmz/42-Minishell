@@ -63,7 +63,9 @@ static char	*expand_wildcard(char *pattern)
 			{
 				while (pattern[j] == '*')
 					j++;
-				if (!check_wildcard_match(entry->d_name, pattern[j], &i))
+				if (!pattern[j])
+					break;
+				else if (!check_wildcard_match(entry->d_name, pattern[j], &i))
 					break;
 				else
 					save_j = j;
@@ -77,7 +79,7 @@ static char	*expand_wildcard(char *pattern)
 			else
 				break;
 		}
-		if (!entry->d_name[i] && !pattern[j])
+		if (!pattern[j])
 		{
 			expansions = ft_realloc_str_arr(expansions, expansions_count + 2);
 			if (!expansions)
