@@ -21,5 +21,20 @@ Arguments and options aren't the same, exit does take arguments.
 */
 void	exit_builtin(t_ms_vars *ms_vars)
 {
+   int   exit;
+   if(ms_vars->exec_argv[2])
+   {
+      ms_vars->exit_value = 1;
+      printf("exit\nexit: too many arguments\n");
+      return ;
+   }
+   if(ms_vars->exec_argv[1])
+   {
+      exit = ft_atoi(ms_vars->exec_argv[1]);
+      ms_vars->exit_value = exit;
+   }
+   else
+      ms_vars->exit_value = 0;
+   printf("exit\n");
 	error_cleanup(ms_vars);
 }

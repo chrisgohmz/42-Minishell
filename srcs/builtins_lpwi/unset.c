@@ -85,11 +85,9 @@ static void copy_invalid_keys(t_ms_vars *ms_vars, char **new_ep)
 {
 	int i;
 	int k;
-	//int pos;
 
 	i = 0;
 	k = 0;
-	//pos = -1;
 	while (ms_vars->ep[i])
 	{
 		if(to_keep(ms_vars, i))
@@ -106,15 +104,17 @@ void	unset_builtin(t_ms_vars *ms_vars)
 	int i;
 	char **new_ep;
 	char **temp;
+	int new_size;
 
 	i = 1;
+	new_size = ms_vars->env_size;
 	while (ms_vars->exec_argv[i])
 	{
 		if(find_unset_pos(ms_vars, ms_vars->exec_argv[i]) >= 0)
-			(ms_vars->env_size)--;
+			new_size--;
 		i++;
 	}
-	new_ep = malloc(sizeof(char *) * (ms_vars->env_size + 1));
+	new_ep = malloc(sizeof(char *) * (new_size + 1));
 	if (!new_ep)
 		printf("unsuccessful malloc\n");
 	copy_invalid_keys(ms_vars, new_ep);
@@ -122,4 +122,5 @@ void	unset_builtin(t_ms_vars *ms_vars)
 	ms_vars->ep = new_ep;
 	free_old_ep(temp);
 	environ = ms_vars->ep;
+	ms_vars->env_size = new_size;
 }

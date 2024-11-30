@@ -114,7 +114,6 @@ void	heredoc_unquoted(char **content)
 	int	delim_index;
 	char	**new;
 	char	**old;
-	int	arr_size;
 	char	*env_to_find;
 
 	i = 0;

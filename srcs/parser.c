@@ -136,7 +136,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	branch = 0;
 	if (stree->type == PIPE)
 	{
-		if (stree->num_branches > 1)
+		if (stree->num_branches > 0)
 		{
 			ms_vars->pid_arr = malloc(stree->num_branches * sizeof(pid_t));
 			if (!ms_vars->pid_arr)
