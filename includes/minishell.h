@@ -50,7 +50,7 @@ typedef enum e_token_type
 }	t_token_type;
 typedef enum e_escaped_type
 {
-	ESC_SPACE = -15,
+	ESC_SPACE = -30,
 	ESC_TAB,
 	ESC_SQUOTE,
 	ESC_DQUOTE,
@@ -62,7 +62,9 @@ typedef enum e_escaped_type
 	ESC_AND,
 	ESC_OPEN_BRACKET,
 	ESC_CLOSE_BRACKET,
-	ESC_WILDCARD
+	ESC_WILDCARD,
+	DQUOTE,
+	SQUOTE
 }	t_escaped_type;
 typedef enum e_process_type
 {
@@ -89,8 +91,8 @@ typedef struct s_ms_vars
 	pid_t			*pid_arr;
 	char			prompt[PATH_MAX + sizeof(PROMPT_START) + sizeof(PROMPT_END) - 2];
 	t_process_type	proc_type;
-	int				fd_in;
-	int				fd_out;
+	int				stdout_fd;
+	int				stdin_fd;
 }	t_ms_vars;
 typedef struct s_mergesort_vars
 {
@@ -114,7 +116,7 @@ char	*remove_quotes(char *old_str);
 char	**logical_split(char *str);
 int		check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
 void	insert_exit_value(unsigned char exit_value, char *new_str, int *j);
-int		perform_redirection(char *filename, t_ms_vars *ms_vars);
+int		perform_redirection(char **filename, t_ms_vars *ms_vars);
 void	perform_heredoc(char *delimiter, t_ms_vars *ms_vars, t_token_type delim_type);
 void	error_cleanup(t_ms_vars *ms_vars);
 void	*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars);
@@ -128,10 +130,11 @@ void	export_builtin(t_ms_vars *ms_vars);
 void	unset_builtin(t_ms_vars *ms_vars);
 void	env_builtin(t_ms_vars *ms_vars);
 void	exit_builtin(t_ms_vars *ms_vars);
-void	close_fds(t_ms_vars *ms_vars);
 int		fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void	fork_wait_single_process(t_ms_vars *ms_vars);
 void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void	modify_expansions_if_export(t_syntax_tree *stree);
+void	disable_value_word_splitting(char *str);
 
 #endif

@@ -12,6 +12,29 @@
 
 #include "../includes/minishell.h"
 
+void	modify_expansions_if_export(t_syntax_tree *stree)
+{
+	int		i;
+	int		first_word_found;
+	int		is_export;
+
+	i = 0;
+	first_word_found = 0;
+	is_export = 0;
+	while (i < stree->num_branches)
+	{
+		if (!first_word_found && stree->branches[i]->type == WORD)
+		{
+			first_word_found = 1;
+			if (ft_strncmp("export", stree->branches[i]->value, sizeof("export")) == 0)
+				is_export = 1;
+		}
+		else if (is_export && stree->branches[i]->type == WORD)
+			disable_value_word_splitting(stree->branches[i]->value);
+		i++;
+	}
+}
+
 void	fork_wait_single_process(t_ms_vars *ms_vars)
 {
 	pid_t	pid;

@@ -6,41 +6,38 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 02:40:30 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/22 19:58:06 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/02 02:50:25 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+static void fill_new_str(char *old_str, char *new_str)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (old_str[i])
+	{
+		if (old_str[i] != DQUOTE && old_str[i] != SQUOTE)
+			new_str[j++] = old_str[i++];
+		else
+			i++;
+	}
+}
+
 char	*remove_quotes(char *old_str)
 {
-    int     new_len;
-    int     i;
-    int     j;
-    char    *new_str;
+    size_t	len;
+    char	*new_str;
 
-    new_len = 0;
-    i = 0;
-    while (old_str[i])
-	{
-        if (old_str[i] != '"' && old_str[i] != '\'')
-            new_len++;
-        i++;
-	}
-    new_str = ft_calloc(new_len + 1, sizeof(char));
+    len = ft_strlen(old_str);
+    new_str = ft_calloc(len + 1, sizeof(char));
     if (!new_str)
-	{
-        perror("malloc");
-        return (free(old_str), NULL);
-	}
-    i = 0;
-    j = 0;
-    while (j < new_len)
-	{
-        if (old_str[i] != '"' && old_str[i] != '\'')
-            new_str[j++] = old_str[i];
-        i++;
-	}
+        return (perror("malloc"), free(old_str), NULL);
+    fill_new_str(old_str, new_str);
     free(old_str);
     return (new_str);
 }

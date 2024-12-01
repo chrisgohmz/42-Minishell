@@ -17,21 +17,20 @@
    relative path: path to a file or directory that is relative to the current directory */
 
 /*
-Handle multiple arguments to cd.
-Handle no arguments to cd.
+Handle cd with no arguments, and HOME is unset.
 */
 void	cd_builtin(t_ms_vars *ms_vars)
 {
 	int	chdir_ret;
 
-	if(ms_vars->exec_argv[2])
+	if (!ms_vars->exec_argv[1])
+		chdir_ret = chdir(getenv("HOME"));
+	else if (ms_vars->exec_argv[2])
 	{
-		printf("cd: too many arguments\n");
+		ft_putendl_fd("cd: too many arguments", STDERR_FILENO);
 		ms_vars->exit_value = EXIT_FAILURE;
 		return ;
 	}
-	if (!ms_vars->exec_argv[1])
-		chdir_ret = chdir(getenv("HOME"));
 	else
 		chdir_ret = chdir(ms_vars->exec_argv[1]);
 	if (chdir_ret < 0)

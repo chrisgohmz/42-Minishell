@@ -16,8 +16,7 @@
    take no options: returns the exit status of the last command. */
 
 /*
-hint: ms_vars->exit_value.
-Arguments and options aren't the same, exit does take arguments.
+1 more case to handle: exit with non-numeric argument (e.g exit blah)
 */
 void	exit_builtin(t_ms_vars *ms_vars)
 {

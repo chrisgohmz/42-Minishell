@@ -19,8 +19,8 @@ static void	init_vars(t_ms_vars *ms_vars)
 	ms_vars->stree = NULL;
 	ms_vars->pid_arr = NULL;
 	ms_vars->exec_argv = NULL;
-	ms_vars->fd_in = STDIN_FILENO;
-	ms_vars->fd_out = STDOUT_FILENO;
+	ms_vars->stdout_fd = STDOUT_FILENO;
+	ms_vars->stdin_fd = STDIN_FILENO;
 	prompt = getcwd(ms_vars->prompt + sizeof(PROMPT_START) - 1, PATH_MAX);
 	if (!prompt)
 	{
@@ -62,7 +62,6 @@ int	main(int argc, char **argv)
 		ms_vars.line = NULL;
 		parse_tree(ms_vars.stree, &ms_vars);
 		free_syntax_tree(ms_vars.stree);
-		close_fds(&ms_vars);
 	}
 	rl_clear_history();
 	free_2d_malloc_array(&ms_vars.ep);

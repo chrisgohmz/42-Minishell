@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/22 19:57:59 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/02 02:47:23 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_first_word(char *line, int *i, int *sfw, int *is_export)
+int	check_first_word(char *line, int *i, int *sfw)
 {
 	while (line[*i] == ' ' || line[*i] == '\t')
 		(*i)++;
@@ -33,8 +33,6 @@ int	check_first_word(char *line, int *i, int *sfw, int *is_export)
 	}
 	else if (line[*i] == '(')
 		*sfw = 1;
-	else if (!ft_strncmp(line + *i, "export ", 7) || !ft_strncmp(line + *i, "export\t", 7))
-		*is_export = 1;
 	return (1);
 }
 
@@ -101,7 +99,7 @@ int	check_redirection_pipe_syntax(char *line, int sfw, int srf, int pfw)
 	return (1);
 }
 
-void	transform_special_char(char *c, int within_squotes, int within_dquotes, int exporting_value)
+void	transform_special_char(char *c, int within_squotes, int within_dquotes)
 {
 	if ((within_squotes || within_dquotes) && *c == ' ')
 		*c = ESC_SPACE;
@@ -125,9 +123,9 @@ void	transform_special_char(char *c, int within_squotes, int within_dquotes, int
 		*c = ESC_CLOSE_BRACKET;
 	else if (within_squotes && *c == '$')
 		*c = ESC_DOLLAR;
-	else if ((within_dquotes || exporting_value) && *c == '$')
+	else if (within_dquotes && *c == '$')
 		*c = DQUOTE_DOLLAR;
-	else if ((within_squotes || within_dquotes || exporting_value) && *c == '*')
+	else if ((within_squotes || within_dquotes) && *c == '*')
 		*c = ESC_WILDCARD;
 }
 
@@ -141,8 +139,6 @@ int	check_syntax_and_transform_line(char *line)
 	int	within_dquotes;
 	int	bracket_level;
 	int	empty_brackets;
-	int	is_export;
-	int	exporting_value;
 
 	i = 0;
 	searching_first_word = 0;
@@ -152,27 +148,25 @@ int	check_syntax_and_transform_line(char *line)
 	within_dquotes = 0;
 	bracket_level = 0;
 	empty_brackets = 0;
-	is_export = 0;
-	exporting_value = 0;
-	if (!check_first_word(line, &i, &searching_first_word, &is_export))
+	if (!check_first_word(line, &i, &searching_first_word))
 		return (1);
 	while (line[i])
 	{
 		if (!within_squotes && line[i] == '"')
+		{
 			within_dquotes = !within_dquotes;
+			line[i] = DQUOTE;	
+		}
 		else if (!within_dquotes && line[i] == '\'')
+		{
 			within_squotes = !within_squotes;
+			line[i] = SQUOTE;
+		}
 		else if (!within_dquotes && !within_squotes && line[i] == '(')
 			bracket_level++;
 		else if (!within_dquotes && !within_squotes && line[i] == ')')
 			bracket_level--;
-		else if (is_export && line[i] == '=')
-			exporting_value = 1;
-		else if (exporting_value && ft_strchr(" \t", line[i]))
-			exporting_value = 0;
-		else if (is_export && ft_strchr("|&", line[i]))
-			is_export = 0;
-		transform_special_char(line + i, within_squotes, within_dquotes, exporting_value);
+		transform_special_char(line + i, within_squotes, within_dquotes);
 		if (!check_redirection_pipe_syntax(line + i, searching_first_word, searching_redir_file, pipe_first_word))
 			return (1);
 		else if (!check_bracket_syntax(line + i, bracket_level, empty_brackets))

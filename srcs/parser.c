@@ -35,7 +35,14 @@ static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
 	i = 0;
 	while (split_arr[i])
 	{
-		ms_vars->exec_argv[ms_vars->argv_index++] = revert_transform(split_arr[i]);
+		ms_vars->exec_argv[ms_vars->argv_index] = remove_quotes(split_arr[i]);
+		if (!ms_vars->exec_argv[ms_vars->argv_index])
+		{
+			free_2d_malloc_array(&split_arr);
+			ms_vars->exit_value = EXIT_FAILURE;
+			error_cleanup(ms_vars);
+		}
+		revert_transform(ms_vars->exec_argv[ms_vars->argv_index++]);
 		i++;
 	}
 }
@@ -55,7 +62,6 @@ static void	get_exec_args(char **split_arr, t_ms_vars *ms_vars)
 		}
 		add_to_argv(split_arr, ms_vars);
 	}
-	free(split_arr);
 }
 
 void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
@@ -64,8 +70,10 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	char	*expanded_str;
 	char	**split_arr;
 
+	if (stree->num_branches == 0)
+		return ;
 	branch = 0;
-	while (stree->branches && branch < stree->num_branches && stree->type == REDIRECTION)
+	while (branch < stree->num_branches)
 	{
 		if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
 			perform_heredoc(revert_transform(stree->branches[branch]->value), ms_vars, stree->branches[branch]->type);
@@ -73,6 +81,8 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	}
 	branch = 0;
 	ms_vars->argv_index = 0;
+	split_arr = NULL;
+	modify_expansions_if_export(stree);
 	while (branch < stree->num_branches)
 	{
 		if (stree->branches[branch]->type == WORD)
@@ -84,6 +94,8 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			if (!split_arr)
 				error_cleanup(ms_vars);
 			get_exec_args(split_arr, ms_vars);
+			free(split_arr);
+			split_arr = NULL;
 		}
 		else if (stree->branches[branch]->type == T_FILE)
 		{
@@ -94,7 +106,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			if (!split_arr)
 				error_cleanup(ms_vars);
 			if (check_ambiguous_redirections(split_arr) || !perform_redirection\
-			(revert_transform(split_arr[0]), ms_vars))
+			(&split_arr[0], ms_vars))
 			{
 				ms_vars->exit_value = EXIT_FAILURE;
 				free_2d_malloc_array(&split_arr);
@@ -103,9 +115,10 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				else
 					return (free_2d_malloc_array(&ms_vars->exec_argv));
 			}
+			free_2d_malloc_array(&split_arr);
 		}
 		else if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
-			perform_redirection(revert_transform(stree->branches[branch]->value), ms_vars);
+			perform_redirection(&stree->branches[branch]->value, ms_vars);
 		else if (stree->branches[branch]->type == SINGLE_RIGHT)
 			ms_vars->redirect = SINGLE_RIGHT;
 		else if (stree->branches[branch]->type == DOUBLE_RIGHT)
@@ -127,6 +140,8 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		}
 		free_2d_malloc_array(&ms_vars->exec_argv);
 	}
+	else
+		ms_vars->exit_value = EXIT_SUCCESS;
 }
 
 void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
@@ -136,7 +151,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	branch = 0;
 	if (stree->type == PIPE)
 	{
-		if (stree->num_branches > 0)
+		if (stree->num_branches > 1)
 		{
 			ms_vars->pid_arr = malloc(stree->num_branches * sizeof(pid_t));
 			if (!ms_vars->pid_arr)
@@ -148,12 +163,28 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		else
 		{
 			parse_cmd_redirects(stree->branches[0], ms_vars);
+			if (ms_vars->stdout_fd != STDOUT_FILENO)
+			{
+				if (dup2(ms_vars->stdout_fd, STDOUT_FILENO) < 0)
+					perror("dup2");
+				close(ms_vars->stdout_fd);
+			}
+			if (ms_vars->stdin_fd != STDIN_FILENO)
+			{
+				if (dup2(ms_vars->stdin_fd, STDIN_FILENO) < 0)
+					perror("dup2");
+				close(ms_vars->stdin_fd);
+			}
 			return ;
 		}
 	}
 	while (stree->branches && branch < stree->num_branches && stree->type != PIPE)
 	{
-		parse_tree(stree->branches[branch], ms_vars);
-		branch++;
+		if (stree->branches[branch]->type == AND && ms_vars->exit_value != EXIT_SUCCESS)
+			branch += 2;
+		else if (stree->branches[branch]->type == OR && ms_vars->exit_value == EXIT_SUCCESS)
+			branch += 2;
+		else
+			parse_tree(stree->branches[branch++], ms_vars);
 	}
 }

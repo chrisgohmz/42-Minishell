@@ -15,11 +15,10 @@
 /* undefine a variable during the program execution. */
 
 /*
-lpwi - export A B C D. unset A ok. unset D after causes segfault. to check again.
-cgoh - don't overcomplicate unset, it can be done without allocating a new env.
-edit: actually nevermind, u just need a few small changes to finish it.
+Bugs found:
+1) variable aaa can be unset by unsetting a
+2) variable aaa can be unset by unsetting aaaaa
 */
-
 static int	key_len(char *key)
 {
 	int i;
@@ -114,7 +113,7 @@ void	unset_builtin(t_ms_vars *ms_vars)
 			new_size--;
 		i++;
 	}
-	new_ep = malloc(sizeof(char *) * (new_size + 1));
+	new_ep = ft_calloc(new_size + 1, sizeof(char *));
 	if (!new_ep)
 		printf("unsuccessful malloc\n");
 	copy_invalid_keys(ms_vars, new_ep);

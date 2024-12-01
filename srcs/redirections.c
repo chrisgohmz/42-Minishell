@@ -14,81 +14,81 @@
 
 static int	redir_single_right(char *filename, t_ms_vars *ms_vars)
 {
-	if (ms_vars->fd_out != STDOUT_FILENO)
-		close(ms_vars->fd_out); //single builtin command, multiple redirections
-	ms_vars->fd_out = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IRGRP
+	int	fd;
+
+	if (ms_vars->proc_type == PARENT && ms_vars->stdout_fd == STDOUT_FILENO)
+	{
+		ms_vars->stdout_fd = dup(STDOUT_FILENO);
+		if (ms_vars->stdout_fd == -1)
+			return (perror("dup"), 0);
+	} //For single builtin command, temporarily save stdout to another fd, so I can use dup2 to restore stdout later
+	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IRGRP
 			| S_IROTH | S_IWUSR);
-	if (ms_vars->fd_out == -1)
+	if (fd == -1)
 	{
 		perror(filename);
 		return (0);
 	}
-	if (ms_vars->proc_type == CHILD)
+	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
-		if (dup2(ms_vars->fd_out, 1) < 0)
-		{
-			perror("dup2");
-			close(ms_vars->fd_out);
-			return (0);
-		}
-		close(ms_vars->fd_out);
-		ms_vars->fd_out = 1;
+		perror("dup2");
+		close(fd);
+		return (0);
 	}
+	close(fd);
 	return (1);
 }
 
 static int	redir_single_left(char *filename, t_ms_vars *ms_vars)
 {
-	// char	*line;
+	int	fd;
 
-	if(ms_vars->fd_in != STDIN_FILENO)
-		close(ms_vars->fd_in);
-	ms_vars->fd_in = open(filename, O_RDONLY);
-	printf("single left function entered\n");
-	if (ms_vars->fd_in == -1)
+	if (ms_vars->proc_type == PARENT && ms_vars->stdin_fd == STDIN_FILENO)
+	{
+		ms_vars->stdin_fd = dup(STDIN_FILENO);
+		if (ms_vars->stdin_fd == -1)
+			return (perror("dup"), 0);
+	} //same reason as line 24, but for stdin
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
 	{
 		perror(filename);
 		return (0);
 	}
-	// while ((line = get_next_line(ms_vars->fd_in)))
-	// {
-	// 	printf("%s", line);
-	// 	free(line);
-	// }
-	close(ms_vars->fd_in);
-	ms_vars->fd_in = 0;
+	if (dup2(fd, STDIN_FILENO) < 0)
+	{
+		perror("dup2");
+		close(fd);
+		return (0);
+	}
+	close(fd);
 	return (1);
 }
 
 static int	redir_double_right(char *filename, t_ms_vars *ms_vars)
 {
-	if (ms_vars->fd_out != STDOUT_FILENO)
-		close(ms_vars->fd_out);
-	ms_vars->fd_out = open(filename, O_WRONLY | O_CREAT | O_APPEND);
-	if (ms_vars->fd_out == -1)
+	int	fd;
+
+	if (ms_vars->proc_type == PARENT && ms_vars->stdout_fd == STDOUT_FILENO)
+	{
+		ms_vars->stdout_fd = dup(STDOUT_FILENO);
+		if (ms_vars->stdout_fd == -1)
+			return (perror("dup"), 0);
+	} //For single builtin command, temporarily save stdout to another fd, so I can use dup2 to restore stdout later
+	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IRGRP
+			| S_IROTH | S_IWUSR);
+	if (fd == -1)
 	{
 		perror(filename);
 		return (0);
 	}
-	if (ms_vars->proc_type == CHILD)
+	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
-		if (dup2(ms_vars->fd_out, 1) < 0)
-		{
-			perror("dup2");
-			close(ms_vars->fd_out);
-			return (0);
-		}
-		close(ms_vars->fd_out);
-		ms_vars->fd_out = 1;
+		perror("dup2");
+		close(fd);
+		return (0);
 	}
-	// int	i;
-
-	// i = 0;
-	// while(content[i])
-	// {
-	// 	printf("%s\n", content[i]);
-	// 	i++;
-	// }
+	close(fd);
 	return (1);
 }
 
@@ -107,21 +107,25 @@ void	perform_heredoc(char *delimiter, t_ms_vars *ms_vars, t_token_type delim_typ
 	}
 }
 
-int	perform_redirection(char *filename, t_ms_vars *ms_vars)
+int	perform_redirection(char **filename, t_ms_vars *ms_vars)
 {
+	*filename = remove_quotes(*filename);
+	if (!*filename)
+		return (0);
+	revert_transform(*filename);
 	if (ms_vars->redirect == SINGLE_RIGHT)
 	{
-		if (!redir_single_right(filename, ms_vars))
+		if (!redir_single_right(*filename, ms_vars))
 			return (0);
 	}
 	else if (ms_vars->redirect == DOUBLE_RIGHT)
 	{
-		if (!redir_double_right(filename, ms_vars))
+		if (!redir_double_right(*filename, ms_vars))
 			return (0);
 	}
 	else if (ms_vars->redirect == SINGLE_LEFT)
 	{
-		if(!redir_single_left(filename, ms_vars))
+		if (!redir_single_left(*filename, ms_vars))
 			return (0);
 	}
 	return (1);

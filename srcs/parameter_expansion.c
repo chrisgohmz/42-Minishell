@@ -99,10 +99,8 @@ static void	fill_expanded_str(char *old_str, char *new_str, t_ms_vars *ms_vars, 
 			}
 			new_str[j++] = old_str[i++];
 		}
-		else if ((old_str[i] == '"' || old_str[i] == '\'') && is_heredoc_delim)
-			new_str[j++] = old_str[i++];
 		else
-			i++;
+			new_str[j++] = old_str[i++];
 	}
 }
 
@@ -150,13 +148,11 @@ static char	*allocate_expanded_str(char *str, t_ms_vars *ms_vars, size_t *expand
 			(*expanded_size)++;
 			i++;
 		}
-		else if ((str[i] == '"' || str[i] == '\'') && is_heredoc_delim)
+		else
 		{
 			(*expanded_size)++;
 			i++;
 		}
-		else
-			i++;
 	}
 	expanded_str = ft_calloc(*expanded_size + 1, sizeof(char));
 	return (expanded_str);

@@ -7,7 +7,7 @@ SRCS_DIR = srcs/
 SRCS = $(addprefix $(SRCS_DIR), minishell.c redirection_split.c syntax_tree.c\
 		check_syntax_and_transform.c check_syntax_and_transform2.c parser.c env.c\
 		logical_split.c parameter_expansion.c parameter_expansion2.c wildcard_expansion.c\
-		redirections.c error.c tree_utils.c exec.c merge_sort.c parser2.c)
+		redirections.c error.c tree_utils.c exec.c merge_sort.c parser2.c parser3.c)
 DEPS = $(SRCS:.c=.d)
 OBJS = $(SRCS:.c=.o)
 

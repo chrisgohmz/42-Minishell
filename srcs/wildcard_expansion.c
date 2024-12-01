@@ -24,22 +24,22 @@ static char	**expand_wildcard(char *pattern, size_t *expansions_count)
 	DIR				*dirptr;
 	struct dirent	*entry;
 	char			**expansions;
+	size_t			arr_size;
 	int				include_dot;
 	int				i;
 	int				j;
 	int				save_j;
 
+	arr_size = 1000;
+	expansions = ft_calloc(arr_size, sizeof(char *));
+	if (!expansions)
+		return (perror("malloc"), NULL);
 	dirptr = opendir(".");
-	if (!dirptr)
-	{
-		perror("opendir");
-		return (NULL);
-	}
 	errno = 0;
-	expansions = NULL;
-	entry = readdir(dirptr);
+	if (dirptr)
+		entry = readdir(dirptr);
 	include_dot = (pattern[0] == '.');
-	while (entry)
+	while (dirptr && entry)
 	{
 		if (entry->d_name[0] == '.' && !include_dot)
 		{
@@ -78,29 +78,32 @@ static char	**expand_wildcard(char *pattern, size_t *expansions_count)
 		}
 		if (!pattern[j])
 		{
-			expansions = ft_realloc_str_arr(expansions, *expansions_count + 2);
-			if (!expansions)
-				return (closedir(dirptr), NULL);
-			expansions[(*expansions_count)++] = ft_strdup(entry->d_name);
+			(*expansions_count)++;
+			if (*expansions_count + 1 > arr_size)
+			{
+				arr_size *= 2;
+				expansions = ft_realloc_str_arr(expansions, arr_size);
+				if (!expansions)
+					return (perror("malloc"), closedir(dirptr), NULL);
+			}
+			expansions[*expansions_count - 1] = ft_strdup(entry->d_name);
 			if (!expansions[*expansions_count - 1])
 				return (closedir(dirptr), free_2d_malloc_array(&expansions), NULL);
 		}
 		errno = 0;
 		entry = readdir(dirptr);
 	}
-	closedir(dirptr);
 	if (errno)
-		return (perror("readdir"), free_2d_malloc_array(&expansions), NULL);
+		return (perror("readdir"), free_2d_malloc_array(&expansions), closedir(dirptr), NULL);
+	closedir(dirptr);
 	if (!*expansions_count)
 	{
-		expansions = ft_realloc_str_arr(expansions, *expansions_count + 2);
-		if (!expansions)
-			return (NULL);
-		expansions[(*expansions_count)++] = ft_strdup(pattern);
-		if (!expansions[*expansions_count - 1])
+		expansions[*expansions_count] = ft_strdup(pattern);
+		if (!expansions[(*expansions_count)++])
 			return (free_2d_malloc_array(&expansions), NULL);
 	}
-	expansions = mergesort_expansions(expansions, *expansions_count);
+	if (*expansions_count > 1)
+		expansions = mergesort_expansions(expansions, *expansions_count);
 	return (expansions);
 }
 
@@ -111,15 +114,18 @@ char	**perform_wildcard_expansions(char *str)
 	char	**expansions;
 	size_t	expansions_count;
 	size_t	new_size;
+	size_t	blocks_filled;
 	int		i;
-	int		j;
 
 	split_arr = ft_multi_split(str, " \t");
 	if (!split_arr)
 		return (free(str), NULL);
-	new_split_arr = NULL;
+	new_size = 1000;
+	new_split_arr = ft_calloc(new_size, sizeof(char *));
+	if (!new_split_arr)
+		return (perror("malloc"), free(str), free_2d_malloc_array(&split_arr), NULL);
 	i = 0;
-	new_size = 0;
+	blocks_filled = 1;
 	while (split_arr[i])
 	{
 		expansions_count = 0;
@@ -127,19 +133,30 @@ char	**perform_wildcard_expansions(char *str)
 		{
 			expansions = expand_wildcard(split_arr[i], &expansions_count);
 			if (!expansions)
-				return (free_2d_malloc_array(&split_arr), free(str), NULL);
-			new_split_arr = ft_realloc_str_arr(new_split_arr, new_size + expansions_count + 1);
-			if (!new_split_arr)
-				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
-			j = 0;
-			while (expansions[j])
-				new_split_arr[new_size++] = expansions[j++];
+				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&new_split_arr), free(str), NULL);
+			if (blocks_filled + expansions_count > new_size)
+			{
+				new_size *= 2;
+				new_split_arr = ft_realloc_str_arr(new_split_arr, new_size);
+				if (!new_split_arr)
+					return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
+			}
+			ft_memcpy(new_split_arr + blocks_filled - 1, expansions, expansions_count * sizeof(char *));
+			blocks_filled += expansions_count;
 			free(expansions);
 		}
 		else
 		{
-			new_split_arr = ft_realloc_str_arr(new_split_arr, ++new_size + 1);
-			new_split_arr[new_size - 1] = ft_strdup(split_arr[i]);
+			if (blocks_filled + 1 > new_size)
+			{
+				new_size *= 2;
+				new_split_arr = ft_realloc_str_arr(new_split_arr, new_size);
+				if (!new_split_arr)
+					return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
+			}
+			new_split_arr[blocks_filled - 1] = ft_strdup(split_arr[i]);
+			if (!new_split_arr[blocks_filled++ - 1])
+				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&new_split_arr), free(str), NULL);
 		}
 		i++;
 	}
