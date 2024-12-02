@@ -17,6 +17,8 @@
 
 /*
 1 more case to handle: exit with non-numeric argument (e.g exit blah)
+Invalid read when exit with no arguments is called.
+exit with no arguments should exit the shell with the last saved exit value.
 */
 void	exit_builtin(t_ms_vars *ms_vars)
 {
