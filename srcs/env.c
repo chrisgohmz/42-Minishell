@@ -31,7 +31,7 @@ char	*ft_getenv(char *name)
 	else
 		env = getenv(name);
 	if (!env)
-		return ("\0");
+		return ("");
 	return (env);
 }
 

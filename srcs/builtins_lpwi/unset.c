@@ -122,4 +122,5 @@ void	unset_builtin(t_ms_vars *ms_vars)
 	free_old_ep(temp);
 	environ = ms_vars->ep;
 	ms_vars->env_size = new_size;
+	ms_vars->exit_value = EXIT_SUCCESS;
 }
