@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/02 02:47:23 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/03 02:10:54 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	check_first_word(char *line, int *i, int *sfw)
+int	check_first_word(char *line, int *i, bool *sfw)
 {
 	while (line[*i] == ' ' || line[*i] == '\t')
 		(*i)++;
@@ -32,7 +32,7 @@ int	check_first_word(char *line, int *i, int *sfw)
 		return (0);
 	}
 	else if (line[*i] == '(')
-		*sfw = 1;
+		*sfw = true;
 	return (1);
 }
 
@@ -74,7 +74,7 @@ char	*revert_transform(char *token)
 	return (token);
 }
 
-int	check_redirection_pipe_syntax(char *line, int sfw, int srf, int pfw)
+int	check_redirection_pipe_syntax(char *line, bool sfw, bool srf, bool pfw)
 {
 	if (ft_strchr("|&", line[0]) && sfw)
 	{
@@ -131,23 +131,23 @@ void	transform_special_char(char *c, int within_squotes, int within_dquotes)
 
 int	check_syntax_and_transform_line(char *line)
 {
-	int	i;
-	int	searching_first_word;
-	int	pipe_first_word;
-	int	searching_redir_file;
-	int	within_squotes;
-	int	within_dquotes;
-	int	bracket_level;
-	int	empty_brackets;
+	int		i;
+	bool	searching_first_word;
+	bool	pipe_first_word;
+	bool	searching_redir_file;
+	bool	within_squotes;
+	bool	within_dquotes;
+	int		bracket_level;
+	bool	empty_brackets;
 
 	i = 0;
-	searching_first_word = 0;
-	pipe_first_word = 0;
-	searching_redir_file = 0;
-	within_squotes = 0;
-	within_dquotes = 0;
+	searching_first_word = false;
+	pipe_first_word = false;
+	searching_redir_file = false;
+	within_squotes = false;
+	within_dquotes = false;
 	bracket_level = 0;
-	empty_brackets = 0;
+	empty_brackets = false;
 	if (!check_first_word(line, &i, &searching_first_word))
 		return (1);
 	while (line[i])
@@ -172,17 +172,17 @@ int	check_syntax_and_transform_line(char *line)
 		else if (!check_bracket_syntax(line + i, bracket_level, empty_brackets))
 			return (1);
 		if (searching_first_word && !ft_strchr(" \t<>(", line[i]))
-			searching_first_word = 0;
+			searching_first_word = false;
 		else if (!searching_first_word && (line[i] == '|' || (line[i] == '&' && line[i + 1] == '&') || line[i] == '('))
-			searching_first_word = 1;
+			searching_first_word = true;
 		else if (!searching_redir_file && ft_strchr("<>", line[i]))
-			searching_redir_file = 1;
+			searching_redir_file = true;
 		else if (searching_redir_file && !ft_strchr(" \t", line[i]))
-			searching_redir_file = 0;
+			searching_redir_file = false;
 		if (line[i] == '|' && line[i + 1] != '|' && !pipe_first_word)
-			pipe_first_word = 1;
+			pipe_first_word = true;
 		else if (pipe_first_word && !ft_strchr(" \t", line[i]))
-			pipe_first_word = 0;
+			pipe_first_word = false;
 		if (line[i] == '>' && line[i + 1] == '>')
 			i++;
 		else if (line[i] == '<' && line[i + 1] == '<')
@@ -192,9 +192,9 @@ int	check_syntax_and_transform_line(char *line)
 		else if (line[i] == '&' && line[i + 1] == '&')
 			i++;
 		else if (line[i] == '(')
-			empty_brackets = 1;
+			empty_brackets = true;
 		else if (empty_brackets && !ft_strchr(" \t", line[i]))
-			empty_brackets = 0;
+			empty_brackets = false;
 		i++;
 	}
 	if (within_squotes || within_dquotes)

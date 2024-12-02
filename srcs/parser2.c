@@ -14,24 +14,24 @@
 
 void	modify_expansions_if_export(t_syntax_tree *stree)
 {
-	int		i;
-	int		first_word_found;
-	int		is_export;
+	int	i;
 
 	i = 0;
-	first_word_found = 0;
-	is_export = 0;
 	while (i < stree->num_branches)
 	{
-		if (!first_word_found && stree->branches[i]->type == WORD)
+		if (stree->branches[i]->type == WORD)
 		{
-			first_word_found = 1;
 			if (ft_strncmp("export", stree->branches[i]->value, sizeof("export")) == 0)
-				is_export = 1;
+				break;
+			else
+				return ;
 		}
-		else if (is_export && stree->branches[i]->type == WORD)
-			disable_value_word_splitting(stree->branches[i]->value);
 		i++;
+	}
+	while (++i < stree->num_branches)
+	{
+		if (stree->branches[i]->type == WORD)
+			disable_value_word_splitting(stree->branches[i]->value);
 	}
 }
 

@@ -24,7 +24,6 @@
 # include <errno.h>
 # include <sys/wait.h>
 # include <linux/limits.h>
-# include <stdbool.h>
 # include <fcntl.h>
 # include <sys/stat.h>
 # define PROMPT_START "\e[1;95mLynetteChriShell:"
