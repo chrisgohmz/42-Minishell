@@ -22,6 +22,7 @@
 # include <readline/history.h>
 # include <dirent.h>
 # include <errno.h>
+# include <stdbool.h>
 # include <sys/wait.h>
 # include <linux/limits.h>
 # include <fcntl.h>

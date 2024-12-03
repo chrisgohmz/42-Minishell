@@ -136,7 +136,8 @@ char	**perform_wildcard_expansions(char *str)
 				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&new_split_arr), free(str), NULL);
 			if (blocks_filled + expansions_count > new_size)
 			{
-				new_size *= 2;
+				while (blocks_filled + expansions_count > new_size)
+					new_size *= 2;
 				new_split_arr = ft_realloc_str_arr(new_split_arr, new_size);
 				if (!new_split_arr)
 					return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
