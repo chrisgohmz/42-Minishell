@@ -37,5 +37,5 @@ void	exit_builtin(t_ms_vars *ms_vars)
    else
       ms_vars->exit_value = 0;
    printf("exit\n");
-	error_cleanup(ms_vars);
+	exit_cleanup(ms_vars);
 }

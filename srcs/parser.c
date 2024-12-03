@@ -40,7 +40,7 @@ static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
 		{
 			free_2d_malloc_array(&split_arr);
 			ms_vars->exit_value = EXIT_FAILURE;
-			error_cleanup(ms_vars);
+			exit_cleanup(ms_vars);
 		}
 		revert_transform(ms_vars->exec_argv[ms_vars->argv_index++]);
 		i++;
@@ -58,7 +58,7 @@ static void	get_exec_args(char **split_arr, t_ms_vars *ms_vars)
 		if (!ms_vars->exec_argv)
 		{
 			free_2d_malloc_array(&split_arr);
-			error_cleanup(ms_vars);
+			exit_cleanup(ms_vars);
 		}
 		add_to_argv(split_arr, ms_vars);
 	}
@@ -89,10 +89,10 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		{
 			expanded_str = perform_parameter_expansions(stree->branches[branch]->value, ms_vars);
 			if (!expanded_str)
-				error_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			split_arr = perform_wildcard_expansions(expanded_str);
 			if (!split_arr)
-				error_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			get_exec_args(split_arr, ms_vars);
 			free(split_arr);
 			split_arr = NULL;
@@ -101,17 +101,17 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		{
 			expanded_str = perform_parameter_expansions(stree->branches[branch]->value, ms_vars);
 			if (!expanded_str)
-				error_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			split_arr = perform_wildcard_expansions(expanded_str);
 			if (!split_arr)
-				error_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			if (check_ambiguous_redirections(split_arr) || !perform_redirection\
 			(&split_arr[0], ms_vars))
 			{
 				ms_vars->exit_value = EXIT_FAILURE;
 				free_2d_malloc_array(&split_arr);
 				if (ms_vars->proc_type == CHILD)
-					error_cleanup(ms_vars);
+					exit_cleanup(ms_vars);
 				else
 					return (free_2d_malloc_array(&ms_vars->exec_argv));
 			}
@@ -153,9 +153,9 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	{
 		if (stree->num_branches > 1)
 		{
-			ms_vars->pid_arr = malloc(stree->num_branches * sizeof(pid_t));
+			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
 			if (!ms_vars->pid_arr)
-				error_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			fork_child_processes(stree, ms_vars);
 			wait_child_processes(stree, ms_vars);
 			free(ms_vars->pid_arr);

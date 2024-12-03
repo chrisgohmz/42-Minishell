@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 18:28:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/02 01:29:22 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/04 02:13:03 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redir_split_arr, t_ms_vars *ms_vars)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (redir_split_arr[i])
@@ -43,7 +43,7 @@ void	create_cmd_redirection_branches(t_syntax_tree **redir_branches, char **redi
 			{
 				free_2d_malloc_array(&redir_split_arr);
 				ms_vars->exit_value = EXIT_FAILURE;
-				error_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			}
 		}
 		else
@@ -60,7 +60,7 @@ void	create_redirection_branches(t_syntax_tree *stree, char *pipe_split, t_ms_va
 	stree->type = REDIRECTION;
 	redir_split_arr = redirection_split(pipe_split);
 	if (!redir_split_arr)
-		error_cleanup(ms_vars);
+		exit_cleanup(ms_vars);
 	stree->num_branches = count_split_elements(redir_split_arr);
 	stree->branches = allocate_new_node(stree->num_branches, sizeof(t_syntax_tree *), ms_vars);
 	i = 0;
@@ -81,7 +81,7 @@ void	create_pipe_branches(t_syntax_tree *stree, t_ms_vars *ms_vars)
 
 	pipe_split = ft_split(stree->value, '|');
 	if (!pipe_split)
-		error_cleanup(ms_vars);
+		exit_cleanup(ms_vars);
 	stree->num_branches = count_split_elements(pipe_split);
 	stree->branches = allocate_new_node(stree->num_branches, sizeof(t_syntax_tree *), ms_vars);
 	i = 0;
@@ -102,7 +102,7 @@ void	create_logical_branches(t_syntax_tree **stree, char *line, t_ms_vars *ms_va
 
 	logical_split_arr = logical_split(line);
 	if (!logical_split_arr)
-		error_cleanup(ms_vars);
+		exit_cleanup(ms_vars);
 	(*stree)->num_branches = count_split_elements(logical_split_arr);
 	(*stree)->branches = allocate_new_node((*stree)->num_branches, sizeof(t_syntax_tree *), ms_vars);
 	i = 0;

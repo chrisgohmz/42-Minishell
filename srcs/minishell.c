@@ -25,12 +25,12 @@ static void	init_vars(t_ms_vars *ms_vars)
 	if (!prompt)
 	{
 		perror("getcwd");
-		error_cleanup(ms_vars);
+		exit_cleanup(ms_vars);
 	}
 	ft_strlcat(ms_vars->prompt, PROMPT_END, sizeof(ms_vars->prompt));
 }
 
-int	main(int argc, char **argv)
+int	main(void)
 {
 	t_ms_vars	ms_vars;
 
@@ -39,7 +39,7 @@ int	main(int argc, char **argv)
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
-	while (1 || argc || argv)
+	while (true)
 	{
 		init_vars(&ms_vars);
 		ms_vars.line = readline(ms_vars.prompt);
@@ -63,7 +63,5 @@ int	main(int argc, char **argv)
 		parse_tree(ms_vars.stree, &ms_vars);
 		free_syntax_tree(ms_vars.stree);
 	}
-	rl_clear_history();
-	free_2d_malloc_array(&ms_vars.ep);
-	exit(ms_vars.exit_value);
+	exit_cleanup(&ms_vars);
 }

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/03 02:10:54 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/04 02:35:38 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,24 +198,16 @@ int	check_syntax_and_transform_line(char *line)
 		i++;
 	}
 	if (within_squotes || within_dquotes)
-	{
-		ft_putendl_fd("\e[1;91mSyntax Error: unclosed quotes\e[0m", STDERR_FILENO);
-		return (1);
-	}
-	if (searching_first_word)
-	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing command after |, ||, or &&\e[0m", STDERR_FILENO);
-		return (1);
-	}
+		return (ft_putendl_fd("\e[1;91mSyntax Error: unclosed quotes\e[0m",
+			STDERR_FILENO), 1);
+	else if (searching_first_word)
+		return (ft_putendl_fd("\e[1;91mSyntax Error: Missing command after |,"
+			" ||, or &&\e[0m", STDERR_FILENO), 1);
 	else if (searching_redir_file)
-	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing file name after redirection operator\e[0m", STDERR_FILENO);
-		return (1);
-	}
+		return (ft_putendl_fd("\e[1;91mSyntax Error: Missing file name after "
+			"redirection operator\e[0m", STDERR_FILENO), 1);
 	else if (bracket_level)
-	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing closing parenthesis\e[0m", STDERR_FILENO);
-		return (1);
-	}
+		return (ft_putendl_fd("\e[1;91mSyntax Error: Missing closing "
+			"parenthesis\e[0m", STDERR_FILENO), 1);
 	return (0);
 }

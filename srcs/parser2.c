@@ -42,14 +42,11 @@ void	fork_wait_single_process(t_ms_vars *ms_vars)
 
 	pid = fork();
 	if (pid < 0)
-	{
 		perror("fork");
-		error_cleanup(ms_vars);
-	}
 	else if (pid == 0)
 	{
 		exec_cmd(ms_vars);
-		error_cleanup(ms_vars);
+		exit_cleanup(ms_vars);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
@@ -75,7 +72,7 @@ void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	}
 }
 
-int	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
+void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
 	pid_t	pid;
@@ -87,17 +84,16 @@ int	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		if (pid < 0)
 		{
 			perror("fork");
-			error_cleanup(ms_vars);
+			return ;
 		}
 		else if (pid == 0)
 		{
 			ms_vars->proc_type = CHILD;
 			parse_cmd_redirects(stree->branches[branch], ms_vars);
-			error_cleanup(ms_vars);
+			exit_cleanup(ms_vars);
 		}
 		ms_vars->pid_arr[branch++] = pid;
 	}
-	return (1);
 }
 
 int	check_cmd_is_builtin(t_ms_vars *ms_vars)

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 20:24:58 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/09 13:40:34 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/04 01:56:17 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars)
 	if (!node)
 	{
 		perror("malloc");
-		error_cleanup(ms_vars);
+		exit_cleanup(ms_vars);
 	}
 	return (node);
 }
