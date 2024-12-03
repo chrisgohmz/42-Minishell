@@ -26,8 +26,8 @@
 # include <linux/limits.h>
 # include <fcntl.h>
 # include <sys/stat.h>
-# define PROMPT_START "\e[1;95mLynetteChriShell:"
-# define PROMPT_END "> \e[0m"
+# define PROMPT_START "\001\e[1;95m\002LynetteChriShell:"
+# define PROMPT_END "> \001\e[0m\002"
 # define SYNTAX_ERROR 2
 
 typedef enum e_token_type
