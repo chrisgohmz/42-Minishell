@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/04 02:35:38 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/04 17:52:35 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,20 @@ int	check_first_word(char *line, int *i, bool *sfw)
 		(*i)++;
 	if (line[*i] == '|' && line[*i + 1] == '|')
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing command before ||\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Missing command before ||\e[0m",
+			STDERR_FILENO);
 		return (0);
 	}
 	else if (line[*i] == '&' && line[*i + 1] == '&')
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing command before &&\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Missing command before &&\e[0m",
+			STDERR_FILENO);
 		return (0);
 	}
 	else if (line[*i] == '|')
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing command before |\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Missing command before |\e[0m",
+			STDERR_FILENO);
 		return (0);
 	}
 	else if (line[*i] == '(')
@@ -78,22 +81,26 @@ int	check_redirection_pipe_syntax(char *line, bool sfw, bool srf, bool pfw)
 {
 	if (ft_strchr("|&", line[0]) && sfw)
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing command after |, ||, or &&\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Missing command after |, ||, "
+			"or &&\e[0m", STDERR_FILENO);
 		return (0);
 	}
 	else if (ft_strchr("<>|&", line[0]) && srf)
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Missing file name after redirection operator\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Missing file name after "
+			"redirection operator\e[0m", STDERR_FILENO);
 		return (0);
 	}
 	else if (line[0] == '&' && line[1] != '&')
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: Invalid operator &, please use && instead\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: Invalid operator &, please use "
+			"&& instead\e[0m", STDERR_FILENO);
 		return (0);
 	}
 	else if (line[0] == '(' && (!sfw || pfw))
 	{
-		ft_putendl_fd("\e[1;91mSyntax Error: unexpected '(' found\e[0m", STDERR_FILENO);
+		ft_putendl_fd("\e[1;91mSyntax Error: unexpected '(' found\e[0m",
+			STDERR_FILENO);
 		return (0);
 	}
 	return (1);
@@ -155,7 +162,7 @@ int	check_syntax_and_transform_line(char *line)
 		if (!within_squotes && line[i] == '"')
 		{
 			within_dquotes = !within_dquotes;
-			line[i] = DQUOTE;	
+			line[i] = DQUOTE;
 		}
 		else if (!within_dquotes && line[i] == '\'')
 		{
@@ -199,15 +206,15 @@ int	check_syntax_and_transform_line(char *line)
 	}
 	if (within_squotes || within_dquotes)
 		return (ft_putendl_fd("\e[1;91mSyntax Error: unclosed quotes\e[0m",
-			STDERR_FILENO), 1);
+				STDERR_FILENO), 1);
 	else if (searching_first_word)
 		return (ft_putendl_fd("\e[1;91mSyntax Error: Missing command after |,"
-			" ||, or &&\e[0m", STDERR_FILENO), 1);
+				" ||, or &&\e[0m", STDERR_FILENO), 1);
 	else if (searching_redir_file)
 		return (ft_putendl_fd("\e[1;91mSyntax Error: Missing file name after "
-			"redirection operator\e[0m", STDERR_FILENO), 1);
+				"redirection operator\e[0m", STDERR_FILENO), 1);
 	else if (bracket_level)
 		return (ft_putendl_fd("\e[1;91mSyntax Error: Missing closing "
-			"parenthesis\e[0m", STDERR_FILENO), 1);
+				"parenthesis\e[0m", STDERR_FILENO), 1);
 	return (0);
 }

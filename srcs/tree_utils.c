@@ -6,22 +6,27 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 20:24:58 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/04 01:56:17 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/04 20:54:41 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars)
+t_syntax_tree	*allocate_new_node(t_token_type type, char *value,
+	int num_branches)
 {
 	t_syntax_tree	*node;
 
-	node = ft_calloc(nmemb, size);
+	node = ft_calloc(1, sizeof(t_syntax_tree) + num_branches
+			* sizeof(t_syntax_tree *));
 	if (!node)
 	{
 		perror("malloc");
-		exit_cleanup(ms_vars);
+		return (NULL);
 	}
+	node->type = type;
+	node->value = value;
+	node->num_branches = num_branches;
 	return (node);
 }
 
@@ -48,6 +53,5 @@ void	free_syntax_tree(t_syntax_tree *stree)
 		i++;
 	}
 	free(stree->value);
-	free(stree->branches);
 	free(stree);
 }

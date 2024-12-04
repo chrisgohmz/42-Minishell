@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 15:09:04 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/04 20:25:20 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,17 +168,19 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				if (dup2(ms_vars->stdout_fd, STDOUT_FILENO) < 0)
 					perror("dup2");
 				close(ms_vars->stdout_fd);
+				ms_vars->stdout_fd = STDOUT_FILENO;
 			}
 			if (ms_vars->stdin_fd != STDIN_FILENO)
 			{
 				if (dup2(ms_vars->stdin_fd, STDIN_FILENO) < 0)
 					perror("dup2");
 				close(ms_vars->stdin_fd);
+				ms_vars->stdin_fd = STDIN_FILENO;
 			}
 			return ;
 		}
 	}
-	while (stree->branches && branch < stree->num_branches && stree->type != PIPE)
+	while (branch < stree->num_branches && stree->type != PIPE)
 	{
 		if (stree->branches[branch]->type == AND && ms_vars->exit_value != EXIT_SUCCESS)
 			branch += 2;

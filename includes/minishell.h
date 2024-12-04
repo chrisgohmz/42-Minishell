@@ -76,7 +76,7 @@ typedef struct s_syntax_tree
 	t_token_type			type;
 	char					*value;
 	int						num_branches;
-	struct s_syntax_tree	**branches;
+	struct s_syntax_tree	*branches[];
 }	t_syntax_tree;
 typedef struct s_ms_vars
 {
@@ -89,7 +89,8 @@ typedef struct s_ms_vars
 	t_syntax_tree	*stree;
 	char			*line;
 	pid_t			*pid_arr;
-	char			prompt[PATH_MAX + sizeof(PROMPT_START) + sizeof(PROMPT_END) - 2];
+	char			prompt[PATH_MAX + sizeof(PROMPT_START)
+		+ sizeof(PROMPT_END) - 2];
 	t_process_type	proc_type;
 	int				stdout_fd;
 	int				stdin_fd;
@@ -100,41 +101,45 @@ typedef struct s_mergesort_vars
 	int	middle;
 	int	end;
 }	t_mergesort_vars;
-char	**redirection_split(char *str);
-void	create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
-int		count_split_elements(char **split);
-void	free_syntax_tree(t_syntax_tree *stree);
-char	*revert_transform(char *token);
-int		check_syntax_and_transform_line(char *line);
-void	free_2d_malloc_array(char ***split);
-char	*ft_getenv(char *name);
-void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
-char	*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
-char	**perform_wildcard_expansions(char *str);
-int		make_new_envp(t_ms_vars *ms_vars);
-char	*remove_quotes(char *old_str);
-char	**logical_split(char *str);
-int		check_bracket_syntax(char *line, int bracket_level, int empty_brackets);
-void	insert_exit_value(unsigned char exit_value, char *new_str, int *j);
-int		perform_redirection(char **filename, t_ms_vars *ms_vars);
-void	perform_heredoc(char *delimiter, t_ms_vars *ms_vars, t_token_type delim_type);
-void	exit_cleanup(t_ms_vars *ms_vars);
-void	*allocate_new_node(size_t nmemb, size_t size, t_ms_vars *ms_vars);
-void	exec_cmd(t_ms_vars *ms_vars);
-char	**mergesort_expansions(char **expansions, int expansions_count);
-int		check_cmd_is_builtin(t_ms_vars *ms_vars);
-void	echo_builtin(t_ms_vars *ms_vars);
-void	cd_builtin(t_ms_vars *ms_vars);
-void	pwd_builtin(t_ms_vars *ms_vars);
-void	export_builtin(t_ms_vars *ms_vars);
-void	unset_builtin(t_ms_vars *ms_vars);
-void	env_builtin(t_ms_vars *ms_vars);
-void	exit_builtin(t_ms_vars *ms_vars);
-void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
-void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
-void	fork_wait_single_process(t_ms_vars *ms_vars);
-void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars);
-void	modify_expansions_if_export(t_syntax_tree *stree);
-void	disable_value_word_splitting(char *str);
+char			**redirection_split(char *str);
+void			create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
+int				count_split_elements(char **split);
+void			free_syntax_tree(t_syntax_tree *stree);
+char			*revert_transform(char *token);
+int				check_syntax_and_transform_line(char *line);
+void			free_2d_malloc_array(char ***split);
+char			*ft_getenv(char *name);
+void			parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
+char			*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
+char			**perform_wildcard_expansions(char *str);
+int				make_new_envp(t_ms_vars *ms_vars);
+char			*remove_quotes(char *old_str);
+char			**logical_split(char *str);
+int				check_bracket_syntax(char *line, int bracket_level,
+					int empty_brackets);
+void			insert_exit_value(unsigned char exit_value, char *new_str,
+					int *j);
+int				perform_redirection(char **filename, t_ms_vars *ms_vars);
+void			perform_heredoc(char *delimiter, t_ms_vars *ms_vars,
+					t_token_type delim_type);
+void			exit_cleanup(t_ms_vars *ms_vars);
+t_syntax_tree	*allocate_new_node(t_token_type type, char *value,
+					int num_branches);
+void			exec_cmd(t_ms_vars *ms_vars);
+char			**mergesort_expansions(char **expansions, int expansions_count);
+int				check_cmd_is_builtin(t_ms_vars *ms_vars);
+void			echo_builtin(t_ms_vars *ms_vars);
+void			cd_builtin(t_ms_vars *ms_vars);
+void			pwd_builtin(t_ms_vars *ms_vars);
+void			export_builtin(t_ms_vars *ms_vars);
+void			unset_builtin(t_ms_vars *ms_vars);
+void			env_builtin(t_ms_vars *ms_vars);
+void			exit_builtin(t_ms_vars *ms_vars);
+void			fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void			wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void			fork_wait_single_process(t_ms_vars *ms_vars);
+void			parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void			modify_expansions_if_export(t_syntax_tree *stree);
+void			disable_value_word_splitting(char *str);
 
 #endif
