@@ -57,9 +57,12 @@ int	main(void)
 			free(ms_vars.line);
 			continue ;
 		}
-		create_syntax_tree(&ms_vars.stree, ms_vars.line, &ms_vars);
-		free(ms_vars.line);
-		ms_vars.line = NULL;
+		ms_vars.stree = create_logical_branches(ms_vars.stree, ms_vars.line);
+		if (!ms_vars.stree)
+		{
+			ms_vars.exit_value = EXIT_FAILURE;
+			exit_cleanup(&ms_vars);
+		}
 		parse_tree(ms_vars.stree, &ms_vars);
 		free_syntax_tree(ms_vars.stree);
 	}

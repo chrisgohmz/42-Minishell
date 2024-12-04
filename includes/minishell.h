@@ -33,7 +33,6 @@
 
 typedef enum e_token_type
 {
-	ROOT,
 	BRACKETS,
 	REDIRECTION,
 	SINGLE_LEFT,
@@ -102,7 +101,7 @@ typedef struct s_mergesort_vars
 	int	end;
 }	t_mergesort_vars;
 char			**redirection_split(char *str);
-void			create_syntax_tree(t_syntax_tree **stree, char *line, t_ms_vars *ms_vars);
+t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value);
 int				count_split_elements(char **split);
 void			free_syntax_tree(t_syntax_tree *stree);
 char			*revert_transform(char *token);

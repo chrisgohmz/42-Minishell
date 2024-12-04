@@ -6,28 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 03:50:14 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/05 01:58:42 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-void	free_2d_malloc_array(char ***split)
-{
-	int	i;
-
-	if (!*split)
-		return ;
-	i = 0;
-	while ((*split)[i])
-	{
-		free((*split)[i]);
-		(*split)[i] = NULL;
-		i++;
-	}
-	free(*split);
-	*split = NULL;
-}
 
 static char	*alloc_word(char *restrict start, char *restrict end)
 {

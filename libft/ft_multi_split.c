@@ -6,11 +6,24 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 03:53:33 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/05 01:59:44 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+static void	free_arr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
+}
 
 static char	*alloc_word(char *restrict start, char *restrict end)
 {
@@ -47,7 +60,8 @@ static int	count_words(char *restrict str, char *restrict charset)
 	return (words);
 }
 
-static void	insert_words(char **split, char *restrict str, char *restrict charset, int words)
+static char	**insert_words(char **split, char *restrict str,
+	char *restrict charset, int words)
 {
 	int		index;
 	char	*start;
@@ -64,9 +78,15 @@ static void	insert_words(char **split, char *restrict str, char *restrict charse
 		while (!ft_strchr(charset, *end) && *end)
 			end++;
 		split[index] = alloc_word(start, end);
+		if (!split[index])
+		{
+			free_arr(split);
+			return (NULL);
+		}
 		index++;
 	}
 	split[index] = NULL;
+	return (split);
 }
 
 char	**ft_multi_split(char *str, char *charset)
@@ -78,6 +98,6 @@ char	**ft_multi_split(char *str, char *charset)
 	split = malloc(sizeof(char *) * (words + 1));
 	if (!split)
 		return (NULL);
-	insert_words(split, str, charset, words);
+	split = insert_words(split, str, charset, words);
 	return (split);
 }
