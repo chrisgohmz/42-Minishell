@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit_cleanup.c                                     :+:      :+:    :+:   */
+/*   free_2d_arr.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/08 20:10:18 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/06 04:36:46 by cgoh             ###   ########.fr       */
+/*   Created: 2024/12/06 04:30:54 by cgoh              #+#    #+#             */
+/*   Updated: 2024/12/06 04:31:33 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-void	exit_cleanup(t_ms_vars *ms_vars)
+void	free_2d_arr(void ***arr)
 {
-	free_syntax_tree(ms_vars->stree);
-	free_2d_arr((void ***)&ms_vars->exec_argv);
-	free_2d_arr((void ***)&ms_vars->ep);
-	free(ms_vars->pid_arr);
-	rl_clear_history();
-	if (ms_vars->stdin_fd != STDIN_FILENO)
-		close(ms_vars->stdin_fd);
-	if (ms_vars->stdout_fd != STDOUT_FILENO)
-		close(ms_vars->stdout_fd);
-	exit(ms_vars->exit_value);
+	int	i;
+
+	if (!*arr)
+		return ;
+	i = 0;
+	while ((*arr)[i])
+	{
+		free((*arr)[i]);
+		(*arr)[i] = NULL;
+		i++;
+	}
+	free(*arr);
+	*arr = NULL;
 }

@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 10:37:10 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 04:05:47 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/06 04:29:03 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static char	**copy_expansions(char **expansions, int expansions_count)
 	if (!expansions_copy)
 	{
 		perror("malloc");
-		free_2d_malloc_array(&expansions);
+		free_2d_arr((void ***)&expansions);
 		return (NULL);
 	}
 	ft_memcpy(expansions_copy, expansions, expansions_count * sizeof(char *));

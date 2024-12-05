@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:45:49 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/24 01:33:45 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/06 04:31:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ int				ft_dprintf(int fd, const char *format, ...);
 char			**ft_multi_split(char *str, char *charset);
 char			*ft_multi_strjoin(int size, char **strs, char *sep);
 char			**ft_realloc_str_arr(char **old_arr, size_t new_size);
+void			free_2d_arr(void ***arr);
 
 typedef struct s_list
 {

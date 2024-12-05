@@ -48,7 +48,7 @@ int	make_new_envp(t_ms_vars *ms_vars)
 	{
 		ms_vars->ep[ms_vars->env_size] = ft_strdup(environ[ms_vars->env_size]);
 		if (!ms_vars->ep[ms_vars->env_size])
-			return (free_2d_malloc_array(&ms_vars->ep), 0);
+			return (free_2d_arr((void ***)&ms_vars->ep), 0);
 		ms_vars->env_size++;
 	}
 	environ = ms_vars->ep;

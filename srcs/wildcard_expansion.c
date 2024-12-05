@@ -88,19 +88,19 @@ static char	**expand_wildcard(char *pattern, size_t *expansions_count)
 			}
 			expansions[*expansions_count - 1] = ft_strdup(entry->d_name);
 			if (!expansions[*expansions_count - 1])
-				return (closedir(dirptr), free_2d_malloc_array(&expansions), NULL);
+				return (closedir(dirptr), free_2d_arr((void ***)&expansions), NULL);
 		}
 		errno = 0;
 		entry = readdir(dirptr);
 	}
 	if (errno)
-		return (perror("readdir"), free_2d_malloc_array(&expansions), closedir(dirptr), NULL);
+		return (perror("readdir"), free_2d_arr((void ***)&expansions), closedir(dirptr), NULL);
 	closedir(dirptr);
 	if (!*expansions_count)
 	{
 		expansions[*expansions_count] = ft_strdup(pattern);
 		if (!expansions[(*expansions_count)++])
-			return (free_2d_malloc_array(&expansions), NULL);
+			return (free_2d_arr((void ***)&expansions), NULL);
 	}
 	if (*expansions_count > 1)
 		expansions = mergesort_expansions(expansions, *expansions_count);
@@ -123,7 +123,7 @@ char	**perform_wildcard_expansions(char *str)
 	new_size = 1000;
 	new_split_arr = ft_calloc(new_size, sizeof(char *));
 	if (!new_split_arr)
-		return (perror("malloc"), free(str), free_2d_malloc_array(&split_arr), NULL);
+		return (perror("malloc"), free(str), free_2d_arr((void ***)&split_arr), NULL);
 	i = 0;
 	blocks_filled = 1;
 	while (split_arr[i])
@@ -133,14 +133,14 @@ char	**perform_wildcard_expansions(char *str)
 		{
 			expansions = expand_wildcard(split_arr[i], &expansions_count);
 			if (!expansions)
-				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&new_split_arr), free(str), NULL);
+				return (free_2d_arr((void ***)&split_arr), free_2d_arr((void ***)&new_split_arr), free(str), NULL);
 			if (blocks_filled + expansions_count > new_size)
 			{
 				while (blocks_filled + expansions_count > new_size)
 					new_size *= 2;
 				new_split_arr = ft_realloc_str_arr(new_split_arr, new_size);
 				if (!new_split_arr)
-					return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
+					return (free_2d_arr((void ***)&split_arr), free_2d_arr((void ***)&expansions), free(str), NULL);
 			}
 			ft_memcpy(new_split_arr + blocks_filled - 1, expansions, expansions_count * sizeof(char *));
 			blocks_filled += expansions_count;
@@ -153,13 +153,13 @@ char	**perform_wildcard_expansions(char *str)
 				new_size *= 2;
 				new_split_arr = ft_realloc_str_arr(new_split_arr, new_size);
 				if (!new_split_arr)
-					return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&expansions), free(str), NULL);
+					return (free_2d_arr((void ***)&split_arr), free_2d_arr((void ***)&expansions), free(str), NULL);
 			}
 			new_split_arr[blocks_filled - 1] = ft_strdup(split_arr[i]);
 			if (!new_split_arr[blocks_filled++ - 1])
-				return (free_2d_malloc_array(&split_arr), free_2d_malloc_array(&new_split_arr), free(str), NULL);
+				return (free_2d_arr((void ***)&split_arr), free_2d_arr((void ***)&new_split_arr), free(str), NULL);
 		}
 		i++;
 	}
-	return (free(str), free_2d_malloc_array(&split_arr), new_split_arr);
+	return (free(str), free_2d_arr((void ***)&split_arr), new_split_arr);
 }

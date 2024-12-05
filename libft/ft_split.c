@@ -6,24 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 03:55:58 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/06 04:33:01 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static void	free_arr(char **split)
-{
-	int		i;
-
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
 
 static char	*alloc_word(char *restrict start, char *restrict end)
 {
@@ -79,7 +66,7 @@ static int	insert_words(char **split, char *restrict s, char c, int words)
 		split[index] = alloc_word(start, end);
 		if (!split[index])
 		{
-			free_arr(split);
+			free_2d_arr((void ***)&split);
 			return (-1);
 		}
 		index++;

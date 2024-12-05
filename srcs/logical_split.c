@@ -107,7 +107,7 @@ static void	insert_words(char **split, char *restrict str, int words)
 		split[index] = alloc_word(start, end);
 		if (!split[index])
 		{
-			free_2d_malloc_array(&split);
+			free_2d_arr((void ***)&split);
 			return ;
 		}
 		index++;
@@ -118,7 +118,7 @@ static void	insert_words(char **split, char *restrict str, int words)
 		split[index] = alloc_word(start, end);
 		if (!split[index])
 		{
-			free_2d_malloc_array(&split);
+			free_2d_arr((void ***)&split);
 			return ;
 		}
 		index++;

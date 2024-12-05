@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:43:31 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/05 01:58:42 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/06 04:29:03 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static void	insert_words(char **split, char *restrict str, int words)
 		split[index] = alloc_word(start, end);
 		if (!split[index])
 		{
-			free_2d_malloc_array(&split);
+			free_2d_arr((void ***)&split);
 			return ;
 		}
 		index++;

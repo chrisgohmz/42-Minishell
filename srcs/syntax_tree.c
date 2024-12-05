@@ -78,13 +78,13 @@ static t_syntax_tree	*create_redirection_branches(t_syntax_tree *stree,
 	stree = allocate_new_node(REDIRECTION, value, num_branches);
 	if (!stree)
 	{
-		free_2d_malloc_array(&redir_split_arr);
+		free_2d_arr((void ***)&redir_split_arr);
 		return (NULL);
 	}
 	if (!create_cmd_redirection_branches(stree, redir_split_arr))
 	{
 		free(stree);
-		free_2d_malloc_array(&redir_split_arr);
+		free_2d_arr((void ***)&redir_split_arr);
 		return (NULL);
 	}
 	free(redir_split_arr);
@@ -105,7 +105,7 @@ static t_syntax_tree	*create_pipe_branches(t_syntax_tree *stree,
 	stree = allocate_new_node(PIPE, value, num_branches);
 	if (!stree)
 	{
-		free_2d_malloc_array(&pipe_split);
+		free_2d_arr((void ***)&pipe_split);
 		return (NULL);
 	}
 	i = 0;
@@ -115,7 +115,7 @@ static t_syntax_tree	*create_pipe_branches(t_syntax_tree *stree,
 				pipe_split[i]);
 		if (!stree->branches[i])
 		{
-			free_2d_malloc_array(&pipe_split);
+			free_2d_arr((void ***)&pipe_split);
 			free_syntax_tree(stree);
 			return (NULL);
 		}
@@ -139,7 +139,7 @@ t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value)
 	stree = allocate_new_node(BRACKETS, value, num_branches);
 	if (!stree)
 	{
-		free_2d_malloc_array(&logical_split_arr);
+		free_2d_arr((void ***)&logical_split_arr);
 		return (NULL);
 	}
 	i = 0;

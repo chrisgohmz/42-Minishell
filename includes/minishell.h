@@ -106,7 +106,7 @@ int				count_split_elements(char **split);
 void			free_syntax_tree(t_syntax_tree *stree);
 char			*revert_transform(char *token);
 int				check_syntax_and_transform_line(char *line);
-void			free_2d_malloc_array(char ***split);
+void			free_2d_arr(void ***split);
 char			*ft_getenv(char *name);
 void			parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars);
 char			*perform_parameter_expansions(char *str, t_ms_vars *ms_vars);
