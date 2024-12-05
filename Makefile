@@ -43,10 +43,10 @@ fclean:
 re: fclean all
 
 vg:
-	$(MAKE) && valgrind --leak-check=full --show-leak-kinds=all --suppressions=$(PWD)/readline.supp --trace-children=yes --track-fds=yes ./$(NAME)
+	$(MAKE) && valgrind --leak-check=full --show-leak-kinds=all --suppressions=$(PWD)/readline.supp --track-fds=yes ./$(NAME)
 
 vg_speed:
-	$(MAKE) && valgrind --leak-check=full --show-leak-kinds=all --suppressions=$(PWD)/readline.supp --trace-children=yes --track-fds=yes ./$(SPEED_NAME)
+	$(MAKE) && valgrind --leak-check=full --show-leak-kinds=all --suppressions=$(PWD)/readline.supp --track-fds=yes ./$(SPEED_NAME)
 
 speed: $(SPEED_NAME)
 
