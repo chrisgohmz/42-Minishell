@@ -6,13 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/04 20:25:20 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/09 19:49:22 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	check_ambiguous_redirections(char **split_arr)
+static int	check_ambiguous_redirections(char **split_arr, char *str)
 {
 	int	i;
 
@@ -21,8 +21,8 @@ static int	check_ambiguous_redirections(char **split_arr)
 		i++;
 	if (i != 1)
 	{
-		ft_putendl_fd("\e[1;91mError: ambiguous redirection\e[0m",
-			STDERR_FILENO);
+		ft_dprintf(STDERR_FILENO, "\e[1;91mError: %s: ambiguous redirect"
+			"\e[0m\n", revert_transform(str));
 		return (1);
 	}
 	return (0);
@@ -98,8 +98,8 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			split_arr = do_expansions(stree->branches[branch]->value, ms_vars);
 			if (!split_arr)
 				exit_cleanup(ms_vars);
-			if (check_ambiguous_redirections(split_arr) || !perform_redirection\
-			(&split_arr[0], ms_vars))
+			if (check_ambiguous_redirections(split_arr, stree->branches[branch]->value)
+				|| !perform_redirection(&split_arr[0], ms_vars))
 			{
 				ms_vars->exit_value = EXIT_FAILURE;
 				free_2d_arr((void ***)&split_arr);

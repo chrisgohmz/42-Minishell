@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 01:59:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/08 22:39:42 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/09 19:37:21 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	disable_value_word_splitting(char *str)
 {
 	int		i;
 	bool	disable;
-	
+
 	i = 0;
 	disable = false;
 	while (str[i])
@@ -31,7 +31,7 @@ void	disable_value_word_splitting(char *str)
 	}
 }
 
-static char	*remove_quoted_null_args(char *str)
+static char	*remove_quotes_in_non_null_args(char *str)
 {
 	char	*new_str;
 	char	**split_arr;
@@ -57,15 +57,12 @@ static char	*remove_quoted_null_args(char *str)
 		if (!split_arr[i][k])
 		{
 			j = ft_strlcat(new_str + j, split_arr[i], len + 1);
-			continue;
+			continue ;
 		}
 		k = -1;
 		while (split_arr[i][++k])
-			if (!(split_arr[i][k] == DQUOTE && split_arr[i][k + 1] == DQUOTE)
-			&& !(split_arr[i][k] == SQUOTE && split_arr[i][k + 1] == SQUOTE))
+			if (!(split_arr[i][k] == DQUOTE) && !(split_arr[i][k] == SQUOTE))
 				new_str[j++] = split_arr[i][k];
-			else
-				k++;
 		if (split_arr[i + 1])
 			new_str[j++] = ' ';
 	}
@@ -78,11 +75,11 @@ char	**do_expansions(char *str, t_ms_vars *ms_vars)
 {
 	char	*expanded_str;
 	char	**split_arr;
-	
+
 	expanded_str = perform_parameter_expansions(str, ms_vars);
 	if (!expanded_str)
 		return (NULL);
-	expanded_str = remove_quoted_null_args(expanded_str);
+	expanded_str = remove_quotes_in_non_null_args(expanded_str);
 	if (!expanded_str)
 		return (NULL);
 	split_arr = perform_wildcard_expansions(expanded_str);

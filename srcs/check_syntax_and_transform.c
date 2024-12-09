@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 21:35:27 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/04 17:52:35 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/09 19:52:50 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ char	*revert_transform(char *token)
 			token[i] = ' ';
 		else if (token[i] == ESC_TAB)
 			token[i] = '\t';
-		else if (token[i] == ESC_DQUOTE)
+		else if (token[i] == ESC_DQUOTE || token[i] == DQUOTE)
 			token[i] = '"';
-		else if (token[i] == ESC_SQUOTE)
+		else if (token[i] == ESC_SQUOTE || token[i] == SQUOTE)
 			token[i] = '\'';
 		else if (token[i] == ESC_PIPE)
 			token[i] = '|';
