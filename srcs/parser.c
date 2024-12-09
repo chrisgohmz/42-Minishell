@@ -21,7 +21,7 @@ static int	check_ambiguous_redirections(char **split_arr)
 		i++;
 	if (i != 1)
 	{
-		ft_putendl_fd("\e[1;91mError: Ambiguous redirection\e[0m",
+		ft_putendl_fd("\e[1;91mError: ambiguous redirection\e[0m",
 			STDERR_FILENO);
 		return (1);
 	}
@@ -67,7 +67,6 @@ static void	get_exec_args(char **split_arr, t_ms_vars *ms_vars)
 void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
-	char	*expanded_str;
 	char	**split_arr;
 
 	if (stree->num_branches == 0)
@@ -87,10 +86,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	{
 		if (stree->branches[branch]->type == WORD)
 		{
-			expanded_str = perform_parameter_expansions(stree->branches[branch]->value, ms_vars);
-			if (!expanded_str)
-				exit_cleanup(ms_vars);
-			split_arr = perform_wildcard_expansions(expanded_str);
+			split_arr = do_expansions(stree->branches[branch]->value, ms_vars);
 			if (!split_arr)
 				exit_cleanup(ms_vars);
 			get_exec_args(split_arr, ms_vars);
@@ -99,10 +95,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		}
 		else if (stree->branches[branch]->type == T_FILE)
 		{
-			expanded_str = perform_parameter_expansions(stree->branches[branch]->value, ms_vars);
-			if (!expanded_str)
-				exit_cleanup(ms_vars);
-			split_arr = perform_wildcard_expansions(expanded_str);
+			split_arr = do_expansions(stree->branches[branch]->value, ms_vars);
 			if (!split_arr)
 				exit_cleanup(ms_vars);
 			if (check_ambiguous_redirections(split_arr) || !perform_redirection\

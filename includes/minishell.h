@@ -140,5 +140,6 @@ void			fork_wait_single_process(t_ms_vars *ms_vars);
 void			parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			modify_expansions_if_export(t_syntax_tree *stree);
 void			disable_value_word_splitting(char *str);
+char			**do_expansions(char *str, t_ms_vars *ms_vars);
 
 #endif
