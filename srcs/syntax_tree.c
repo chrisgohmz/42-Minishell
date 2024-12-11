@@ -41,7 +41,7 @@ static int	create_cmd_redirection_branches(t_syntax_tree *stree,
 				|| ft_strchr(redir_split_arr[i], SQUOTE)))
 		{
 			stree->branches[i] = allocate_new_node(HEREDOC_QUOTED_DELIMITER,
-					remove_quotes(redir_split_arr[i]), 0);
+					revert_transform(remove_quotes(redir_split_arr[i])), 0);
 			is_heredoc_delimiter = false;
 		}
 		else if (is_heredoc_delimiter)
