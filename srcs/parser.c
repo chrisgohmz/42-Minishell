@@ -72,13 +72,6 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	if (stree->num_branches == 0)
 		return ;
 	branch = 0;
-	while (branch < stree->num_branches)
-	{
-		if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
-			perform_heredoc(revert_transform(stree->branches[branch]->value), ms_vars, stree->branches[branch]->type);
-		branch++;
-	}
-	branch = 0;
 	ms_vars->argv_index = 0;
 	split_arr = NULL;
 	modify_expansions_if_export(stree);
@@ -111,7 +104,16 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			free_2d_arr((void ***)&split_arr);
 		}
 		else if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
-			perform_redirection(&stree->branches[branch]->value, ms_vars);
+		{
+			if (!perform_redirection(&stree->branches[branch]->value, ms_vars))
+			{
+				ms_vars->exit_value = EXIT_FAILURE;
+				if (ms_vars->proc_type == CHILD)
+					exit_cleanup(ms_vars);
+				else
+					return (free_2d_arr((void ***)&ms_vars->exec_argv));
+			}
+		}
 		else if (stree->branches[branch]->type == SINGLE_RIGHT)
 			ms_vars->redirect = SINGLE_RIGHT;
 		else if (stree->branches[branch]->type == DOUBLE_RIGHT)
@@ -121,6 +123,11 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		else if (stree->branches[branch]->type == DOUBLE_LEFT)
 			ms_vars->redirect = DOUBLE_LEFT;
 		branch++;
+	}
+	if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)
+	{
+		close(ms_vars->heredoc_fd[ms_vars->pipe_number][0]);
+		ms_vars->heredoc_fd[ms_vars->pipe_number][0] = -1;
 	}
 	if (ms_vars->exec_argv)
 	{
@@ -144,6 +151,15 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	branch = 0;
 	if (stree->type == PIPE)
 	{
+		if (stree->num_branches > MAX_PIPES)
+		{
+			ft_dprintf(STDERR_FILENO, "Error: exceeded maximum"
+			" pipe count of %d\n", MAX_PIPES);
+			ms_vars->exit_value = SYNTAX_ERROR;
+			return ;
+		}
+		if (!open_heredocs(stree, ms_vars))
+			return (close_heredoc_fds(ms_vars));
 		if (stree->num_branches > 1)
 		{
 			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
@@ -170,6 +186,8 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				close(ms_vars->stdin_fd);
 				ms_vars->stdin_fd = STDIN_FILENO;
 			}
+			close_heredoc_fds(ms_vars);
+			reset_heredoc_fds(ms_vars);
 			return ;
 		}
 	}

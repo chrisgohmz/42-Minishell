@@ -30,6 +30,7 @@
 # define PROMPT_START "\001\e[1;95m\002LynetteChriShell:"
 # define PROMPT_END "> \001\e[0m\002"
 # define SYNTAX_ERROR 2
+# define MAX_PIPES 5000
 
 typedef enum e_token_type
 {
@@ -93,6 +94,8 @@ typedef struct s_ms_vars
 	t_process_type	proc_type;
 	int				stdout_fd;
 	int				stdin_fd;
+	int				heredoc_fd[MAX_PIPES][2];
+	unsigned int	pipe_number;
 }	t_ms_vars;
 typedef struct s_mergesort_vars
 {
@@ -119,8 +122,8 @@ int				check_bracket_syntax(char *line, int bracket_level,
 void			insert_exit_value(unsigned char exit_value, char *new_str,
 					int *j);
 int				perform_redirection(char **filename, t_ms_vars *ms_vars);
-void			perform_heredoc(char *delimiter, t_ms_vars *ms_vars,
-					t_token_type delim_type);
+int				perform_heredoc(char *delimiter, t_ms_vars *ms_vars,
+					t_token_type delim_type, int pipe_num);
 void			exit_cleanup(t_ms_vars *ms_vars);
 t_syntax_tree	*allocate_new_node(t_token_type type, char *value,
 					int num_branches);
@@ -141,5 +144,8 @@ void			parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			modify_expansions_if_export(t_syntax_tree *stree);
 void			disable_value_word_splitting(char *str);
 char			**do_expansions(char *str, t_ms_vars *ms_vars);
+int				open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void			reset_heredoc_fds(t_ms_vars *ms_vars);
+void			close_heredoc_fds(t_ms_vars *ms_vars);
 
 #endif

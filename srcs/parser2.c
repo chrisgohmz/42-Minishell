@@ -92,6 +92,9 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			parse_cmd_redirects(stree->branches[branch], ms_vars);
 			exit_cleanup(ms_vars);
 		}
+		if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)
+			close(ms_vars->heredoc_fd[ms_vars->pipe_number][0]);
+		ms_vars->pipe_number++;
 		ms_vars->pid_arr[branch++] = pid;
 	}
 }

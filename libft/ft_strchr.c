@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 19:47:10 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 03:42:17 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/11 03:44:24 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ char	*ft_strchr(const char *restrict str, int c)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == (unsigned char)c)
+		if (str[i] == (char)c)
 			return ((char *)str + i);
 		i++;
 	}
-	if ((unsigned char)c == 0)
+	if ((char)c == 0)
 		return ((char *)str + i);
 	return (NULL);
 }

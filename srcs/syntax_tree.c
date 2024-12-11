@@ -37,8 +37,8 @@ static int	create_cmd_redirection_branches(t_syntax_tree *stree,
 		else if (ft_strncmp(redir_split_arr[i], ">", 1) == 0)
 			stree->branches[i] = allocate_new_node(SINGLE_RIGHT,
 					redir_split_arr[i], 0);
-		else if (is_heredoc_delimiter && (ft_strchr(redir_split_arr[i], '"')
-				|| ft_strchr(redir_split_arr[i], '\'')))
+		else if (is_heredoc_delimiter && (ft_strchr(redir_split_arr[i], DQUOTE)
+				|| ft_strchr(redir_split_arr[i], SQUOTE)))
 		{
 			stree->branches[i] = allocate_new_node(HEREDOC_QUOTED_DELIMITER,
 					remove_quotes(redir_split_arr[i]), 0);

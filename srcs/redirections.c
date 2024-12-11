@@ -92,19 +92,20 @@ static int	redir_double_right(char *filename, t_ms_vars *ms_vars)
 	return (1);
 }
 
-void	perform_heredoc(char *delimiter, t_ms_vars *ms_vars, t_token_type delim_type)
+static int	redir_double_left(t_ms_vars *ms_vars)
 {
-	(void)delimiter;
-	(void)ms_vars;
-	(void)delim_type;
-	if (delim_type == HEREDOC_DELIMITER)
+	if (ms_vars->proc_type == PARENT && ms_vars->stdin_fd == STDIN_FILENO)
 	{
-		//todo
+		ms_vars->stdin_fd = dup(STDIN_FILENO);
+		if (ms_vars->stdin_fd == -1)
+			return (perror("dup"), 0);
 	}
-	else if (delim_type == HEREDOC_QUOTED_DELIMITER)
+	if (dup2(ms_vars->heredoc_fd[ms_vars->pipe_number][0], STDIN_FILENO) < 0)
 	{
-		//todo
+		perror("dup2");
+		return (0);
 	}
+	return (1);
 }
 
 int	perform_redirection(char **filename, t_ms_vars *ms_vars)
@@ -126,6 +127,11 @@ int	perform_redirection(char **filename, t_ms_vars *ms_vars)
 	else if (ms_vars->redirect == SINGLE_LEFT)
 	{
 		if (!redir_single_left(*filename, ms_vars))
+			return (0);
+	}
+	else
+	{
+		if (!redir_double_left(ms_vars))
 			return (0);
 	}
 	return (1);

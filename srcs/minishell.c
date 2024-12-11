@@ -21,6 +21,8 @@ static void	init_vars(t_ms_vars *ms_vars)
 	ms_vars->exec_argv = NULL;
 	ms_vars->stdout_fd = STDOUT_FILENO;
 	ms_vars->stdin_fd = STDIN_FILENO;
+	reset_heredoc_fds(ms_vars);
+	ms_vars->pipe_number = 0;
 	prompt = getcwd(ms_vars->prompt + sizeof(PROMPT_START) - 1, PATH_MAX);
 	if (!prompt)
 	{
