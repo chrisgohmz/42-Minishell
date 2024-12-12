@@ -19,17 +19,24 @@ Bugs found:
 1) variable aaa can be unset by unsetting a
 2) variable aaa can be unset by unsetting aaaaa
 */
-static int	key_len(char *key)
+static int	cmp_len(char *key, char *ep_var)
 {
 	int i;
+	int j;
 
 	i = 0;
-	while(key[i] != '=')
+	j = 0;
+	while(key[i])
 		i++;
-	return (i);
+	while(ep_var[j] != '=')
+		j++;
+	if (i > j)
+		return (i);
+	else
+		return (j);
 }
 
-static int	find_unset_pos(t_ms_vars *ms_vars, char *key)
+int	find_unset_pos(t_ms_vars *ms_vars, char *key)
 {
 	unsigned int i;
 
@@ -43,7 +50,7 @@ static int	find_unset_pos(t_ms_vars *ms_vars, char *key)
 	i = 0;
 	while (i < ms_vars->env_size)
 	{
-		if(ft_strncmp(ms_vars->ep[i], key, key_len(ms_vars->ep[i])) == 0)
+		if(ft_strncmp(ms_vars->ep[i], key, cmp_len(key, ms_vars->ep[i])) == 0)
 			return (i);
 		i++;
 	}

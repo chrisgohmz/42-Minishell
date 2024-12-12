@@ -24,7 +24,15 @@ void	cd_builtin(t_ms_vars *ms_vars)
 	int	chdir_ret;
 
 	if (!ms_vars->exec_argv[1])
+	{
 		chdir_ret = chdir(getenv("HOME"));
+		if (chdir_ret == -1)
+		{
+			perror("cd: HOME not set\n");
+			ms_vars->exit_value = EXIT_FAILURE;
+			return ;
+		}
+	}
 	else if (ms_vars->exec_argv[2])
 	{
 		ft_putendl_fd("cd: too many arguments", STDERR_FILENO);
