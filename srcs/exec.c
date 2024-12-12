@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-extern int errno;
+extern int errno; //no need to include this, nor are we allowed to since it's a global var, it's alrdy defined in <errno.h>
 
 /*
 cgoh: Good start! Now I need u to modify it such that it searches $PATH, not just /usr/bin/.
@@ -47,6 +47,7 @@ static char **store_path(t_ms_vars *ms_vars)
 		i++;
 	}
 	path[j] = '\0';
+	//cgoh: I think getenv() does the job for lines 33-49
 	bin  = ft_split(path, ':');
 	if (!bin)
 	{
@@ -80,7 +81,8 @@ static int relative_path(t_ms_vars *ms_vars)
 		ft_strlcpy(path, bin[i], ft_strlen(bin[i]) + 1);
 		ft_strlcat(path, "/", len + 1);
 		ft_strlcat(path, ms_vars->exec_argv[0], len + 1);
-		if(access(path, F_OK & X_OK) != -1)
+		//cgoh: ft_multi_strjoin is probably easier
+		if(access(path, F_OK &/*should be bitwise OR not bitwise AND*/ X_OK) != -1)
 			break ;
 		i++;
 	}
@@ -106,6 +108,11 @@ void	exec_cmd(t_ms_vars *ms_vars)
 		close(ms_vars->stdout_fd); //For the case of single execve cmd, close the saved stdout fd from earlier, refer to redirections.c lines 19-24
 	if (ms_vars->stdin_fd != STDIN_FILENO)
 		close(ms_vars->stdin_fd); //likewise for stdin
+	/*
+		Split into 2 cases.
+		Case 1: cmd name contains a '/' character in any part of the string, this is an absolute or relative path, don't search PATH
+		Case 2: otherwise, search PATH only. Do not try to access and execve the cmd by itself (e.g. access(minishell) followed by execve(minishell)) as this would succeed when it shouldn't. 
+	*/
 	if(ms_vars->exec_argv[0][0] == '/')
 	{
 		if(execve(ms_vars->exec_argv[0], ms_vars->exec_argv, ms_vars->ep) == -1)
@@ -115,7 +122,7 @@ void	exec_cmd(t_ms_vars *ms_vars)
 		}
 		return ;
 	}
-	else if(ms_vars->exec_argv[0][0] == '.' && ms_vars->exec_argv[0][1] == '/')//need tosplit the directory??
+	else if(ms_vars->exec_argv[0][0] == '.' && ms_vars->exec_argv[0][1] == '/')//need tosplit the directory?? cgoh: don't need
 	{
 		if(getcwd(cwd, sizeof(cwd)))
 			path = ft_strdup(cwd);
