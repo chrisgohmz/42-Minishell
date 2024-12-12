@@ -36,7 +36,7 @@ static int	cmp_len(char *key, char *ep_var)
 		return (j);
 }
 
-int	find_unset_pos(t_ms_vars *ms_vars, char *key)
+static int	find_unset_pos(t_ms_vars *ms_vars, char *key)
 {
 	unsigned int i;
 
