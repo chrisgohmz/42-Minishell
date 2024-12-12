@@ -148,4 +148,7 @@ int				open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			reset_heredoc_fds(t_ms_vars *ms_vars);
 void			close_heredoc_fds(t_ms_vars *ms_vars);
 
+/* used in unset.c and exec.c */
+int	find_unset_pos(t_ms_vars *ms_vars, char *key);
+
 #endif
