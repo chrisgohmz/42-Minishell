@@ -57,12 +57,13 @@ static char **store_path(t_ms_vars *ms_vars)
 	return (bin);
 }
 
-void	exec_cmd(t_ms_vars *ms_vars)
+static int relative_path(t_ms_vars *ms_vars)
 {
-	char **bin;
-	char *path;
-	int len;
 	int i;
+	char **bin;
+	int len;
+	char *path;
+
 	i = 0;
 	bin = store_path(ms_vars);
 	if (!bin)
@@ -75,7 +76,7 @@ void	exec_cmd(t_ms_vars *ms_vars)
 		len = ft_strlen(bin[i]) + ft_strlen(ms_vars->exec_argv[0]) + 1;
 		path = malloc(sizeof(char) * (len + 1));
 		if (!path)
-			return ;
+			return (1);
 		ft_strlcpy(path, bin[i], ft_strlen(bin[i]) + 1);
 		ft_strlcat(path, "/", len + 1);
 		ft_strlcat(path, ms_vars->exec_argv[0], len + 1);
@@ -83,15 +84,45 @@ void	exec_cmd(t_ms_vars *ms_vars)
 			break ;
 		i++;
 	}
-	if (ms_vars->stdout_fd != STDOUT_FILENO)
-		close(ms_vars->stdout_fd); //For the case of single execve cmd, close the saved stdout fd from earlier, refer to redirections.c lines 19-24
-	if (ms_vars->stdin_fd != STDIN_FILENO)
-		close(ms_vars->stdin_fd); //likewise for stdin
 	if(execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
 	{
 		perror("execve unsuccessful");
 		ms_vars->exit_value = 127;
 		free(path);
+		return (1);
+	}
+	return (0);
+}
+
+void	exec_cmd(t_ms_vars *ms_vars)
+{
+	char **bin;
+	char *path;
+	int len;
+	int i;
+	char	cwd[PATH_MAX];
+	
+	if (ms_vars->stdout_fd != STDOUT_FILENO)
+		close(ms_vars->stdout_fd); //For the case of single execve cmd, close the saved stdout fd from earlier, refer to redirections.c lines 19-24
+	if (ms_vars->stdin_fd != STDIN_FILENO)
+		close(ms_vars->stdin_fd); //likewise for stdin
+	if(ms_vars->exec_argv[0][0] == '/')
+	{
+		if(execve(ms_vars->exec_argv[0], ms_vars->exec_argv, ms_vars->ep) == -1)
+		{
+			perror("execve unsuccessful");
+			ms_vars->exit_value = 127;
+		}
 		return ;
 	}
+	else if(ms_vars->exec_argv[0][0] == '.' && ms_vars->exec_argv[0][1] == '/')//need tosplit the directory??
+	{
+		if(getcwd(cwd, sizeof(cwd)))
+			path = ft_strdup(cwd);
+		else
+			return ;
+		
+	}
+	else
+		relative_path(ms_vars);	
 }
