@@ -86,6 +86,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		{
 			pipe(fds);
 			pid = fork();
+			minishell_signals();
 			if (pid < 0)
 			{
 				perror("fork");

@@ -21,10 +21,10 @@
     Cont: unblock a stopped process
     Stop: block the process
 */
-void sigint_handler(int signum) //not working
+void sigint_handler(int signum)
 {
     signum = 0;
-    printf("CTRL + C received");
+    printf("CTRL+C received\n"); //need to display prompt instead
 }
 
 void    minishell_signals(void)
