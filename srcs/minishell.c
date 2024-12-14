@@ -12,8 +12,6 @@
 
 #include "../includes/minishell.h"
 
-t_ms_vars	ms_vars;
-
 static void	init_vars(t_ms_vars *ms_vars)
 {
 	char	*prompt;
@@ -36,16 +34,16 @@ static void	init_vars(t_ms_vars *ms_vars)
 
 int	main(void)
 {
-	// t_ms_vars	ms_vars;
+	t_ms_vars	ms_vars;
 
 	ms_vars.exit_value = 0;
 	ms_vars.proc_type = PARENT;
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
+	minishell_signals();
 	while (true)
 	{
-		minishell_signals();
 		init_vars(&ms_vars);
 		ms_vars.line = readline(ms_vars.prompt);
 		// handle CTRL + D
