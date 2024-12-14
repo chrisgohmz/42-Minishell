@@ -6,11 +6,13 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:44:42 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/19 19:25:26 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/14 18:29:11 by lpwi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+t_ms_vars	ms_vars;
 
 static void	init_vars(t_ms_vars *ms_vars)
 {
@@ -34,7 +36,7 @@ static void	init_vars(t_ms_vars *ms_vars)
 
 int	main(void)
 {
-	t_ms_vars	ms_vars;
+	// t_ms_vars	ms_vars;
 
 	ms_vars.exit_value = 0;
 	ms_vars.proc_type = PARENT;
@@ -43,8 +45,12 @@ int	main(void)
 		exit(EXIT_FAILURE);
 	while (true)
 	{
+		minishell_signals();
 		init_vars(&ms_vars);
 		ms_vars.line = readline(ms_vars.prompt);
+		// handle CTRL + D
+		if (ms_vars.line == NULL)
+			exit_cleanup(&ms_vars);
 		if (!ms_vars.line)
 			break ;
 		if (!ms_vars.line[0])

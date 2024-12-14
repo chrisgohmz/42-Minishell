@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/19 19:30:53 by cgoh             ###   ########.fr       */
+/*   Updated: 2024/12/14 18:30:00 by lpwi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <linux/limits.h>
 # include <fcntl.h>
 # include <sys/stat.h>
+# include <signal.h>
 # define PROMPT_START "\001\e[1;95m\002LynetteChriShell:"
 # define PROMPT_END "> \001\e[0m\002"
 # define SYNTAX_ERROR 2
@@ -103,6 +104,9 @@ typedef struct s_mergesort_vars
 	int	middle;
 	int	end;
 }	t_mergesort_vars;
+
+extern t_ms_vars	ms_vars;
+
 char			**redirection_split(char *str);
 t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value);
 int				count_split_elements(char **split);
@@ -147,5 +151,6 @@ char			**do_expansions(char *str, t_ms_vars *ms_vars);
 int				open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			reset_heredoc_fds(t_ms_vars *ms_vars);
 void			close_heredoc_fds(t_ms_vars *ms_vars);
+void    minishell_signals(void);
 
 #endif
