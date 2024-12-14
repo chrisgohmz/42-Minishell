@@ -86,7 +86,6 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		{
 			pipe(fds);
 			pid = fork();
-			minishell_signals();
 			if (pid < 0)
 			{
 				perror("fork");
@@ -94,6 +93,8 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			}
 			else if (pid == 0)
 			{
+				signal(SIGINT, SIG_DFL); //display 2x prompt
+				signal(SIGQUIT, SIG_IGN); //unable to segfault
 				ms_vars->proc_type = CHILD;
 				dup2(fds[1], STDOUT_FILENO);
 				close(fds[0]);

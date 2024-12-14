@@ -24,7 +24,10 @@
 void sigint_handler(int signum)
 {
     signum = 0;
-    printf("CTRL+C received\n"); //need to display prompt instead
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    printf("\n");
+    rl_redisplay();
 }
 
 void    minishell_signals(void)

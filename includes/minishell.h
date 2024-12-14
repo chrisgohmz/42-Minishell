@@ -105,8 +105,6 @@ typedef struct s_mergesort_vars
 	int	end;
 }	t_mergesort_vars;
 
-extern t_ms_vars	ms_vars;
-
 char			**redirection_split(char *str);
 t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value);
 int				count_split_elements(char **split);

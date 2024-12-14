@@ -24,6 +24,8 @@ int	perform_heredoc(char *delimiter, t_ms_vars *ms_vars,
 		close(ms_vars->heredoc_fd[pipe_num][1]);
 	if (pipe(ms_vars->heredoc_fd[pipe_num]) < 0)
 		return (perror("pipe"), 0);
+	signal(SIGINT, SIG_DFL); //needs to exit heredoc but it is exiting the shell immediately
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		line = readline("\001\e[1;96m\002heredoc> \001\e[0m\002");
