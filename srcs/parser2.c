@@ -75,27 +75,45 @@ void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
+	int fds[2];
 	pid_t	pid;
+	int status;
 
 	branch = 0;
 	while (branch < stree->num_branches)
 	{
-		pid = fork();
-		if (pid < 0)
+		if(branch != (stree->num_branches - 1))
 		{
-			perror("fork");
-			return ;
+			pipe(fds);
+			pid = fork();
+			if (pid < 0)
+			{
+				perror("fork");
+				return ;
+			}
+			else if (pid == 0)
+			{
+				ms_vars->proc_type = CHILD;
+				dup2(fds[1], STDOUT_FILENO);
+				close(fds[0]);
+				close(fds[1]);
+				parse_cmd_redirects(stree->branches[branch], ms_vars);
+				exit_cleanup(ms_vars);
+			}
+			else //exit to parent
+			{
+				dup2(fds[0], STDIN_FILENO);
+				close(fds[0]);
+				close(fds[1]);
+			}
+			waitpid(pid, &status, 0);
 		}
-		else if (pid == 0)
-		{
-			ms_vars->proc_type = CHILD;
+		else
 			parse_cmd_redirects(stree->branches[branch], ms_vars);
-			exit_cleanup(ms_vars);
-		}
-		if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)
-			close(ms_vars->heredoc_fd[ms_vars->pipe_number][0]);
 		ms_vars->pipe_number++;
 		ms_vars->pid_arr[branch++] = pid;
+		if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)
+			close(ms_vars->heredoc_fd[ms_vars->pipe_number][0]);
 	}
 }
 

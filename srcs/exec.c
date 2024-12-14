@@ -64,7 +64,7 @@ static int relative_path(t_ms_vars *ms_vars)
 	}
 	if(execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
 	{
-		perror("execve unsuccessful");
+		perror(ms_vars->exec_argv[0]);
 		ms_vars->exit_value = 127;
 		free_2d_arr((void***)&path_and_cmd);
 		free(path);
