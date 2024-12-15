@@ -150,5 +150,9 @@ int				open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			reset_heredoc_fds(t_ms_vars *ms_vars);
 void			close_heredoc_fds(t_ms_vars *ms_vars);
 void    minishell_signals(void);
+void sigint_handler(int signum);
+void sigquit_handler(int signum);
+void heredoc_sigint_handler(int signum);
+void child_sigint_handler(int signum);
 
 #endif

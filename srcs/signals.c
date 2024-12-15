@@ -21,13 +21,39 @@
     Cont: unblock a stopped process
     Stop: block the process
 */
+
 void sigint_handler(int signum)
 {
     signum = 0;
+    printf("\n");
     rl_on_new_line();
     rl_replace_line("", 0);
-    printf("\n");
     rl_redisplay();
+}
+
+void child_sigint_handler(int signum) //shell exit when pipe is involved
+{
+    signum = 0;
+    rl_on_new_line();
+    // rl_replace_line("", 0);
+    printf("\n");
+    // rl_redisplay(); // works for cat but idky.
+}
+
+void sigquit_handler(int signum)
+{
+    signum = 0;
+    printf("Quit (core dumped)\n");
+}
+
+void heredoc_sigint_handler(int signum)
+{
+    signum = 0;
+    printf("\n");
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    // need to exit heredoc and go back to parent prompt
+
 }
 
 void    minishell_signals(void)
