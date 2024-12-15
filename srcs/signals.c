@@ -52,7 +52,7 @@ void heredoc_sigint_handler(int signum)
     printf("\n");
     rl_on_new_line();
     rl_replace_line("", 0);
-    // need to exit heredoc and go back to parent prompt
+    // need to exit heredoc and go back to parent prompt, unable to exit because heredoc is run in PARENT
 
 }
 
