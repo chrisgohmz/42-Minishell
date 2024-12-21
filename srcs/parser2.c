@@ -85,7 +85,9 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		if(branch != (stree->num_branches - 1))
 		{
 			pipe(fds);
-			pid = fork();
+			// signal(SIGINT, SIG_IGN);
+			// signal(SIGQUIT, SIG_IGN);
+			pid = fork(); // may not need to fork since parse_cmd is creating a fork?
 			if (pid < 0)
 			{
 				perror("fork");
@@ -98,7 +100,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				close(fds[0]);
 				close(fds[1]);
 				parse_cmd_redirects(stree->branches[branch], ms_vars);
-				exit_cleanup(ms_vars);
+				// exit_cleanup(ms_vars);
 			}
 			else //exit to parent
 			{

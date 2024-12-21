@@ -31,13 +31,11 @@ void sigint_handler(int signum)
     rl_redisplay();
 }
 
-void child_sigint_handler(int signum) //shell exit when pipe is involved
+void parse_sigint_handler(int signum) //shell exit when pipe is involved
 {
     signum = 0;
-    rl_on_new_line();
-    // rl_replace_line("", 0);
     printf("\n");
-    // rl_redisplay(); // works for cat but idky.
+    rl_on_new_line();
 }
 
 void sigquit_handler(int signum)
@@ -53,7 +51,6 @@ void heredoc_sigint_handler(int signum)
     rl_on_new_line();
     rl_replace_line("", 0);
     // need to exit heredoc and go back to parent prompt, unable to exit because heredoc is run in PARENT
-
 }
 
 void    minishell_signals(void)

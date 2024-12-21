@@ -41,15 +41,13 @@ int	main(void)
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
-	minishell_signals();
 	while (true)
 	{
+		minishell_signals();
 		init_vars(&ms_vars);
 		ms_vars.line = readline(ms_vars.prompt);
-		// handle CTRL + D
-		if (ms_vars.line == NULL)
-			exit_cleanup(&ms_vars);
-		if (!ms_vars.line)
+		printf("readline: %p\n", ms_vars.line);
+		if (!ms_vars.line) //handles ctrl D but after successful pipe, shell exit here. likely parent fd stdin and out is closed??
 			break ;
 		if (!ms_vars.line[0])
 		{

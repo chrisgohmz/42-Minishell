@@ -75,7 +75,6 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	ms_vars->argv_index = 0;
 	split_arr = NULL;
 	modify_expansions_if_export(stree);
-	signal(SIGINT, child_sigint_handler); //change signal for SIGINT
 	while (branch < stree->num_branches)
 	{
 		if (stree->branches[branch]->type == WORD)
@@ -150,7 +149,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	int		branch;
 
 	branch = 0;
-	// signal(SIGINT, child_sigint_handler);
+	signal(SIGINT, parse_sigint_handler);
 	signal(SIGQUIT, sigquit_handler);
 	if (stree->type == PIPE)
 	{
