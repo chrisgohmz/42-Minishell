@@ -75,10 +75,11 @@ void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
-	int fds[2];
+	int 	fds[2];
 	pid_t	pid;
-	int status;
+	//int status;
 
+	//current problem: shell will exit with piped commands because a child process wasn't made for the last command, thus execve was called on main process
 	branch = 0;
 	while (branch < stree->num_branches)
 	{
@@ -87,7 +88,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			pipe(fds);
 			// signal(SIGINT, SIG_IGN);
 			// signal(SIGQUIT, SIG_IGN);
-			pid = fork(); // may not need to fork since parse_cmd is creating a fork?
+			pid = fork(); // may not need to fork since parse_cmd is creating a fork? cgoh: u do. parse_cmd_redirects doesn't do any forks
 			if (pid < 0)
 			{
 				perror("fork");
@@ -108,7 +109,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 				close(fds[0]);
 				close(fds[1]);
 			}
-			waitpid(pid, &status, 0);
+			//waitpid(pid, &status, 0); not needed, handled in function wait_child_processes
 		}
 		else
 			parse_cmd_redirects(stree->branches[branch], ms_vars);

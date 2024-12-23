@@ -149,8 +149,6 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	int		branch;
 
 	branch = 0;
-	signal(SIGINT, parse_sigint_handler);
-	signal(SIGQUIT, sigquit_handler);
 	if (stree->type == PIPE)
 	{
 		if (stree->num_branches > MAX_PIPES)
@@ -160,8 +158,10 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			ms_vars->exit_value = SYNTAX_ERROR;
 			return ;
 		}
+		signal(SIGINT, parse_sigint_handler);
 		if (!open_heredocs(stree, ms_vars))
 			return (close_heredoc_fds(ms_vars));
+		signal(SIGQUIT, sigquit_handler);
 		if (stree->num_branches > 1)
 		{
 			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
@@ -193,7 +193,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			return ;
 		}
 	}
-	while (branch < stree->num_branches && stree->type != PIPE)
+	while (!g_signal && branch < stree->num_branches && stree->type != PIPE)
 	{
 		if (stree->branches[branch]->type == AND && ms_vars->exit_value != EXIT_SUCCESS)
 			branch += 2;

@@ -22,39 +22,30 @@
     Stop: block the process
 */
 
-void sigint_handler(int signum)
+void sigint_handler(int)
 {
-    signum = 0;
     printf("\n");
     rl_on_new_line();
     rl_replace_line("", 0);
     rl_redisplay();
+    g_signal = 1;
 }
 
-void parse_sigint_handler(int signum) //shell exit when pipe is involved
+void parse_sigint_handler(int) //shell exit when pipe is involved
 {
-    signum = 0;
     printf("\n");
     rl_on_new_line();
+    g_signal = 1;
 }
 
-void sigquit_handler(int signum)
+void sigquit_handler(int)
 {
-    signum = 0;
     printf("Quit (core dumped)\n");
-}
-
-void heredoc_sigint_handler(int signum)
-{
-    signum = 0;
-    printf("\n");
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    // need to exit heredoc and go back to parent prompt, unable to exit because heredoc is run in PARENT
 }
 
 void    minishell_signals(void)
 {
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, SIG_IGN);
+    g_signal = 0;
 }

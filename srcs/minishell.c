@@ -12,6 +12,8 @@
 
 #include "../includes/minishell.h"
 
+bool	g_signal;
+
 static void	init_vars(t_ms_vars *ms_vars)
 {
 	char	*prompt;
@@ -41,12 +43,14 @@ int	main(void)
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
+	rl_event_hook = rl_event_handler;
 	while (true)
 	{
 		minishell_signals();
 		init_vars(&ms_vars);
 		ms_vars.line = readline(ms_vars.prompt);
-		printf("readline: %p\n", ms_vars.line);
+		if (g_signal)
+			ms_vars.exit_value = 128 + SIGINT;
 		if (!ms_vars.line) //handles ctrl D but after successful pipe, shell exit here. likely parent fd stdin and out is closed??
 			break ;
 		if (!ms_vars.line[0])
