@@ -193,7 +193,7 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			return ;
 		}
 	}
-	while (!g_signal && branch < stree->num_branches && stree->type != PIPE)
+	while (!g_sigint && branch < stree->num_branches && stree->type != PIPE)
 	{
 		if (stree->branches[branch]->type == AND && ms_vars->exit_value != EXIT_SUCCESS)
 			branch += 2;

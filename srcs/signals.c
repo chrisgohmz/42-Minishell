@@ -28,14 +28,14 @@ void sigint_handler(int)
     rl_on_new_line();
     rl_replace_line("", 0);
     rl_redisplay();
-    g_signal = 1;
+    g_sigint = 1;
 }
 
 void parse_sigint_handler(int) //shell exit when pipe is involved
 {
     printf("\n");
     rl_on_new_line();
-    g_signal = 1;
+    g_sigint = 1;
 }
 
 void sigquit_handler(int)
@@ -47,5 +47,5 @@ void    minishell_signals(void)
 {
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, SIG_IGN);
-    g_signal = 0;
+    g_sigint = 0;
 }

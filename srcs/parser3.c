@@ -61,7 +61,7 @@ static char	*remove_quotes_in_non_null_args(char *str)
 		}
 		k = -1;
 		while (split_arr[i][++k])
-			if (!(split_arr[i][k] == DQUOTE) && !(split_arr[i][k] == SQUOTE))
+			if (split_arr[i][k] != DQUOTE && split_arr[i][k] != SQUOTE)
 				new_str[j++] = split_arr[i][k];
 		if (split_arr[i + 1])
 			new_str[j++] = ' ';

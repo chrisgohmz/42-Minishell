@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-bool	g_signal;
+bool	g_sigint;
 
 static void	init_vars(t_ms_vars *ms_vars)
 {
@@ -49,8 +49,11 @@ int	main(void)
 		minishell_signals();
 		init_vars(&ms_vars);
 		ms_vars.line = readline(ms_vars.prompt);
-		if (g_signal)
+		if (g_sigint)
+		{
 			ms_vars.exit_value = 128 + SIGINT;
+			g_sigint = 0;
+		}
 		if (!ms_vars.line) //handles ctrl D but after successful pipe, shell exit here. likely parent fd stdin and out is closed??
 			break ;
 		if (!ms_vars.line[0])

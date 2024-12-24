@@ -33,7 +33,7 @@
 # define SYNTAX_ERROR 2
 # define MAX_PIPES 5000
 
-extern bool g_signal;
+extern bool g_sigint;
 typedef enum e_token_type
 {
 	BRACKETS,

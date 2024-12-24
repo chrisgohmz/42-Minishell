@@ -29,7 +29,7 @@ int	perform_heredoc(char *delimiter, t_ms_vars *ms_vars,
 	while (1)
 	{
 		line = readline("\001\e[1;96m\002heredoc> \001\e[0m\002");
-		if (!line || !ft_strncmp(delimiter, line, ft_strlen(delimiter) + 1) || g_signal)
+		if (!line || !ft_strncmp(delimiter, line, ft_strlen(delimiter) + 1) || g_sigint)
 		{
 			free(line);
 			break ;	
@@ -47,9 +47,9 @@ int	perform_heredoc(char *delimiter, t_ms_vars *ms_vars,
 		free(line);
 	}
 	close(ms_vars->heredoc_fd[pipe_num][1]);
-	if (g_signal)
+	if (g_sigint)
 		ms_vars->exit_value = 128 + SIGINT;
-	return (!g_signal);
+	return (!g_sigint);
 }
 
 int	open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars)
