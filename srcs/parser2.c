@@ -79,7 +79,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	pid_t	pid;
 	//int status;
 
-	//current problem: shell will exit with piped commands because a child process wasn't made for the last command, thus execve was called on main process
+	//current problem: shell will exit with piped commands because parent's stdin fd was replaced, need to make sure only the child calls dup2
 	branch = 0;
 	while (branch < stree->num_branches)
 	{
@@ -88,7 +88,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			pipe(fds);
 			// signal(SIGINT, SIG_IGN);
 			// signal(SIGQUIT, SIG_IGN);
-			pid = fork(); // may not need to fork since parse_cmd is creating a fork? cgoh: u do. parse_cmd_redirects doesn't do any forks
+			pid = fork(); // may not need to fork since parse_cmd is creating a fork? cgoh: u do. parse_cmd_redirects doesn't do any forks for piped commands
 			if (pid < 0)
 			{
 				perror("fork");
