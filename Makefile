@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -MMD -MP -g
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -g -std=gnu2x
 SPEEDFLAGS = -Wall -Wextra -Werror -Ofast
 LDFLAGS = -Llibft
 LDLIBS = -lft -lreadline -ltinfo
