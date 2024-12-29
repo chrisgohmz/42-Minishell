@@ -26,6 +26,8 @@ int   non_numeric_string(char *str)
    int   i;
 
    i = 0;
+   if(str[i] == '-' || str[i] == '+')
+      i++;
    while(str[i])
    {
       if(ft_isdigit(str[i]) == 0)
@@ -35,23 +37,54 @@ int   non_numeric_string(char *str)
    return (0);
 }
 
+int check_value(char *str)
+{
+   int sign;
+   int i;
+   int len;
+   char *max = "2147483647";
+
+   i = 0;
+   if(str[i] == '+' || str[i] == '-')
+   {
+      if(str[i] == '+')
+         sign = 1;
+      else if(str[i] == '-')
+         sign = -1;
+      i++;
+   }
+   len = ft_strlen(&str[i]);
+   if(len > 10)
+      return (1);
+   else if(len == 10 && ft_strncmp(max, &str[i], len) < 0)
+      return (1);
+   else
+      return (0);
+}
+
 void	exit_builtin(t_ms_vars *ms_vars)
 {
-   printf("exit\n");
+   ft_putendl_fd("exit", STDOUT_FILENO);
    if(ms_vars->exec_argv[1])
    {
       if(non_numeric_string(ms_vars->exec_argv[1]) == 1)
       {   
          ms_vars->exit_value = 2;
-         if(non_numeric_string(ms_vars->exec_argv[1]) == 1)
-            perror("exit: numeric argument required\n");
+         ft_putendl_fd("exit: numeric argument required", STDERR_FILENO);
          exit_cleanup(ms_vars);
+         return ;
       }
       else if(ms_vars->exec_argv[2])
       {
          ms_vars->exit_value = 1;
-         perror("exit: too many arguments\n");
+         ft_putendl_fd("exit: too many arguments", STDERR_FILENO);
          return ;
+      }
+      if(check_value(ms_vars->exec_argv[1]) == 1)
+      {   
+         ms_vars->exit_value = 2;
+         ft_putendl_fd("exit: numeric argument required", STDERR_FILENO);
+         exit_cleanup(ms_vars);
       }
       else
       {

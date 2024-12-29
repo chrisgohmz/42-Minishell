@@ -28,12 +28,13 @@
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <signal.h>
+# include <limits.h>
 # define PROMPT_START "\001\e[1;95m\002LynetteChriShell:"
 # define PROMPT_END "> \001\e[0m\002"
 # define SYNTAX_ERROR 2
 # define MAX_PIPES 5000
 
-extern bool g_sigint;
+extern int g_sigint;
 typedef enum e_token_type
 {
 	BRACKETS,
@@ -156,5 +157,6 @@ void			sigquit_handler(int signum);
 void			heredoc_sigint_handler(int signum);
 void			parse_sigint_handler(int signum);
 int				rl_event_handler(void);
+void 			child_handler(int);
 
 #endif

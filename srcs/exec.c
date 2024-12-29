@@ -25,6 +25,8 @@ static char **store_path(void)
 	char **bin;
 
 	path = getenv("PATH");
+	if (!path)
+		return NULL;
 	bin  = ft_split(path, ':');
 	if (!bin)
 	{
@@ -45,7 +47,9 @@ static int relative_path(t_ms_vars *ms_vars)
 	bin = store_path();
 	if (!bin)
 	{
-		perror("store path failure\n");
+		errno = ENOENT;
+		perror(ms_vars->exec_argv[0]);
+		ms_vars->exit_value = 127;
 		return (0);
 	}
 	while (bin[i])
@@ -59,17 +63,30 @@ static int relative_path(t_ms_vars *ms_vars)
 		path_and_cmd[2] = NULL;
 		path = ft_multi_strjoin(2, path_and_cmd, "/");
 		if(access(path, F_OK | X_OK) != -1)
+		{
 			break ;
-		i++;
-	}
-	if(execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
-	{
-		perror(ms_vars->exec_argv[0]);
-		ms_vars->exit_value = 127;
+		}
 		free_2d_arr((void***)&path_and_cmd);
 		free(path);
+		path = NULL;
+		i++;
+	}
+	if (!path)
+	{
+		errno = ENOENT;
+		perror(ms_vars->exec_argv[0]);
+		ms_vars->exit_value = 127;
+	}
+	if(path && execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
+	{
+		perror(ms_vars->exec_argv[0]);
+		if (errno == EACCES)
+			ms_vars->exit_value = 126;
+		else
+			ms_vars->exit_value = 127;
 		return (1);
 	}
+	free_2d_arr((void***)&bin);
 	return (0);
 }
 
@@ -79,17 +96,15 @@ void	exec_cmd(t_ms_vars *ms_vars)
 		close(ms_vars->stdout_fd); //For the case of single execve cmd, close the saved stdout fd from earlier, refer to redirections.c lines 19-24
 	if (ms_vars->stdin_fd != STDIN_FILENO)
 		close(ms_vars->stdin_fd); //likewise for stdin
-	/*
-		Split into 2 cases.
-		Case 1: cmd name contains a '/' character in any part of the string, this is an absolute or relative path, don't search PATH
-		Case 2: otherwise, search PATH only. Do not try to access and execve the cmd by itself (e.g. access(minishell) followed by execve(minishell)) as this would succeed when it shouldn't. 
-	*/
 	if(ft_strchr(ms_vars->exec_argv[0], '/'))
 	{
 		if(execve(ms_vars->exec_argv[0], ms_vars->exec_argv, ms_vars->ep) == -1)
 		{
-			perror("execve unsuccessful");
-			ms_vars->exit_value = 127;
+			perror(ms_vars->exec_argv[0]);
+			if (errno == EACCES)
+				ms_vars->exit_value = 126;
+			else
+				ms_vars->exit_value = 127;
 		}
 		return ;
 	}

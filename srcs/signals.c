@@ -33,14 +33,12 @@ void sigint_handler(int)
 
 void parse_sigint_handler(int) //shell exit when pipe is involved
 {
-    printf("\n");
-    rl_on_new_line();
     g_sigint = 1;
 }
 
 void sigquit_handler(int)
 {
-    printf("Quit (core dumped)\n");
+    g_sigint = 2;
 }
 
 void    minishell_signals(void)

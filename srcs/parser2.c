@@ -77,42 +77,70 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	int		branch;
 	int 	fds[2];
 	pid_t	pid;
+	int 	temp_fd;
 	//int status;
 
 	//current problem: shell will exit with piped commands because parent's stdin fd was replaced, need to make sure only the child calls dup2
 	branch = 0;
+	temp_fd = -1;
 	while (branch < stree->num_branches)
 	{
-		if(branch != (stree->num_branches - 1))
+		pipe(fds);
+		pid = fork();
+		if (pid < 0)
 		{
-			pipe(fds);
-			// signal(SIGINT, SIG_IGN);
-			// signal(SIGQUIT, SIG_IGN);
-			pid = fork(); // may not need to fork since parse_cmd is creating a fork? cgoh: u do. parse_cmd_redirects doesn't do any forks for piped commands
-			if (pid < 0)
+			perror("fork");
+			return ;
+		}
+		else if (pid == 0) 
+		{
+			ms_vars->proc_type = CHILD;
+			if (branch == 0) //child of 1st cmd
 			{
-				perror("fork");
-				return ;
-			}
-			else if (pid == 0)
-			{
-				ms_vars->proc_type = CHILD;
-				dup2(fds[1], STDOUT_FILENO);
+				if (dup2(fds[1], STDOUT_FILENO) == -1)
+					perror("fds[0]"); // to send output of 1st cmd to write end of the pipe
 				close(fds[0]);
 				close(fds[1]);
 				parse_cmd_redirects(stree->branches[branch], ms_vars);
-				// exit_cleanup(ms_vars);
+				exit_cleanup(ms_vars);
 			}
-			else //exit to parent
+			else if (branch == (stree->num_branches - 1)) //child of last cmd
 			{
-				dup2(fds[0], STDIN_FILENO);
+				if (dup2(temp_fd, STDIN_FILENO) == -1)
+					perror("temp_fd");
+				close(temp_fd);
 				close(fds[0]);
 				close(fds[1]);
+				parse_cmd_redirects(stree->branches[branch], ms_vars);
+				exit_cleanup(ms_vars);
 			}
-			//waitpid(pid, &status, 0); not needed, handled in function wait_child_processes
+			else
+			{
+				if (dup2(temp_fd, STDIN_FILENO) == -1)
+					perror("temp_fd");
+				if (dup2(fds[1], STDOUT_FILENO) == -1)
+					perror("fd[1]");
+				close(temp_fd);
+				close(fds[0]);
+				close(fds[1]);
+				parse_cmd_redirects(stree->branches[branch], ms_vars);
+				exit_cleanup(ms_vars);
+			}
 		}
-		else
-			parse_cmd_redirects(stree->branches[branch], ms_vars);
+		else if(branch == (stree->num_branches - 1))//exit to parent
+		{
+			if (temp_fd != -1)
+				close(temp_fd);
+			close(fds[0]);
+			close(fds[1]);
+		}
+		else //exit to parent
+		{
+			if (temp_fd != -1)
+				close(temp_fd);
+			temp_fd = fds[0];
+			close(fds[1]);
+		}
 		ms_vars->pipe_number++;
 		ms_vars->pid_arr[branch++] = pid;
 		if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)

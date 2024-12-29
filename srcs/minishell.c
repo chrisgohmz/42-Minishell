@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-bool	g_sigint;
+int	g_sigint;
 
 static void	init_vars(t_ms_vars *ms_vars)
 {
@@ -43,7 +43,7 @@ int	main(void)
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
-	rl_event_hook = rl_event_handler;
+	//rl_event_hook = rl_event_handler;
 	while (true)
 	{
 		minishell_signals();

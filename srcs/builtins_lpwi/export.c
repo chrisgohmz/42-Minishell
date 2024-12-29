@@ -33,9 +33,13 @@ static int	ft_valid_key_value(char *str)
 		return (0);
 	while (ft_isalnum(str[i]) || str[i] == '_')
 		i++;
-	if (str[i] == '=')
-		return (1);
-	return (2);
+	if (str[i])
+	{
+		if(str[i] == '=')
+			return (1);
+		return (0);
+	}
+	return (1);
 }
 
 static int ft_new_strlen(char *str)
@@ -95,7 +99,7 @@ void	export_builtin(t_ms_vars *ms_vars)
 		is_valid_key = ft_valid_key_value(ms_vars->exec_argv[i]);
 		if(!is_valid_key)
 		{
-			ft_dprintf(STDERR_FILENO, "\e[1;91mexport: %s: not a valid identifier\n\e[1;91m", ms_vars->exec_argv[i]);
+			ft_dprintf(STDERR_FILENO, "export: %s: not a valid identifier\n", ms_vars->exec_argv[i]);
 			err = 1;
 		}
 		else if (is_valid_key == 1)

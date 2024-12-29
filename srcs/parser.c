@@ -200,6 +200,12 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		else if (stree->branches[branch]->type == OR && ms_vars->exit_value == EXIT_SUCCESS)
 			branch += 2;
 		else
+		{
 			parse_tree(stree->branches[branch++], ms_vars);
+			if (g_sigint == 1)
+				printf("\n");
+			else if (g_sigint == 2)
+				printf("Quit (core dumped)\n");
+		}
 	}
 }
