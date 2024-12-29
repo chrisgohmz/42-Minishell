@@ -36,7 +36,7 @@ static char **store_path(void)
 	return (bin);
 }
 
-static int relative_path(t_ms_vars *ms_vars)
+static void relative_path(t_ms_vars *ms_vars, struct stat *statbuf)
 {
 	int i;
 	char **bin;
@@ -50,21 +50,41 @@ static int relative_path(t_ms_vars *ms_vars)
 		errno = ENOENT;
 		perror(ms_vars->exec_argv[0]);
 		ms_vars->exit_value = 127;
-		return (0);
+		return ;
 	}
 	while (bin[i])
 	{
-		//cgoh: ft_multi_strjoin is probably easier.
 		path_and_cmd = malloc(sizeof(char *) * 3);
 		if(!path_and_cmd)
-			return (1);
+			return ;
 		path_and_cmd[0] = ft_strdup(bin[i]);
 		path_and_cmd[1] = ft_strdup(ms_vars->exec_argv[0]);
 		path_and_cmd[2] = NULL;
 		path = ft_multi_strjoin(2, path_and_cmd, "/");
-		if(access(path, F_OK | X_OK) != -1)
+		if(access(path, F_OK) != -1)
 		{
-			break ;
+			if (stat(path, statbuf) < 0)
+				perror("stat");
+			if (S_ISDIR(statbuf->st_mode))
+			{
+				ft_dprintf(STDERR_FILENO, "%s: Is a directory\n", ms_vars->exec_argv[0]);
+				ms_vars->exit_value = 126;
+				free_2d_arr((void***)&path_and_cmd);
+				free_2d_arr((void***)&bin);
+				free(path);
+				return ;
+			}
+			if (access(path, X_OK) == -1)
+			{
+				perror(ms_vars->exec_argv[0]);
+				ms_vars->exit_value = 126;
+				free_2d_arr((void***)&path_and_cmd);
+				free_2d_arr((void***)&bin);
+				free(path);
+				return ;
+			}
+			else
+				break;
 		}
 		free_2d_arr((void***)&path_and_cmd);
 		free(path);
@@ -75,29 +95,36 @@ static int relative_path(t_ms_vars *ms_vars)
 	{
 		errno = ENOENT;
 		perror(ms_vars->exec_argv[0]);
-		ms_vars->exit_value = 127;
 	}
 	if(path && execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
-	{
 		perror(ms_vars->exec_argv[0]);
-		if (errno == EACCES)
-			ms_vars->exit_value = 126;
-		else
-			ms_vars->exit_value = 127;
-		return (1);
-	}
+	ms_vars->exit_value = 127;
 	free_2d_arr((void***)&bin);
-	return (0);
+	free_2d_arr((void***)&path_and_cmd);
+	free(path);
 }
 
 void	exec_cmd(t_ms_vars *ms_vars)
 {	
+	struct stat	statbuf;
+
 	if (ms_vars->stdout_fd != STDOUT_FILENO)
 		close(ms_vars->stdout_fd); //For the case of single execve cmd, close the saved stdout fd from earlier, refer to redirections.c lines 19-24
 	if (ms_vars->stdin_fd != STDIN_FILENO)
 		close(ms_vars->stdin_fd); //likewise for stdin
 	if(ft_strchr(ms_vars->exec_argv[0], '/'))
 	{
+		if (access(ms_vars->exec_argv[0], F_OK) != -1)
+		{
+			if (stat(ms_vars->exec_argv[0], &statbuf) < 0)
+				perror("stat");
+			if (S_ISDIR(statbuf.st_mode))
+			{
+				ft_dprintf(STDERR_FILENO, "%s: Is a directory\n", ms_vars->exec_argv[0]);
+				ms_vars->exit_value = 126;
+				return ;
+			}
+		}
 		if(execve(ms_vars->exec_argv[0], ms_vars->exec_argv, ms_vars->ep) == -1)
 		{
 			perror(ms_vars->exec_argv[0]);
@@ -109,5 +136,5 @@ void	exec_cmd(t_ms_vars *ms_vars)
 		return ;
 	}
 	else
-		relative_path(ms_vars);	
+		relative_path(ms_vars, &statbuf);	
 }

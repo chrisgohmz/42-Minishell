@@ -43,7 +43,7 @@ int	main(void)
 	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
 	if (!make_new_envp(&ms_vars))
 		exit(EXIT_FAILURE);
-	//rl_event_hook = rl_event_handler;
+	rl_event_hook = rl_event_handler;
 	while (true)
 	{
 		minishell_signals();
@@ -54,7 +54,7 @@ int	main(void)
 			ms_vars.exit_value = 128 + SIGINT;
 			g_sigint = 0;
 		}
-		if (!ms_vars.line) //handles ctrl D but after successful pipe, shell exit here. likely parent fd stdin and out is closed??
+		if (!ms_vars.line)
 			break ;
 		if (!ms_vars.line[0])
 		{

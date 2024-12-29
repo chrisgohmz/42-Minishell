@@ -158,10 +158,10 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			ms_vars->exit_value = SYNTAX_ERROR;
 			return ;
 		}
-		signal(SIGINT, parse_sigint_handler);
 		if (!open_heredocs(stree, ms_vars))
 			return (close_heredoc_fds(ms_vars));
-		signal(SIGQUIT, sigquit_handler);
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
 		if (stree->num_branches > 1)
 		{
 			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
@@ -170,6 +170,8 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			fork_child_processes(stree, ms_vars);
 			wait_child_processes(stree, ms_vars);
 			free(ms_vars->pid_arr);
+			close_heredoc_fds(ms_vars);
+			reset_heredoc_fds(ms_vars);
 		}
 		else
 		{
@@ -200,12 +202,6 @@ void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		else if (stree->branches[branch]->type == OR && ms_vars->exit_value == EXIT_SUCCESS)
 			branch += 2;
 		else
-		{
 			parse_tree(stree->branches[branch++], ms_vars);
-			if (g_sigint == 1)
-				printf("\n");
-			else if (g_sigint == 2)
-				printf("Quit (core dumped)\n");
-		}
 	}
 }

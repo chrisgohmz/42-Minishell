@@ -33,12 +33,12 @@ void sigint_handler(int)
 
 void parse_sigint_handler(int) //shell exit when pipe is involved
 {
-    g_sigint = 1;
+    ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
 void sigquit_handler(int)
 {
-    g_sigint = 2;
+    ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
 }
 
 void    minishell_signals(void)

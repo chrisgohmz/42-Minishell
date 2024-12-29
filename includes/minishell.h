@@ -33,6 +33,8 @@
 # define PROMPT_END "> \001\e[0m\002"
 # define SYNTAX_ERROR 2
 # define MAX_PIPES 5000
+# define LONG_MAX_STR "9223372036854775807"
+# define LONG_MIN_STR "9223372036854775808"
 
 extern int g_sigint;
 typedef enum e_token_type

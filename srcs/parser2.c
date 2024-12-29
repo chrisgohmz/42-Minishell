@@ -45,6 +45,8 @@ void	fork_wait_single_process(t_ms_vars *ms_vars)
 		perror("fork");
 	else if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		exec_cmd(ms_vars);
 		exit_cleanup(ms_vars);
 	}
@@ -52,22 +54,37 @@ void	fork_wait_single_process(t_ms_vars *ms_vars)
 	if (WIFEXITED(status))
 		ms_vars->exit_value = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
+	{
 		ms_vars->exit_value = 128 + WTERMSIG(status);
+		if (WTERMSIG(status) == SIGINT)
+			ft_putchar_fd('\n', STDERR_FILENO);
+		else if (WTERMSIG(status) == SIGQUIT)
+			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+	}
 }
 
 void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
-	int	i;
-	int	status;
+	int		i;
+	int		status;
+	bool	line_printed;
 
 	i = 0;
+	line_printed = false;
 	while (i < stree->num_branches)
 	{
 		waitpid(ms_vars->pid_arr[i], &status, 0);
 		if (WIFEXITED(status))
 			ms_vars->exit_value = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
+		{
 			ms_vars->exit_value = 128 + WTERMSIG(status);
+			if (!line_printed && WTERMSIG(status) == SIGINT)
+				ft_putchar_fd('\n', STDERR_FILENO);
+			else if (!line_printed && WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
+			line_printed = true;
+		}
 		i++;
 	}
 }
@@ -85,20 +102,20 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	temp_fd = -1;
 	while (branch < stree->num_branches)
 	{
-		pipe(fds);
+		if (pipe(fds) < 0)
+			return (perror("pipe"));
 		pid = fork();
 		if (pid < 0)
-		{
-			perror("fork");
-			return ;
-		}
+			return (perror("fork"));
 		else if (pid == 0) 
 		{
 			ms_vars->proc_type = CHILD;
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
 			if (branch == 0) //child of 1st cmd
 			{
 				if (dup2(fds[1], STDOUT_FILENO) == -1)
-					perror("fds[0]"); // to send output of 1st cmd to write end of the pipe
+					perror("dup2"); // to send output of 1st cmd to write end of the pipe
 				close(fds[0]);
 				close(fds[1]);
 				parse_cmd_redirects(stree->branches[branch], ms_vars);
@@ -107,7 +124,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			else if (branch == (stree->num_branches - 1)) //child of last cmd
 			{
 				if (dup2(temp_fd, STDIN_FILENO) == -1)
-					perror("temp_fd");
+					perror("dup2");
 				close(temp_fd);
 				close(fds[0]);
 				close(fds[1]);
@@ -117,9 +134,9 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			else
 			{
 				if (dup2(temp_fd, STDIN_FILENO) == -1)
-					perror("temp_fd");
+					perror("dup2");
 				if (dup2(fds[1], STDOUT_FILENO) == -1)
-					perror("fd[1]");
+					perror("dup2");
 				close(temp_fd);
 				close(fds[0]);
 				close(fds[1]);
@@ -143,8 +160,6 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		}
 		ms_vars->pipe_number++;
 		ms_vars->pid_arr[branch++] = pid;
-		if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)
-			close(ms_vars->heredoc_fd[ms_vars->pipe_number][0]);
 	}
 }
 

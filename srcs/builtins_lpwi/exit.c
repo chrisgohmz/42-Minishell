@@ -28,6 +28,8 @@ int   non_numeric_string(char *str)
    i = 0;
    if(str[i] == '-' || str[i] == '+')
       i++;
+   if (!str[i])
+      return (1);
    while(str[i])
    {
       if(ft_isdigit(str[i]) == 0)
@@ -39,27 +41,29 @@ int   non_numeric_string(char *str)
 
 int check_value(char *str)
 {
-   int sign;
    int i;
-   int len;
-   char *max = "2147483647";
+   size_t len;
+   int   sign;
 
    i = 0;
+   sign = 1;
    if(str[i] == '+' || str[i] == '-')
    {
-      if(str[i] == '+')
-         sign = 1;
-      else if(str[i] == '-')
+      if (str[i] == '-')
          sign = -1;
       i++;
    }
    len = ft_strlen(&str[i]);
-   if(len > 10)
+   if(len > sizeof(LONG_MAX_STR) - 1)
       return (1);
-   else if(len == 10 && ft_strncmp(max, &str[i], len) < 0)
-      return (1);
-   else
-      return (0);
+   else if(len == sizeof(LONG_MAX_STR) - 1)
+   {
+      if (sign == 1 && ft_strncmp(&str[i], LONG_MAX_STR, len) > 0)
+         return (1);
+      else if (sign == -1 && ft_strncmp(&str[i], LONG_MIN_STR, len) > 0)
+         return (1);
+   }
+   return (0);
 }
 
 void	exit_builtin(t_ms_vars *ms_vars)

@@ -22,13 +22,21 @@ Handle cd with no arguments, and HOME is unset.
 void	cd_builtin(t_ms_vars *ms_vars)
 {
 	int	chdir_ret;
+	char	*home;
 
 	if (!ms_vars->exec_argv[1])
 	{
-		chdir_ret = chdir(getenv("HOME"));
+		home = getenv("HOME");
+		if (!home)
+		{
+			ft_putendl_fd("cd: HOME not set", STDERR_FILENO);
+			ms_vars->exit_value = EXIT_FAILURE;
+			return ;
+		}
+		chdir_ret = chdir(home);
 		if (chdir_ret == -1)
 		{
-			perror("cd: HOME not set\n");
+			perror(home);
 			ms_vars->exit_value = EXIT_FAILURE;
 			return ;
 		}
