@@ -155,10 +155,7 @@ void			reset_heredoc_fds(t_ms_vars *ms_vars);
 void			close_heredoc_fds(t_ms_vars *ms_vars);
 void    		minishell_signals(void);
 void			sigint_handler(int signum);
-void			sigquit_handler(int signum);
 void			heredoc_sigint_handler(int signum);
-void			parse_sigint_handler(int signum);
 int				rl_event_handler(void);
-void 			child_handler(int);
 
 #endif

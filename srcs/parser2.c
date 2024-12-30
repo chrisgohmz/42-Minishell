@@ -57,7 +57,10 @@ void	fork_wait_single_process(t_ms_vars *ms_vars)
 	{
 		ms_vars->exit_value = 128 + WTERMSIG(status);
 		if (WTERMSIG(status) == SIGINT)
+		{
+			g_sigint = 1;
 			ft_putchar_fd('\n', STDERR_FILENO);
+		}
 		else if (WTERMSIG(status) == SIGQUIT)
 			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
 	}
@@ -80,7 +83,10 @@ void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		{
 			ms_vars->exit_value = 128 + WTERMSIG(status);
 			if (!line_printed && WTERMSIG(status) == SIGINT)
+			{
+				g_sigint = 1;
 				ft_putchar_fd('\n', STDERR_FILENO);
+			}
 			else if (!line_printed && WTERMSIG(status) == SIGQUIT)
 				ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
 			line_printed = true;

@@ -19,6 +19,23 @@ exit status may also not be 127 on failure, see https://www.gnu.org/software/bas
 may want to look into access() function.
 */
 
+static void	exec_cmd_not_found_handler(t_ms_vars *ms_vars)
+{
+	char	*handler_path;
+	char	**arr;
+
+	handler_path = "/lib/command-not-found";
+	arr = ft_calloc(3, sizeof(char *));
+	if (!arr)
+		return ;
+	arr[0] = handler_path;
+	arr[1] = ms_vars->exec_argv[0];
+	execve(handler_path, arr, ms_vars->ep);
+	free(arr);
+	errno = ENOENT;
+	perror(ms_vars->exec_argv[0]);
+}
+
 static char **store_path(void)
 {
 	char *path;
@@ -52,7 +69,8 @@ static void relative_path(t_ms_vars *ms_vars, struct stat *statbuf)
 		ms_vars->exit_value = 127;
 		return ;
 	}
-	while (bin[i])
+	path = NULL;
+	while (bin[i] && ms_vars->exec_argv[0][0])
 	{
 		path_and_cmd = malloc(sizeof(char *) * 3);
 		if(!path_and_cmd)
@@ -92,10 +110,7 @@ static void relative_path(t_ms_vars *ms_vars, struct stat *statbuf)
 		i++;
 	}
 	if (!path)
-	{
-		errno = ENOENT;
-		perror(ms_vars->exec_argv[0]);
-	}
+		exec_cmd_not_found_handler(ms_vars);
 	if(path && execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
 		perror(ms_vars->exec_argv[0]);
 	ms_vars->exit_value = 127;
