@@ -12,19 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-static size_t	get_exit_value_len(unsigned char exit_value)
-{
-	size_t	len;
-
-	len = 1;
-	while (exit_value >= 10)
-	{
-		exit_value /= 10;
-		len++;
-	}
-	return (len);
-}
-
 static size_t	ft_strlcat_transform_metachar(char *dest, const char *src,
 	size_t size, char dollar_char)
 {
@@ -53,6 +40,20 @@ static size_t	ft_strlcat_transform_metachar(char *dest, const char *src,
 	return (ft_strlen(dest) + ft_strlen(&src[src_n]));
 }
 
+static int	append_expansion(char *old_str, char *new_str, int *i,
+	size_t expanded_size)
+{
+	int	j;
+
+	j = ft_strlcat_transform_metachar(new_str,
+			ft_getenv(old_str + *i + 1), expanded_size + 1,
+			old_str[*i]);
+	(*i)++;
+	while (ft_isalnum(old_str[*i]) || old_str[*i] == '_')
+		(*i)++;
+	return (j);
+}
+
 static void	fill_expanded_str(char *old_str, char *new_str,
 	t_ms_vars *ms_vars, size_t expanded_size)
 {
@@ -65,14 +66,7 @@ static void	fill_expanded_str(char *old_str, char *new_str,
 	{
 		if ((old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR)
 			&& (ft_isalnum(old_str[i + 1]) || old_str[i + 1] == '_'))
-		{
-			if (old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR)
-				j = ft_strlcat_transform_metachar(new_str,
-						ft_getenv(old_str + i + 1), expanded_size + 1,
-						old_str[i++]);
-			while (ft_isalnum(old_str[i]) || old_str[i] == '_')
-				i++;
-		}
+			j = append_expansion(old_str, new_str, &i, expanded_size);
 		else if ((old_str[i] == '$' || old_str[i] == DQUOTE_DOLLAR)
 			&& old_str[i + 1] == '?')
 		{
@@ -87,7 +81,7 @@ static void	fill_expanded_str(char *old_str, char *new_str,
 	}
 }
 
-static void	*allocate_expanded_str(char *str, t_ms_vars *ms_vars,
+static void	allocate_expanded_str(char *str, t_ms_vars *ms_vars,
 	size_t *expanded_size)
 {
 	int		i;

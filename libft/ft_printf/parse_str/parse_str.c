@@ -6,14 +6,15 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 16:49:14 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 02:29:16 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/03 04:01:18 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ft_printf.h"
 #define MAX_FLAGS	5
 
-static int	print_replacement(t_format *format_lst, char specifier, va_list va_ptr)
+static int	print_replacement(t_format *format_lst, char specifier,
+	va_list va_ptr)
 {
 	int		len;
 

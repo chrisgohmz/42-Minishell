@@ -12,6 +12,19 @@
 
 #include "../../includes/minishell.h"
 
+size_t	get_exit_value_len(unsigned char exit_value)
+{
+	size_t	len;
+
+	len = 1;
+	while (exit_value >= 10)
+	{
+		exit_value /= 10;
+		len++;
+	}
+	return (len);
+}
+
 void	insert_exit_value(unsigned char exit_value, char *new_str, int *j)
 {
 	if (exit_value == 0)

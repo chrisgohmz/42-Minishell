@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -MMD -MP -g -std=gnu2x
+CFLAGS = -Wall -Wextra -Werror -MMD -MP -g
 SPEEDFLAGS = -Wall -Wextra -Werror -Ofast
 LDFLAGS = -Llibft
 LDLIBS = -lft -lreadline -ltinfo
@@ -42,7 +42,7 @@ HEREDOCS_SRCS = $(addprefix $(HEREDOCS_DIR), heredocs.c)
 HEREDOCS_DEPS = $(HEREDOCS_SRCS:.c=.d)
 HEREDOCS_OBJS = $(HEREDOCS_SRCS:.c=.o)
 
-PARAMETER_EXPANSION_SRCS = $(addprefix $(PARAMETER_EXPANSION_DIR), parameter_expansion.c parameter_expansion2.c)
+PARAMETER_EXPANSION_SRCS = $(addprefix $(PARAMETER_EXPANSION_DIR), parameter_expansion.c exit_value.c)
 PARAMETER_EXPANSION_DEPS = $(PARAMETER_EXPANSION_SRCS:.c=.d)
 PARAMETER_EXPANSION_OBJS = $(PARAMETER_EXPANSION_SRCS:.c=.o)
 

@@ -131,6 +131,7 @@ char			**perform_wildcard_expansions(char *str);
 int				make_new_envp(t_ms_vars *ms_vars);
 char			*remove_quotes(char *old_str);
 char			**logical_split(char *str);
+size_t			get_exit_value_len(unsigned char exit_value);
 void			insert_exit_value(unsigned char exit_value, char *new_str,
 					int *j);
 int				perform_redirection(char **filename, t_ms_vars *ms_vars);

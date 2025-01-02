@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 21:30:05 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/29 03:55:13 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/03 03:59:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static size_t	calc_total_len(int size, char **strs, size_t sep_len)
 	return (total_len);
 }
 
-static int	append_str_sep(char *restrict from_str, char *restrict to_str, int k)
+static int	append_str_sep(char *restrict from_str, char *restrict to_str,
+	int k)
 {
 	size_t	j;
 
@@ -38,7 +39,8 @@ static int	append_str_sep(char *restrict from_str, char *restrict to_str, int k)
 	return (k);
 }
 
-static char	*join_strs(int size, char **strs, char *restrict str, char *restrict sep)
+static char	*join_strs(int size, char **strs, char *restrict str,
+	char *restrict sep)
 {
 	int	i;
 	int	k;
