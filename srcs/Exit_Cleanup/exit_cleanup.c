@@ -6,11 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 20:10:18 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/11 20:30:24 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/02 20:42:17 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void	close_heredoc_fds(t_ms_vars *ms_vars)
 {

@@ -6,11 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/09 19:49:22 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/02 20:42:44 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static int	check_ambiguous_redirections(char **split_arr, char *str)
 {

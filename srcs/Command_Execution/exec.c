@@ -6,11 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 10:54:16 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/09 19:16:42 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/02 20:42:06 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 /*
 cgoh: Good start! Now I need u to modify it such that it searches $PATH, not just /usr/bin/.
@@ -120,7 +120,7 @@ static void relative_path(t_ms_vars *ms_vars, struct stat *statbuf)
 }
 
 void	exec_cmd(t_ms_vars *ms_vars)
-{	
+{
 	struct stat	statbuf;
 
 	if (ms_vars->stdout_fd != STDOUT_FILENO)
@@ -151,5 +151,5 @@ void	exec_cmd(t_ms_vars *ms_vars)
 		return ;
 	}
 	else
-		relative_path(ms_vars, &statbuf);	
+		relative_path(ms_vars, &statbuf);
 }

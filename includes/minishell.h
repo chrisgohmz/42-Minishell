@@ -12,9 +12,6 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# ifndef _FORTIFY_SOURCE
-#  define _FORTIFY_SOURCE 2
-# endif
 # define _GNU_SOURCE
 # include "../libft/libft.h"
 # include <stdio.h>
@@ -36,7 +33,18 @@
 # define LONG_MAX_STR "9223372036854775807"
 # define LONG_MIN_STR "9223372036854775808"
 
-extern int g_sigint;
+extern int	g_sigint;
+typedef struct s_syntax_vars
+{
+	int		i;
+	bool	searching_first_word;
+	bool	pipe_first_word;
+	bool	searching_redir_file;
+	bool	within_squotes;
+	bool	within_dquotes;
+	int		bracket_level;
+	bool	empty_brackets;
+}	t_syntax_vars;
 typedef enum e_token_type
 {
 	BRACKETS,
@@ -123,8 +131,6 @@ char			**perform_wildcard_expansions(char *str);
 int				make_new_envp(t_ms_vars *ms_vars);
 char			*remove_quotes(char *old_str);
 char			**logical_split(char *str);
-int				check_bracket_syntax(char *line, int bracket_level,
-					int empty_brackets);
 void			insert_exit_value(unsigned char exit_value, char *new_str,
 					int *j);
 int				perform_redirection(char **filename, t_ms_vars *ms_vars);
@@ -153,9 +159,15 @@ char			**do_expansions(char *str, t_ms_vars *ms_vars);
 int				open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			reset_heredoc_fds(t_ms_vars *ms_vars);
 void			close_heredoc_fds(t_ms_vars *ms_vars);
-void    		minishell_signals(void);
+void			minishell_signals(void);
 void			sigint_handler(int signum);
 void			heredoc_sigint_handler(int signum);
 int				rl_event_handler(void);
+bool			check_opening_and_bracket_syntax(t_syntax_vars *svars,
+					char *line);
+bool			check_closing_syntax(t_syntax_vars *svars);
+void			update_svars(t_syntax_vars *svars, char *line);
+bool			check_first_word(char *line, int *i, bool *sfw);
+void			transform_special_char(char *c, int within_squotes, int within_dquotes);
 
 #endif

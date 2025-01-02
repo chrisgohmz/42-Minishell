@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc_signals.c                                  :+:      :+:    :+:   */
+/*   parameter_expansion2.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/23 23:34:10 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/24 14:42:13 by cgoh             ###   ########.fr       */
+/*   Created: 2024/11/07 21:04:08 by cgoh              #+#    #+#             */
+/*   Updated: 2025/01/02 20:42:38 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
-int rl_event_handler(void)
+void	insert_exit_value(unsigned char exit_value, char *new_str, int *j)
 {
-	return (1);
-}
-
-void heredoc_sigint_handler(int)
-{
-	g_sigint = 1;
-    rl_done = true;
+	if (exit_value == 0)
+		return ;
+	insert_exit_value(exit_value / 10, new_str, j);
+	new_str[(*j)++] = exit_value % 10 + '0';
 }

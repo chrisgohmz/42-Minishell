@@ -6,11 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 10:37:10 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/06 04:29:03 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/02 20:43:45 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 static void	merge(char **restrict arr2, char **restrict arr1, t_mergesort_vars ms_vars)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void	modify_expansions_if_export(t_syntax_tree *stree)
 {
@@ -113,7 +113,7 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		pid = fork();
 		if (pid < 0)
 			return (perror("fork"));
-		else if (pid == 0) 
+		else if (pid == 0)
 		{
 			ms_vars->proc_type = CHILD;
 			signal(SIGINT, SIG_DFL);

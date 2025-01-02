@@ -6,11 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 20:24:58 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/04 20:54:41 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/02 20:43:39 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 t_syntax_tree	*allocate_new_node(t_token_type type, char *value,
 	int num_branches)

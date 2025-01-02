@@ -34,26 +34,48 @@ static void	init_vars(t_ms_vars *ms_vars)
 	ft_strlcat(ms_vars->prompt, PROMPT_END, sizeof(ms_vars->prompt));
 }
 
+static void	create_and_parse_syntax_tree(t_ms_vars *ms_vars)
+{
+	ms_vars->stree = create_logical_branches(ms_vars->stree, ms_vars->line);
+	if (!ms_vars->stree)
+	{
+		ms_vars->exit_value = EXIT_FAILURE;
+		exit_cleanup(ms_vars);
+	}
+	parse_tree(ms_vars->stree, ms_vars);
+	free_syntax_tree(ms_vars->stree);
+}
+
+static void	reset_signals_vars_readline(t_ms_vars *ms_vars)
+{
+	minishell_signals();
+	init_vars(ms_vars);
+	ms_vars->line = readline(ms_vars->prompt);
+	if (g_sigint)
+	{
+		ms_vars->exit_value = 128 + SIGINT;
+		g_sigint = 0;
+	}
+}
+
+static void	init_program_vars(t_ms_vars *ms_vars)
+{
+	ms_vars->exit_value = 0;
+	ms_vars->proc_type = PARENT;
+	ft_strlcpy(ms_vars->prompt, PROMPT_START, sizeof(ms_vars->prompt));
+	if (!make_new_envp(ms_vars))
+		exit(EXIT_FAILURE);
+	rl_event_hook = rl_event_handler;
+}
+
 int	main(void)
 {
 	t_ms_vars	ms_vars;
 
-	ms_vars.exit_value = 0;
-	ms_vars.proc_type = PARENT;
-	ft_strlcpy(ms_vars.prompt, PROMPT_START, sizeof(ms_vars.prompt));
-	if (!make_new_envp(&ms_vars))
-		exit(EXIT_FAILURE);
-	rl_event_hook = rl_event_handler;
+	init_program_vars(&ms_vars);
 	while (true)
 	{
-		minishell_signals();
-		init_vars(&ms_vars);
-		ms_vars.line = readline(ms_vars.prompt);
-		if (g_sigint)
-		{
-			ms_vars.exit_value = 128 + SIGINT;
-			g_sigint = 0;
-		}
+		reset_signals_vars_readline(&ms_vars);
 		if (!ms_vars.line)
 			break ;
 		if (!ms_vars.line[0])
@@ -68,14 +90,7 @@ int	main(void)
 			free(ms_vars.line);
 			continue ;
 		}
-		ms_vars.stree = create_logical_branches(ms_vars.stree, ms_vars.line);
-		if (!ms_vars.stree)
-		{
-			ms_vars.exit_value = EXIT_FAILURE;
-			exit_cleanup(&ms_vars);
-		}
-		parse_tree(ms_vars.stree, &ms_vars);
-		free_syntax_tree(ms_vars.stree);
+		create_and_parse_syntax_tree(&ms_vars);
 	}
 	exit_cleanup(&ms_vars);
 }

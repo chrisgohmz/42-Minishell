@@ -6,11 +6,11 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 01:59:25 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/09 19:37:21 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/02 20:42:52 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void	disable_value_word_splitting(char *str)
 {
