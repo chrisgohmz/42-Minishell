@@ -28,10 +28,6 @@ static size_t	ft_strlcat_transform_metachar(char *dest, const char *src,
 			dest[dest_len + src_n] = ESC_SPACE;
 		else if (src[src_n] == '\t' && dollar_char == DQUOTE_DOLLAR)
 			dest[dest_len + src_n] = ESC_TAB;
-		else if (src[src_n] == '>')
-			dest[dest_len + src_n] = ESC_RIGHT;
-		else if (src[src_n] == '<')
-			dest[dest_len + src_n] = ESC_LEFT;
 		else
 			dest[dest_len + src_n] = src[src_n];
 		src_n++;
