@@ -46,7 +46,7 @@ PARAMETER_EXPANSION_SRCS = $(addprefix $(PARAMETER_EXPANSION_DIR), parameter_exp
 PARAMETER_EXPANSION_DEPS = $(PARAMETER_EXPANSION_SRCS:.c=.d)
 PARAMETER_EXPANSION_OBJS = $(PARAMETER_EXPANSION_SRCS:.c=.o)
 
-PARSER_SRCS = $(addprefix $(PARSER_DIR), parser.c parser2.c parser3.c)
+PARSER_SRCS = $(addprefix $(PARSER_DIR), parser.c parse_cmd_redirects.c handle_tokens.c non_null_arg_quote_removal.c exec_args.c piped_commands.c single_command.c disable_export_word_split.c)
 PARSER_DEPS = $(PARSER_SRCS:.c=.d)
 PARSER_OBJS = $(PARSER_SRCS:.c=.o)
 
@@ -63,7 +63,7 @@ SYNTAX_AND_TRANSFORMATION_SRCS = $(addprefix $(SYNTAX_AND_TRANSFORMATION_DIR), c
 SYNTAX_AND_TRANSFORMATION_DEPS = $(SYNTAX_AND_TRANSFORMATION_SRCS:.c=.d)
 SYNTAX_AND_TRANSFORMATION_OBJS = $(SYNTAX_AND_TRANSFORMATION_SRCS:.c=.o)
 
-SYNTAX_TREE_SRCS = $(addprefix $(SYNTAX_TREE_DIR), syntax_tree.c tree_utils.c logical_split.c redirection_split.c)
+SYNTAX_TREE_SRCS = $(addprefix $(SYNTAX_TREE_DIR), logical_branches.c pipe_branches.c cmd_redirection_branches.c redirection_branches.c tree_utils.c logical_split.c logical_split2.c redirection_split.c redirection_split2.c)
 SYNTAX_TREE_DEPS = $(SYNTAX_TREE_SRCS:.c=.d)
 SYNTAX_TREE_OBJS = $(SYNTAX_TREE_SRCS:.c=.o)
 

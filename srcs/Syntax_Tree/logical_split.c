@@ -19,7 +19,7 @@ static char	*alloc_word(char *restrict start, char *restrict end)
 	int		j;
 	int		within_brackets;
 
-	word = malloc((end - start + 1) * sizeof(char));
+	word = ft_calloc(end - start + 1, sizeof(char));
 	if (!word)
 		return (NULL);
 	i = 0;
@@ -38,11 +38,10 @@ static char	*alloc_word(char *restrict start, char *restrict end)
 		else
 			word[j++] = start[i++];
 	}
-	word[j] = '\0';
 	return (word);
 }
 
-static int	count_words(char *restrict str)
+static int	count_words(char *str)
 {
 	int	words;
 	int	in_word;
@@ -56,28 +55,16 @@ static int	count_words(char *restrict str)
 	while (*str)
 	{
 		if (*str == '(')
-		{
-			if (!within_brackets && !in_word)
-				words++;
-			within_brackets++;
-			in_word = 1;
-			in_delimiter = 0;
-		}
+			start_bracket_word(&words, &in_word, &in_delimiter,
+				&within_brackets);
 		else if (*str == ')')
 			within_brackets--;
-		else if (!within_brackets && (*str == '&' || (*str == '|' && *(str + 1) == '|')) && !in_delimiter)
-		{
-			words++;
-			str++;
-			in_word = 0;
-			in_delimiter = 1;
-		}
-		else if (!within_brackets && !in_word && !(*str == '&' || (*str == '|' && *(str + 1) == '|')))
-		{
-			words++;
-			in_word = 1;
-			in_delimiter = 0;
-		}
+		else if (!within_brackets && (*str == '&' || (*str == '|'
+					&& *(str + 1) == '|')) && !in_delimiter)
+			start_delimiter(&words, &in_word, &in_delimiter, &str);
+		else if (!within_brackets && !in_word && !(*str == '&'
+				|| (*str == '|' && *(str + 1) == '|')))
+			end_delimiter(&words, &in_word, &in_delimiter);
 		str++;
 	}
 	return (words);
@@ -96,32 +83,17 @@ static void	insert_words(char **split, char *restrict str, int words)
 	end = start;
 	while (*end && index < words)
 	{
-		while (*end && (within_brackets || (*end != '&' && !(*end == '|' && *(end + 1) == '|'))))
-		{
-			if (*end == '(')
-				within_brackets++;
-			else if (*end == ')')
-				within_brackets--;
-			end++;
-		}
+		set_end(&end, &within_brackets);
 		split[index] = alloc_word(start, end);
-		if (!split[index])
-		{
-			free_2d_arr((void ***)&split);
-			return ;
-		}
-		index++;
+		if (!split[index++])
+			return (free_2d_arr((void ***)&split));
 		start = end;
 		if (!*start)
 			break ;
 		end += 2;
 		split[index] = alloc_word(start, end);
-		if (!split[index])
-		{
-			free_2d_arr((void ***)&split);
-			return ;
-		}
-		index++;
+		if (!split[index++])
+			return (free_2d_arr((void ***)&split));
 		start = end;
 	}
 	split[index] = NULL;

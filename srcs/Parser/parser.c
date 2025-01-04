@@ -6,201 +6,50 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 19:44:57 by cgoh              #+#    #+#             */
-/*   Updated: 2025/01/02 20:42:44 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/04 18:15:55 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static int	check_ambiguous_redirections(char **split_arr, char *str)
+static void	prepare_cmd_handling(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
-	int	i;
-
-	i = 0;
-	while (split_arr[i] && i < 2)
-		i++;
-	if (i != 1)
+	if (stree->num_branches > MAX_PIPES)
 	{
-		ft_dprintf(STDERR_FILENO, "\e[1;91mError: %s: ambiguous redirect"
-			"\e[0m\n", revert_transform(str));
-		return (1);
-	}
-	return (0);
-}
-
-static void	add_to_argv(char **split_arr, t_ms_vars *ms_vars)
-{
-	int	i;
-
-	i = 0;
-	while (split_arr[i])
-	{
-		ms_vars->exec_argv[ms_vars->argv_index] = remove_quotes(split_arr[i]);
-		if (!ms_vars->exec_argv[ms_vars->argv_index])
-		{
-			free_2d_arr((void ***)&split_arr);
-			ms_vars->exit_value = EXIT_FAILURE;
-			exit_cleanup(ms_vars);
-		}
-		revert_transform(ms_vars->exec_argv[ms_vars->argv_index++]);
-		i++;
-	}
-}
-
-static void	get_exec_args(char **split_arr, t_ms_vars *ms_vars)
-{
-	int		num_elements;
-
-	num_elements = count_split_elements(split_arr);
-	if (num_elements > 0)
-	{
-		ms_vars->exec_argv = ft_realloc_str_arr(ms_vars->exec_argv, ms_vars->argv_index + num_elements + 1);
-		if (!ms_vars->exec_argv)
-		{
-			free_2d_arr((void ***)&split_arr);
-			exit_cleanup(ms_vars);
-		}
-		add_to_argv(split_arr, ms_vars);
-	}
-}
-
-void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
-{
-	int		branch;
-	char	**split_arr;
-
-	if (stree->num_branches == 0)
+		ft_dprintf(STDERR_FILENO, "Error: exceeded maximum"
+			" pipe count of %d\n", MAX_PIPES);
+		ms_vars->exit_value = SYNTAX_ERROR;
 		return ;
-	branch = 0;
+	}
+	if (!open_heredocs(stree, ms_vars))
+		return (close_heredoc_fds(ms_vars));
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	ms_vars->argv_index = 0;
-	split_arr = NULL;
-	modify_expansions_if_export(stree);
-	while (branch < stree->num_branches)
-	{
-		if (stree->branches[branch]->type == WORD)
-		{
-			split_arr = do_expansions(stree->branches[branch]->value, ms_vars);
-			if (!split_arr)
-				exit_cleanup(ms_vars);
-			get_exec_args(split_arr, ms_vars);
-			free(split_arr);
-			split_arr = NULL;
-		}
-		else if (stree->branches[branch]->type == T_FILE)
-		{
-			split_arr = do_expansions(stree->branches[branch]->value, ms_vars);
-			if (!split_arr)
-				exit_cleanup(ms_vars);
-			if (check_ambiguous_redirections(split_arr, stree->branches[branch]->value)
-				|| !perform_redirection(&split_arr[0], ms_vars))
-			{
-				ms_vars->exit_value = EXIT_FAILURE;
-				free_2d_arr((void ***)&split_arr);
-				if (ms_vars->proc_type == CHILD)
-					exit_cleanup(ms_vars);
-				else
-					return (free_2d_arr((void ***)&ms_vars->exec_argv));
-			}
-			free_2d_arr((void ***)&split_arr);
-		}
-		else if (stree->branches[branch]->type == HEREDOC_DELIMITER || stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
-		{
-			if (!perform_redirection(&stree->branches[branch]->value, ms_vars))
-			{
-				ms_vars->exit_value = EXIT_FAILURE;
-				if (ms_vars->proc_type == CHILD)
-					exit_cleanup(ms_vars);
-				else
-					return (free_2d_arr((void ***)&ms_vars->exec_argv));
-			}
-		}
-		else if (stree->branches[branch]->type == SINGLE_RIGHT)
-			ms_vars->redirect = SINGLE_RIGHT;
-		else if (stree->branches[branch]->type == DOUBLE_RIGHT)
-			ms_vars->redirect = DOUBLE_RIGHT;
-		else if (stree->branches[branch]->type == SINGLE_LEFT)
-			ms_vars->redirect = SINGLE_LEFT;
-		else if (stree->branches[branch]->type == DOUBLE_LEFT)
-			ms_vars->redirect = DOUBLE_LEFT;
-		branch++;
-	}
-	if (ms_vars->heredoc_fd[ms_vars->pipe_number][0] > -1)
-	{
-		close(ms_vars->heredoc_fd[ms_vars->pipe_number][0]);
-		ms_vars->heredoc_fd[ms_vars->pipe_number][0] = -1;
-	}
-	if (ms_vars->exec_argv)
-	{
-		if (!check_cmd_is_builtin(ms_vars))
-		{
-			if (ms_vars->proc_type == PARENT)
-				fork_wait_single_process(ms_vars);
-			else
-				exec_cmd(ms_vars);
-		}
-		free_2d_arr((void ***)&ms_vars->exec_argv);
-	}
+	if (stree->num_branches > 1)
+		handle_piped_commands(stree, ms_vars);
 	else
-		ms_vars->exit_value = EXIT_SUCCESS;
+		handle_single_command(stree, ms_vars);
 }
 
 void	parse_tree(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
-	int		branch;
+	int	branch;
 
 	branch = 0;
-	if (stree->type == PIPE)
+	while (!g_sigint && branch < stree->num_branches)
 	{
-		if (stree->num_branches > MAX_PIPES)
+		if (stree->branches[branch]->type == AND
+			&& ms_vars->exit_value != EXIT_SUCCESS)
+			branch += 2;
+		else if (stree->branches[branch]->type == OR
+			&& ms_vars->exit_value == EXIT_SUCCESS)
+			branch += 2;
+		else if (stree->type == PIPE)
 		{
-			ft_dprintf(STDERR_FILENO, "Error: exceeded maximum"
-			" pipe count of %d\n", MAX_PIPES);
-			ms_vars->exit_value = SYNTAX_ERROR;
+			prepare_cmd_handling(stree, ms_vars);
 			return ;
 		}
-		if (!open_heredocs(stree, ms_vars))
-			return (close_heredoc_fds(ms_vars));
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-		if (stree->num_branches > 1)
-		{
-			ms_vars->pid_arr = ft_calloc(stree->num_branches, sizeof(pid_t));
-			if (!ms_vars->pid_arr)
-				exit_cleanup(ms_vars);
-			fork_child_processes(stree, ms_vars);
-			wait_child_processes(stree, ms_vars);
-			free(ms_vars->pid_arr);
-			close_heredoc_fds(ms_vars);
-			reset_heredoc_fds(ms_vars);
-		}
-		else
-		{
-			parse_cmd_redirects(stree->branches[0], ms_vars);
-			if (ms_vars->stdout_fd != STDOUT_FILENO)
-			{
-				if (dup2(ms_vars->stdout_fd, STDOUT_FILENO) < 0)
-					perror("dup2");
-				close(ms_vars->stdout_fd);
-				ms_vars->stdout_fd = STDOUT_FILENO;
-			}
-			if (ms_vars->stdin_fd != STDIN_FILENO)
-			{
-				if (dup2(ms_vars->stdin_fd, STDIN_FILENO) < 0)
-					perror("dup2");
-				close(ms_vars->stdin_fd);
-				ms_vars->stdin_fd = STDIN_FILENO;
-			}
-			close_heredoc_fds(ms_vars);
-			reset_heredoc_fds(ms_vars);
-			return ;
-		}
-	}
-	while (!g_sigint && branch < stree->num_branches && stree->type != PIPE)
-	{
-		if (stree->branches[branch]->type == AND && ms_vars->exit_value != EXIT_SUCCESS)
-			branch += 2;
-		else if (stree->branches[branch]->type == OR && ms_vars->exit_value == EXIT_SUCCESS)
-			branch += 2;
 		else
 			parse_tree(stree->branches[branch++], ms_vars);
 	}

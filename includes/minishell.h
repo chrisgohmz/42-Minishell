@@ -116,6 +116,15 @@ typedef struct s_mergesort_vars
 	int	middle;
 	int	end;
 }	t_mergesort_vars;
+typedef struct s_redir_split
+{
+	int		index;
+	char	*start;
+	char	*end;
+	int		in_word;
+	int		in_delimiter;
+	int		words;
+}	t_redir_split;
 
 char			**redirection_split(char *str);
 t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value);
@@ -142,7 +151,6 @@ t_syntax_tree	*allocate_new_node(t_token_type type, char *value,
 					int num_branches);
 void			exec_cmd(t_ms_vars *ms_vars);
 char			**mergesort_expansions(char **expansions, int expansions_count);
-int				check_cmd_is_builtin(t_ms_vars *ms_vars);
 void			echo_builtin(t_ms_vars *ms_vars);
 void			cd_builtin(t_ms_vars *ms_vars);
 void			pwd_builtin(t_ms_vars *ms_vars);
@@ -152,11 +160,10 @@ void			env_builtin(t_ms_vars *ms_vars);
 void			exit_builtin(t_ms_vars *ms_vars);
 void			fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars);
-void			fork_wait_single_process(t_ms_vars *ms_vars);
+void			fork_single_process(t_ms_vars *ms_vars);
 void			parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			modify_expansions_if_export(t_syntax_tree *stree);
 void			disable_value_word_splitting(char *str);
-char			**do_expansions(char *str, t_ms_vars *ms_vars);
 int				open_heredocs(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			reset_heredoc_fds(t_ms_vars *ms_vars);
 void			close_heredoc_fds(t_ms_vars *ms_vars);
@@ -169,6 +176,27 @@ bool			check_opening_and_bracket_syntax(t_syntax_vars *svars,
 bool			check_closing_syntax(t_syntax_vars *svars);
 void			update_svars(t_syntax_vars *svars, char *line);
 bool			check_first_word(char *line, int *i, bool *sfw);
-void			transform_special_char(char *c, int within_squotes, int within_dquotes);
+void			transform_special_char(char *c, int within_squotes,
+					int within_dquotes);
+void			handle_piped_commands(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void			handle_single_command(t_syntax_tree *stree, t_ms_vars *ms_vars);
+void			handle_word_token(char *value, t_ms_vars *ms_vars);
+void			handle_file_token(char *value, t_ms_vars *ms_vars);
+void			handle_heredoc_token(char **value, t_ms_vars *ms_vars);
+char			*remove_quotes_in_non_null_args(char *str);
+void			get_exec_args(char **split_arr, t_ms_vars *ms_vars);
+t_syntax_tree	*create_pipe_branches(t_syntax_tree *stree,
+					char *value);
+t_syntax_tree	*create_redirection_branches(t_syntax_tree *stree,
+					char *value);
+int				create_word_file_redirection_branches(t_syntax_tree *stree,
+					char **redir_split_arr);
+void			start_bracket_word(int *words, int *in_word, int *in_delimiter,
+					int *within_brackets);
+void			start_delimiter(int *words, int *in_word, int *in_delimiter,
+					char **str);
+void			end_delimiter(int *words, int *in_word, int *in_delimiter);
+void			set_end(char **end, int *within_brackets);
+bool			alloc_words(t_redir_split *rd_split_vars, char **split);
 
 #endif
