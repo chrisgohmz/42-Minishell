@@ -21,8 +21,8 @@ static int	check_ambiguous_redirections(char **split_arr, char *str)
 		i++;
 	if (i != 1)
 	{
-		ft_dprintf(STDERR_FILENO, "\e[1;91mError: %s: ambiguous redirect"
-			"\e[0m\n", revert_transform(str));
+		ft_dprintf(STDERR_FILENO, "Error: %s: ambiguous redirect"
+			"\n", revert_transform(str));
 		return (1);
 	}
 	return (0);
@@ -45,7 +45,7 @@ static char	**do_expansions(char *str, t_ms_vars *ms_vars)
 	return (split_arr);
 }
 
-void	handle_heredoc_token(char **value, t_ms_vars *ms_vars)
+bool	handle_heredoc_token(char **value, t_ms_vars *ms_vars)
 {
 	if (!perform_redirection(value, ms_vars))
 	{
@@ -53,11 +53,16 @@ void	handle_heredoc_token(char **value, t_ms_vars *ms_vars)
 		if (ms_vars->proc_type == CHILD)
 			exit_cleanup(ms_vars);
 		else
-			return (free_2d_arr((void ***)&ms_vars->exec_argv));
+		{
+			free_2d_arr((void ***)&ms_vars->exec_argv);
+			return (false);
+		}
 	}
+	free_2d_arr((void ***)&ms_vars->exec_argv);
+	return (true);
 }
 
-void	handle_file_token(char *value, t_ms_vars *ms_vars)
+bool	handle_file_token(char *value, t_ms_vars *ms_vars)
 {
 	char	**split_arr;
 
@@ -72,9 +77,13 @@ void	handle_file_token(char *value, t_ms_vars *ms_vars)
 		if (ms_vars->proc_type == CHILD)
 			exit_cleanup(ms_vars);
 		else
-			return (free_2d_arr((void ***)&ms_vars->exec_argv));
+		{
+			free_2d_arr((void ***)&ms_vars->exec_argv);
+			return (false);
+		}
 	}
 	free_2d_arr((void ***)&split_arr);
+	return (true);
 }
 
 void	handle_word_token(char *value, t_ms_vars *ms_vars)

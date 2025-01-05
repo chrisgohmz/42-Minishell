@@ -196,8 +196,8 @@ void			transform_special_char(char *c, int within_squotes,
 void			handle_piped_commands(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			handle_single_command(t_syntax_tree *stree, t_ms_vars *ms_vars);
 void			handle_word_token(char *value, t_ms_vars *ms_vars);
-void			handle_file_token(char *value, t_ms_vars *ms_vars);
-void			handle_heredoc_token(char **value, t_ms_vars *ms_vars);
+bool			handle_file_token(char *value, t_ms_vars *ms_vars);
+bool			handle_heredoc_token(char **value, t_ms_vars *ms_vars);
 char			*remove_quotes_in_non_null_args(char *str);
 void			get_exec_args(char **split_arr, t_ms_vars *ms_vars);
 t_syntax_tree	*create_pipe_branches(t_syntax_tree *stree,

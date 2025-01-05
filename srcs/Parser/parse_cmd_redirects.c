@@ -66,10 +66,16 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		if (stree->branches[branch]->type == WORD)
 			handle_word_token(stree->branches[branch]->value, ms_vars);
 		else if (stree->branches[branch]->type == T_FILE)
-			handle_file_token(stree->branches[branch]->value, ms_vars);
+		{
+			if (!handle_file_token(stree->branches[branch]->value, ms_vars))
+				return ;
+		}
 		else if (stree->branches[branch]->type == HEREDOC_DELIMITER
 			|| stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
-			handle_heredoc_token(&stree->branches[branch]->value, ms_vars);
+		{
+			if (!handle_heredoc_token(&stree->branches[branch]->value, ms_vars))
+				return ;
+		}
 		else if (stree->branches[branch]->type == SINGLE_RIGHT)
 			ms_vars->redirect = SINGLE_RIGHT;
 		else if (stree->branches[branch]->type == DOUBLE_RIGHT)

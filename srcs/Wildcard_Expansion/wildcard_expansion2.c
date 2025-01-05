@@ -70,7 +70,6 @@ static void	add_matches(char ***expansions,
 	if (wc_e_vars->entry->d_name[0] == '.' && wc_e_vars->pattern[0] != '.')
 		return ;
 	check_pattern_match(wc_e_vars, &j);
-	revert_wildcard_transform(wc_e_vars->pattern);
 	if (!wc_e_vars->pattern[j])
 	{
 		(*expansions_count)++;
@@ -111,6 +110,7 @@ char	**expand_wildcard(char *pattern, size_t *expansions_count)
 		return (perror("readdir"), free_2d_arr((void ***)&expansions),
 			closedir(wc_e_vars.dirptr), NULL);
 	closedir(wc_e_vars.dirptr);
+	revert_wildcard_transform(wc_e_vars.pattern);
 	check_expansions_count(expansions_count, &expansions, &wc_e_vars);
 	return (expansions);
 }
