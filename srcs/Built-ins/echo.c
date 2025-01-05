@@ -41,7 +41,7 @@ void	echo_builtin(t_ms_vars *ms_vars)
 		n_flag = 1;
 		i++;
 	}
-	while (newline_flag(ms_vars->exec_argv[i]) == 0)
+	while (ms_vars->exec_argv[i] && newline_flag(ms_vars->exec_argv[i]) == 0)
 	{
 		i++;
 	}
