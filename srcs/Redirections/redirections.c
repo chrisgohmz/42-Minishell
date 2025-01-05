@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 18:08:54 by cgoh              #+#    #+#             */
-/*   Updated: 2024/11/19 19:33:57 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/05 17:03:07 by lpwi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	redir_single_right(char *filename, t_ms_vars *ms_vars)
 		ms_vars->stdout_fd = dup(STDOUT_FILENO);
 		if (ms_vars->stdout_fd == -1)
 			return (perror("dup"), 0);
-	} //For single builtin command, temporarily save stdout to another fd, so I can use dup2 to restore stdout later
+	}
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IRGRP
 			| S_IROTH | S_IWUSR);
 	if (fd == -1)
@@ -48,7 +48,7 @@ static int	redir_single_left(char *filename, t_ms_vars *ms_vars)
 		ms_vars->stdin_fd = dup(STDIN_FILENO);
 		if (ms_vars->stdin_fd == -1)
 			return (perror("dup"), 0);
-	} //same reason as line 24, but for stdin
+	}
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 	{
@@ -74,7 +74,7 @@ static int	redir_double_right(char *filename, t_ms_vars *ms_vars)
 		ms_vars->stdout_fd = dup(STDOUT_FILENO);
 		if (ms_vars->stdout_fd == -1)
 			return (perror("dup"), 0);
-	} //For single builtin command, temporarily save stdout to another fd, so I can use dup2 to restore stdout later
+	}
 	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IRGRP
 			| S_IROTH | S_IWUSR);
 	if (fd == -1)
