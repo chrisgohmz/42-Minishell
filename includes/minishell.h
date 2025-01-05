@@ -125,6 +125,20 @@ typedef struct s_redir_split
 	int		in_delimiter;
 	int		words;
 }	t_redir_split;
+typedef struct s_wildcard_vars
+{
+	char	**split_arr;
+	size_t	new_size;
+	size_t	blocks_filled;
+	int		i;
+}	t_wildcard_vars;
+typedef struct s_wc_expand_vars
+{
+	DIR				*dirptr;
+	struct dirent	*entry;
+	size_t			arr_size;
+	char			*pattern;
+}	t_wc_expand_vars;
 
 char			**redirection_split(char *str);
 t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value);
@@ -198,5 +212,11 @@ void			start_delimiter(int *words, int *in_word, int *in_delimiter,
 void			end_delimiter(int *words, int *in_word, int *in_delimiter);
 void			set_end(char **end, int *within_brackets);
 bool			alloc_words(t_redir_split *rd_split_vars, char **split);
+void			check_expansions_count(size_t *expansions_count,
+					char ***expansions,	t_wc_expand_vars *wc_e_vars);
+bool			skip_multiple_wildcards_and_check_wildcard_match(int *i,
+					int *j, int *save_j, t_wc_expand_vars *wc_e_vars);
+char			**expand_wildcard(char *pattern, size_t *expansions_count);
+int				check_wildcard_match(char *entry_name, char delimiter, int *i);
 
 #endif

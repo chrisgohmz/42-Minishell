@@ -6,13 +6,14 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 10:37:10 by cgoh              #+#    #+#             */
-/*   Updated: 2025/01/02 20:43:45 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/05 20:07:48 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	merge(char **restrict arr2, char **restrict arr1, t_mergesort_vars ms_vars)
+static void	merge(char **restrict arr2, char **restrict arr1,
+	t_mergesort_vars ms_vars)
 {
 	int	i;
 	int	j;
@@ -23,7 +24,8 @@ static void	merge(char **restrict arr2, char **restrict arr1, t_mergesort_vars m
 	k = ms_vars.start;
 	while (k < ms_vars.end)
 	{
-		if (i < ms_vars.middle && (j >= ms_vars.end || ft_strncmp(arr1[i], arr1[j], 256) <= 0))
+		if (i < ms_vars.middle && (j >= ms_vars.end
+				|| ft_strncmp(arr1[i], arr1[j], 256) <= 0))
 			arr2[k] = arr1[i++];
 		else
 			arr2[k] = arr1[j++];

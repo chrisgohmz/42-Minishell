@@ -67,7 +67,7 @@ SYNTAX_TREE_SRCS = $(addprefix $(SYNTAX_TREE_DIR), logical_branches.c pipe_branc
 SYNTAX_TREE_DEPS = $(SYNTAX_TREE_SRCS:.c=.d)
 SYNTAX_TREE_OBJS = $(SYNTAX_TREE_SRCS:.c=.o)
 
-WILDCARD_EXPANSION_SRCS = $(addprefix $(WILDCARD_EXPANSION_DIR), wildcard_expansion.c merge_sort.c)
+WILDCARD_EXPANSION_SRCS = $(addprefix $(WILDCARD_EXPANSION_DIR), wildcard_expansion.c wildcard_expansion2.c wildcard_expansion3.c merge_sort.c)
 WILDCARD_EXPANSION_DEPS = $(WILDCARD_EXPANSION_SRCS:.c=.d)
 WILDCARD_EXPANSION_OBJS = $(WILDCARD_EXPANSION_SRCS:.c=.o)
 
