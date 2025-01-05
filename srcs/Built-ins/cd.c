@@ -6,22 +6,15 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 14:35:53 by lpwi              #+#    #+#             */
-/*   Updated: 2024/11/17 21:29:02 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/05 15:45:26 by lpwi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-/** cd **/
-/* go to the defined directory.
-   absolute path: start with the root directory and provide the full path or directory
-   relative path: path to a file or directory that is relative to the current directory */
 
-/*
-Handle cd with no arguments, and HOME is unset.
-*/
 void	cd_builtin(t_ms_vars *ms_vars)
 {
-	int	chdir_ret;
+	int		chdir_ret;
 	char	*home;
 
 	if (!ms_vars->exec_argv[1])
