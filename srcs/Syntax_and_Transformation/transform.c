@@ -6,11 +6,24 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 19:41:00 by cgoh              #+#    #+#             */
-/*   Updated: 2025/01/02 20:43:23 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/05 23:19:44 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+char	*transform_wildcard(char *str)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		if (str[i] == '*')
+			str[i] = WILDCARD;
+	}
+	return (str);
+}
 
 static void	revert_transform2(char *token)
 {

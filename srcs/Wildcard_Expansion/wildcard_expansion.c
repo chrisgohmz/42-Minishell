@@ -45,7 +45,7 @@ static void	add_expansions(char ***new_split_arr, t_wildcard_vars *wc_vars)
 		if (!*new_split_arr)
 			return (free_2d_arr((void ***)&expansions));
 	}
-	ft_memcpy(new_split_arr + wc_vars->blocks_filled - 1, expansions,
+	ft_memcpy(*new_split_arr + wc_vars->blocks_filled - 1, expansions,
 		expansions_count * sizeof(char *));
 	wc_vars->blocks_filled += expansions_count;
 	free(expansions);

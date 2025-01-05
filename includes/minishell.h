@@ -77,7 +77,8 @@ typedef enum e_escaped_type
 	ESC_CLOSE_BRACKET,
 	ESC_WILDCARD,
 	DQUOTE,
-	SQUOTE
+	SQUOTE,
+	WILDCARD
 }	t_escaped_type;
 typedef enum e_process_type
 {
@@ -218,5 +219,7 @@ bool			skip_multiple_wildcards_and_check_wildcard_match(int *i,
 					int *j, int *save_j, t_wc_expand_vars *wc_e_vars);
 char			**expand_wildcard(char *pattern, size_t *expansions_count);
 int				check_wildcard_match(char *entry_name, char delimiter, int *i);
+char			*transform_wildcard(char *str);
+void			revert_wildcard_transform(char *str);
 
 #endif

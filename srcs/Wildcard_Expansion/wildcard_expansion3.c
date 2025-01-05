@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 20:00:51 by cgoh              #+#    #+#             */
-/*   Updated: 2025/01/05 20:13:13 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/05 23:20:34 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 bool	skip_multiple_wildcards_and_check_wildcard_match(int *i, int *j,
 	int *save_j, t_wc_expand_vars *wc_e_vars)
 {
-	while (wc_e_vars->pattern[*j] == '*')
+	while (wc_e_vars->pattern[*j] == WILDCARD)
 		(*j)++;
 	if (!wc_e_vars->pattern[*j] || !check_wildcard_match(wc_e_vars->\
 	entry->d_name, wc_e_vars->pattern[*j], i))
 		return (false);
-	save_j = j;
+	*save_j = *j;
 	return (true);
 }
 

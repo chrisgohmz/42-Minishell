@@ -59,7 +59,7 @@ SIGNALS_DEPS = $(SIGNALS_SRCS:.c=.d)
 SIGNALS_OBJS = $(SIGNALS_SRCS:.c=.o)
 
 SYNTAX_AND_TRANSFORMATION_SRCS = $(addprefix $(SYNTAX_AND_TRANSFORMATION_DIR), check_syntax_and_transform.c\
-									check_syntax.c quote_removal.c transform.c)
+									check_syntax.c quote_removal.c transform.c transform2.c)
 SYNTAX_AND_TRANSFORMATION_DEPS = $(SYNTAX_AND_TRANSFORMATION_SRCS:.c=.d)
 SYNTAX_AND_TRANSFORMATION_OBJS = $(SYNTAX_AND_TRANSFORMATION_SRCS:.c=.o)
 
