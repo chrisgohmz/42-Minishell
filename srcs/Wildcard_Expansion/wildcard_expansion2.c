@@ -53,16 +53,16 @@ static bool	check_pattern_match(t_wc_expand_vars *wc_e_vars)
 	while (pattern_substr_arr[++i])
 	{
 		substr_pos = ft_strnstr(substr_pos, pattern_substr_arr[i],
-			ft_strlen(wc_e_vars->entry->d_name));
+				ft_strlen(wc_e_vars->entry->d_name));
 		if (!substr_pos)
 			return (free_2d_arr((void ***)&pattern_substr_arr), false);
 		substr_pos += ft_strlen(pattern_substr_arr[i]);
 	}
 	if (!check_pattern_start_match(wc_e_vars->entry->d_name,
-		pattern_substr_arr[0], wc_e_vars->pattern))
+			pattern_substr_arr[0], wc_e_vars->pattern))
 		return (free_2d_arr((void ***)&pattern_substr_arr), false);
 	if (i > 0 && !check_pattern_end_match(wc_e_vars->entry->d_name,
-		pattern_substr_arr[i - 1], wc_e_vars->pattern))
+			pattern_substr_arr[i - 1], wc_e_vars->pattern))
 		return (free_2d_arr((void ***)&pattern_substr_arr), false);
 	return (free_2d_arr((void ***)&pattern_substr_arr), true);
 }

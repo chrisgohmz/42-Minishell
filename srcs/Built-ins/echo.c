@@ -51,7 +51,7 @@ void	echo_builtin(t_ms_vars *ms_vars)
 		if (ms_vars->exec_argv[i + 1])
 			ft_putchar_fd(' ', STDOUT_FILENO);
 		i++;
-	}	
+	}
 	if (n_flag == 0)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 	ms_vars->exit_value = EXIT_SUCCESS;

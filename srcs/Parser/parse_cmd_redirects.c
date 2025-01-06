@@ -53,6 +53,32 @@ static void	close_heredocs_and_execute_cmd(t_ms_vars *ms_vars)
 		ms_vars->exit_value = EXIT_SUCCESS;
 }
 
+static bool	handle_token_type(t_syntax_tree *stree, t_ms_vars *ms_vars)
+{
+	if (stree->type == WORD)
+		handle_word_token(stree->value, ms_vars);
+	else if (stree->type == T_FILE)
+	{
+		if (!handle_file_token(stree->value, ms_vars))
+			return (false);
+	}
+	else if (stree->type == HEREDOC_DELIMITER
+		|| stree->type == HEREDOC_QUOTED_DELIMITER)
+	{
+		if (!handle_heredoc_token(&stree->value, ms_vars))
+			return (false);
+	}
+	else if (stree->type == SINGLE_RIGHT)
+		ms_vars->redirect = SINGLE_RIGHT;
+	else if (stree->type == DOUBLE_RIGHT)
+		ms_vars->redirect = DOUBLE_RIGHT;
+	else if (stree->type == SINGLE_LEFT)
+		ms_vars->redirect = SINGLE_LEFT;
+	else if (stree->type == DOUBLE_LEFT)
+		ms_vars->redirect = DOUBLE_LEFT;
+	return (true);
+}
+
 void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
@@ -62,28 +88,7 @@ void	parse_cmd_redirects(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	branch = -1;
 	modify_expansions_if_export(stree);
 	while (++branch < stree->num_branches)
-	{
-		if (stree->branches[branch]->type == WORD)
-			handle_word_token(stree->branches[branch]->value, ms_vars);
-		else if (stree->branches[branch]->type == T_FILE)
-		{
-			if (!handle_file_token(stree->branches[branch]->value, ms_vars))
-				return ;
-		}
-		else if (stree->branches[branch]->type == HEREDOC_DELIMITER
-			|| stree->branches[branch]->type == HEREDOC_QUOTED_DELIMITER)
-		{
-			if (!handle_heredoc_token(&stree->branches[branch]->value, ms_vars))
-				return ;
-		}
-		else if (stree->branches[branch]->type == SINGLE_RIGHT)
-			ms_vars->redirect = SINGLE_RIGHT;
-		else if (stree->branches[branch]->type == DOUBLE_RIGHT)
-			ms_vars->redirect = DOUBLE_RIGHT;
-		else if (stree->branches[branch]->type == SINGLE_LEFT)
-			ms_vars->redirect = SINGLE_LEFT;
-		else if (stree->branches[branch]->type == DOUBLE_LEFT)
-			ms_vars->redirect = DOUBLE_LEFT;
-	}
+		if (!handle_token_type(stree->branches[branch], ms_vars))
+			return ;
 	close_heredocs_and_execute_cmd(ms_vars);
 }
