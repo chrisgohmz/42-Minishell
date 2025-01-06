@@ -12,65 +12,67 @@
 
 #include "../../includes/minishell.h"
 
-int	check_wildcard_match(char *entry_name, char delimiter, int *i)
+static bool	check_pattern_end_match(char *entry, char *substr,
+	char *pattern)
 {
-	while (entry_name[*i] && entry_name[*i] != delimiter)
-		(*i)++;
-	return (entry_name[*i] == delimiter);
-}
+	size_t	substr_len;
 
-static bool	check_save_point_match(t_wc_expand_vars *wc_e_vars, int *i,
-	int *j, int save_j)
-{
-	if (wc_e_vars->entry->d_name[*i] && save_j > 0)
-	{
-		*j = save_j;
-		if (!check_wildcard_match(wc_e_vars->entry->d_name,
-				wc_e_vars->pattern[*j], i))
-			return (false);
-		else
-			return (true);
-	}
-	else
+	while (*pattern)
+		pattern++;
+	if (*(pattern - 1) == WILDCARD)
+		return (true);
+	while (*entry)
+		entry++;
+	substr_len = ft_strlen(substr);
+	entry -= substr_len;
+	if (ft_strncmp(entry, substr, substr_len))
 		return (false);
+	return (true);
 }
 
-static void	check_pattern_match(t_wc_expand_vars *wc_e_vars, int *j)
+static bool	check_pattern_start_match(char *entry, char *substr, char *pattern)
 {
-	int	i;
-	int	save_j;
+	if (pattern[0] == WILDCARD)
+		return (true);
+	if (ft_strncmp(entry, substr, ft_strlen(substr)))
+		return (false);
+	return (true);
+}
 
-	i = 0;
-	save_j = -1;
-	while (wc_e_vars->entry->d_name[i] || wc_e_vars->pattern[*j])
+static bool	check_pattern_match(t_wc_expand_vars *wc_e_vars)
+{
+	char	**pattern_substr_arr;
+	int		i;
+	char	*substr_pos;
+
+	pattern_substr_arr = ft_split(wc_e_vars->pattern, WILDCARD);
+	if (!pattern_substr_arr)
+		return (perror("malloc"), false);
+	i = -1;
+	substr_pos = wc_e_vars->entry->d_name;
+	while (pattern_substr_arr[++i])
 	{
-		if (wc_e_vars->pattern[*j] == WILDCARD)
-		{
-			if (!skip_multiple_wildcards_and_check_wildcard_match(&i,
-					j, &save_j, wc_e_vars))
-				break ;
-		}
-		else if (wc_e_vars->entry->d_name[i] != wc_e_vars->pattern[*j]
-			&& !check_save_point_match(wc_e_vars, &i, j, save_j))
-			break ;
-		else
-		{
-			i++;
-			(*j)++;
-		}
+		substr_pos = ft_strnstr(substr_pos, pattern_substr_arr[i],
+			ft_strlen(wc_e_vars->entry->d_name));
+		if (!substr_pos)
+			return (free_2d_arr((void ***)&pattern_substr_arr), false);
+		substr_pos += ft_strlen(pattern_substr_arr[i]);
 	}
+	if (!check_pattern_start_match(wc_e_vars->entry->d_name,
+		pattern_substr_arr[0], wc_e_vars->pattern))
+		return (free_2d_arr((void ***)&pattern_substr_arr), false);
+	if (i > 0 && !check_pattern_end_match(wc_e_vars->entry->d_name,
+		pattern_substr_arr[i - 1], wc_e_vars->pattern))
+		return (free_2d_arr((void ***)&pattern_substr_arr), false);
+	return (free_2d_arr((void ***)&pattern_substr_arr), true);
 }
 
 static void	add_matches(char ***expansions,
 	size_t *expansions_count, t_wc_expand_vars *wc_e_vars)
 {
-	int	j;
-
-	j = 0;
 	if (wc_e_vars->entry->d_name[0] == '.' && wc_e_vars->pattern[0] != '.')
 		return ;
-	check_pattern_match(wc_e_vars, &j);
-	if (!wc_e_vars->pattern[j])
+	if (check_pattern_match(wc_e_vars))
 	{
 		(*expansions_count)++;
 		if (*expansions_count + 1 > wc_e_vars->arr_size)

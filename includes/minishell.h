@@ -215,10 +215,7 @@ void			set_end(char **end, int *within_brackets);
 bool			alloc_words(t_redir_split *rd_split_vars, char **split);
 void			check_expansions_count(size_t *expansions_count,
 					char ***expansions,	t_wc_expand_vars *wc_e_vars);
-bool			skip_multiple_wildcards_and_check_wildcard_match(int *i,
-					int *j, int *save_j, t_wc_expand_vars *wc_e_vars);
 char			**expand_wildcard(char *pattern, size_t *expansions_count);
-int				check_wildcard_match(char *entry_name, char delimiter, int *i);
 char			*transform_wildcard(char *str);
 void			revert_wildcard_transform(char *str);
 

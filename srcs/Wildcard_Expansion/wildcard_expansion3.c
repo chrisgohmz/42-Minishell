@@ -12,18 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-bool	skip_multiple_wildcards_and_check_wildcard_match(int *i, int *j,
-	int *save_j, t_wc_expand_vars *wc_e_vars)
-{
-	while (wc_e_vars->pattern[*j] == WILDCARD)
-		(*j)++;
-	if (!wc_e_vars->pattern[*j] || !check_wildcard_match(wc_e_vars->\
-	entry->d_name, wc_e_vars->pattern[*j], i))
-		return (false);
-	*save_j = *j;
-	return (true);
-}
-
 void	check_expansions_count(size_t *expansions_count, char ***expansions,
 	t_wc_expand_vars *wc_e_vars)
 {
