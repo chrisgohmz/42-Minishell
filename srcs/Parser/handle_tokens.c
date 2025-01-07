@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 17:53:31 by cgoh              #+#    #+#             */
-/*   Updated: 2025/01/04 21:07:24 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/07 22:34:31 by cgoh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ bool	handle_heredoc_token(char **value, t_ms_vars *ms_vars)
 			return (false);
 		}
 	}
-	free_2d_arr((void ***)&ms_vars->exec_argv);
 	return (true);
 }
 
