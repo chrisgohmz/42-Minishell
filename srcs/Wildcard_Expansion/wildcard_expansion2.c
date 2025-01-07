@@ -53,7 +53,7 @@ static bool	check_pattern_match(t_wc_expand_vars *wc_e_vars)
 	while (pattern_substr_arr[++i])
 	{
 		substr_pos = ft_strnstr(substr_pos, pattern_substr_arr[i],
-				ft_strlen(wc_e_vars->entry->d_name));
+				ft_strlen(substr_pos));
 		if (!substr_pos)
 			return (free_2d_arr((void ***)&pattern_substr_arr), false);
 		substr_pos += ft_strlen(pattern_substr_arr[i]);
