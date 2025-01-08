@@ -20,6 +20,8 @@ static int	newline_flag(char *str)
 	if (str[i] != '-')
 		return (-1);
 	i++;
+	if (!str[i])
+		return (-1);
 	while (str[i])
 	{
 		if (str[i] != 'n')
