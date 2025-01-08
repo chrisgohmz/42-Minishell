@@ -26,7 +26,7 @@ BUILTIN_SRCS = $(addprefix $(BUILTIN_DIR), echo.c cd.c pwd.c env.c export.c\
 BUILTIN_DEPS = $(BUILTIN_SRCS:.c=.d)
 BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
 
-CMD_EXEC_SRCS = $(addprefix $(CMD_EXEC_DIR), exec.c)
+CMD_EXEC_SRCS = $(addprefix $(CMD_EXEC_DIR), exec.c exec_utils.c)
 CMD_EXEC_DEPS = $(CMD_EXEC_SRCS:.c=.d)
 CMD_EXEC_OBJS = $(CMD_EXEC_SRCS:.c=.o)
 

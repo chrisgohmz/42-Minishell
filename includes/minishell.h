@@ -219,4 +219,9 @@ char			**expand_wildcard(char *pattern, size_t *expansions_count);
 char			*transform_wildcard(char *str);
 void			revert_wildcard_transform(char *str);
 
+int				abs_check_access(t_ms_vars *ms_vars, struct stat *statbuf);
+int				rel_check_access(t_ms_vars *ms_vars, struct stat *statbuf,
+					char *path, char **bin);
+void			free_all(char **bin, char *path);
+
 #endif
