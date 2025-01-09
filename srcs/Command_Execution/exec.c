@@ -12,23 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-static void	exec_cmd_not_found_handler(t_ms_vars *ms_vars)
-{
-	char	*handler_path;
-	char	**arr;
-
-	handler_path = "/lib/command-not-found";
-	arr = ft_calloc(3, sizeof(char *));
-	if (!arr)
-		return ;
-	arr[0] = handler_path;
-	arr[1] = ms_vars->exec_argv[0];
-	execve(handler_path, arr, ms_vars->ep);
-	free(arr);
-	errno = ENOENT;
-	perror(ms_vars->exec_argv[0]);
-}
-
 static char	**store_path(t_ms_vars *ms_vars)
 {
 	char	*path;
@@ -70,9 +53,19 @@ static char	*get_path(char *bin, char *cmd)
 	return (path);
 }
 
+static void	relative_path_2(t_ms_vars *ms_vars, char *path)
+{
+	if (!path)
+		exec_cmd_not_found_handler(ms_vars);
+	if (path && execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
+		perror(ms_vars->exec_argv[0]);
+	ms_vars->exit_value = 127;
+}
+
 static void	relative_path(t_ms_vars *ms_vars, struct stat *statbuf)
 {
 	int		i;
+	int		access_res;
 	char	**bin;
 	char	*path;
 
@@ -84,18 +77,15 @@ static void	relative_path(t_ms_vars *ms_vars, struct stat *statbuf)
 	while (bin[i] && ms_vars->exec_argv[0][0])
 	{
 		path = get_path(bin[i++], ms_vars->exec_argv[0]);
-		if (rel_check_access(ms_vars, statbuf, path, bin) == 0)
+		access_res = rel_check_access(ms_vars, statbuf, path, bin);
+		if (access_res == 0)
 			break ;
-		else if (rel_check_access(ms_vars, statbuf, path, bin) == -1)
+		else if (access_res == -1)
 			return ;
 		free(path);
 		path = NULL;
 	}
-	if (!path)
-		exec_cmd_not_found_handler(ms_vars);
-	if (path && execve(path, ms_vars->exec_argv, ms_vars->ep) == -1)
-		perror(ms_vars->exec_argv[0]);
-	ms_vars->exit_value = 127;
+	relative_path_2(ms_vars, path);
 	free_all(bin, path);
 }
 

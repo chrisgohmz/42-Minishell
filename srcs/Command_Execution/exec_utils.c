@@ -50,3 +50,20 @@ void	free_all(char **bin, char *path)
 	free_2d_arr((void ***)&bin);
 	free(path);
 }
+
+void	exec_cmd_not_found_handler(t_ms_vars *ms_vars)
+{
+	char	*handler_path;
+	char	**arr;
+
+	handler_path = "/lib/command-not-found";
+	arr = ft_calloc(3, sizeof(char *));
+	if (!arr)
+		return ;
+	arr[0] = handler_path;
+	arr[1] = ms_vars->exec_argv[0];
+	execve(handler_path, arr, ms_vars->ep);
+	free(arr);
+	errno = ENOENT;
+	perror(ms_vars->exec_argv[0]);
+}

@@ -223,5 +223,6 @@ int				abs_check_access(t_ms_vars *ms_vars, struct stat *statbuf);
 int				rel_check_access(t_ms_vars *ms_vars, struct stat *statbuf,
 					char *path, char **bin);
 void			free_all(char **bin, char *path);
+void			exec_cmd_not_found_handler(t_ms_vars *ms_vars);
 
 #endif
