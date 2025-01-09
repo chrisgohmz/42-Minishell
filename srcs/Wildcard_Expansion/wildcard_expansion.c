@@ -23,8 +23,8 @@ static void	add_pattern(char ***new_split_arr, t_wildcard_vars *wc_vars)
 	}
 	(*new_split_arr)[wc_vars->blocks_filled - 1] = ft_strdup(wc_vars->\
 		split_arr[wc_vars->i]);
-	if (!new_split_arr[wc_vars->blocks_filled++ - 1])
-		return (free_2d_arr((void ***)&new_split_arr));
+	if (!(*new_split_arr)[wc_vars->blocks_filled++ - 1])
+		return (free_2d_arr((void ***)new_split_arr));
 }
 
 static void	add_expansions(char ***new_split_arr, t_wildcard_vars *wc_vars)
