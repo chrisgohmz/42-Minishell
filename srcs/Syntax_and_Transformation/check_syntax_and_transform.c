@@ -26,6 +26,8 @@ static void	update_svars2(t_syntax_vars *svars, char *line)
 		svars->empty_brackets = true;
 	else if (svars->empty_brackets && !ft_strchr(" \t", line[svars->i]))
 		svars->empty_brackets = false;
+	else if (line[svars->i] == ')')
+		svars->searching_logical_op = true;
 }
 
 void	update_svars(t_syntax_vars *svars, char *line)
@@ -45,6 +47,8 @@ void	update_svars(t_syntax_vars *svars, char *line)
 		svars->pipe_first_word = true;
 	else if (svars->pipe_first_word && !ft_strchr(" \t", line[svars->i]))
 		svars->pipe_first_word = false;
+	if (svars->searching_logical_op && ft_strchr("|&", line[svars->i]))
+		svars->searching_logical_op = false;
 	update_svars2(svars, line);
 }
 

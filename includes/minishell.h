@@ -40,6 +40,7 @@ typedef struct s_syntax_vars
 	bool	searching_first_word;
 	bool	pipe_first_word;
 	bool	searching_redir_file;
+	bool	searching_logical_op;
 	bool	within_squotes;
 	bool	within_dquotes;
 	int		bracket_level;

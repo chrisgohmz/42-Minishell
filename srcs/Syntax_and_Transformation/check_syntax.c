@@ -30,7 +30,7 @@ bool	check_closing_syntax(t_syntax_vars *svars)
 }
 
 static bool	check_bracket_syntax(char *line, int bracket_level,
-	int empty_brackets)
+	int empty_brackets, bool searching_logical_op)
 {
 	if (bracket_level < 0)
 	{
@@ -42,6 +42,12 @@ static bool	check_bracket_syntax(char *line, int bracket_level,
 	{
 		ft_putendl_fd("\e[1;91mSyntax Error: Empty parenthesis\e[0m",
 			STDERR_FILENO);
+		return (0);
+	}
+	else if (searching_logical_op && !ft_strchr(" \t|&)", line[0]))
+	{
+		ft_putendl_fd("\e[1;91mSyntax Error: token after ')' is not &&"
+			" or ||\e[0m", STDERR_FILENO);
 		return (0);
 	}
 	return (1);
@@ -110,7 +116,7 @@ bool	check_opening_and_bracket_syntax(t_syntax_vars *svars, char *line)
 			svars->pipe_first_word))
 		return (1);
 	else if (!check_bracket_syntax(line + svars->i, svars->bracket_level,
-			svars->empty_brackets))
+			svars->empty_brackets, svars->searching_logical_op))
 		return (1);
 	return (0);
 }
