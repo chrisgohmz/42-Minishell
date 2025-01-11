@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 18:45:26 by cgoh              #+#    #+#             */
-/*   Updated: 2024/12/14 18:30:00 by lpwi             ###   ########.fr       */
+/*   Updated: 2025/01/11 17:15:48 by lpwi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,12 @@ typedef struct s_wc_expand_vars
 	size_t			arr_size;
 	char			*pattern;
 }	t_wc_expand_vars;
+
+typedef struct s_pipe_fds
+{
+	int	fds[2];
+	int	temp_fd;
+}	t_pipe_fds;
 
 char			**redirection_split(char *str);
 t_syntax_tree	*create_logical_branches(t_syntax_tree *stree, char *value);
