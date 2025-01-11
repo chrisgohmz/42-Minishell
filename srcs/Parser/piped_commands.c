@@ -108,7 +108,6 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 			ms_vars->proc_type = CHILD;
 			pipe_child(stree, branch, fds, temp_fd);
 			parse_cmd_redirects(stree->branches[branch], ms_vars);
-			// exit_cleanup(ms_vars);
 		}
 		else
 			pipe_parent(stree, branch, &temp_fd, fds);
