@@ -59,7 +59,7 @@ int	check_value(char *str)
 
 void	exit_builtin(t_ms_vars *ms_vars)
 {
-	ft_putendl_fd("exit", STDOUT_FILENO);
+	ft_putendl_fd("exit", STDERR_FILENO);
 	if (ms_vars->exec_argv[1])
 	{
 		if (non_numeric_string(ms_vars->exec_argv[1]) == 1)
