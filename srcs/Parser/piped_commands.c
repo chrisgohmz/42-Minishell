@@ -6,7 +6,7 @@
 /*   By: cgoh <cgoh@student.42singapore.sg>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 17:30:23 by cgoh              #+#    #+#             */
-/*   Updated: 2025/01/04 17:40:49 by cgoh             ###   ########.fr       */
+/*   Updated: 2025/01/11 15:33:36 by lpwi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,59 @@ void	wait_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 	}
 }
 
+static void	pipe_parent(t_syntax_tree *stree, int branch, int *temp_fd,
+			int *fds)
+{
+	if (branch == (stree->num_branches - 1))
+	{
+		if (*temp_fd != -1)
+			close(*temp_fd);
+		close(fds[0]);
+		close(fds[1]);
+	}
+	else
+	{
+		if (*temp_fd != -1)
+			close(*temp_fd);
+		*temp_fd = fds[0];
+		close(fds[1]);
+	}
+}
+
+static void	pipe_child(t_syntax_tree *stree, int branch, int *fds, int temp_fd)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (branch == 0)
+	{
+		if (dup2(fds[1], STDOUT_FILENO) == -1)
+			perror("dup2");
+	}
+	else if (branch == (stree->num_branches - 1))
+	{
+		if (dup2(temp_fd, STDIN_FILENO) == -1)
+			perror("dup2");
+		close(temp_fd);
+	}
+	else
+	{
+		if (dup2(temp_fd, STDIN_FILENO) == -1)
+			perror("dup2");
+		if (dup2(fds[1], STDOUT_FILENO) == -1)
+			perror("dup2");
+		close(temp_fd);
+	}
+	close(fds[0]);
+	close(fds[1]);
+}
+
 void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 {
 	int		branch;
-	int 	fds[2];
+	int		fds[2];
 	pid_t	pid;
-	int 	temp_fd;
-	//int status;
+	int		temp_fd;
 
-	//current problem: shell will exit with piped commands because parent's stdin fd was replaced, need to make sure only the child calls dup2
 	branch = 0;
 	temp_fd = -1;
 	while (branch < stree->num_branches)
@@ -62,54 +106,12 @@ void	fork_child_processes(t_syntax_tree *stree, t_ms_vars *ms_vars)
 		else if (pid == 0)
 		{
 			ms_vars->proc_type = CHILD;
-			signal(SIGINT, SIG_DFL);
-			signal(SIGQUIT, SIG_DFL);
-			if (branch == 0) //child of 1st cmd
-			{
-				if (dup2(fds[1], STDOUT_FILENO) == -1)
-					perror("dup2"); // to send output of 1st cmd to write end of the pipe
-				close(fds[0]);
-				close(fds[1]);
-				parse_cmd_redirects(stree->branches[branch], ms_vars);
-				exit_cleanup(ms_vars);
-			}
-			else if (branch == (stree->num_branches - 1)) //child of last cmd
-			{
-				if (dup2(temp_fd, STDIN_FILENO) == -1)
-					perror("dup2");
-				close(temp_fd);
-				close(fds[0]);
-				close(fds[1]);
-				parse_cmd_redirects(stree->branches[branch], ms_vars);
-				exit_cleanup(ms_vars);
-			}
-			else
-			{
-				if (dup2(temp_fd, STDIN_FILENO) == -1)
-					perror("dup2");
-				if (dup2(fds[1], STDOUT_FILENO) == -1)
-					perror("dup2");
-				close(temp_fd);
-				close(fds[0]);
-				close(fds[1]);
-				parse_cmd_redirects(stree->branches[branch], ms_vars);
-				exit_cleanup(ms_vars);
-			}
+			pipe_child(stree, branch, fds, temp_fd);
+			parse_cmd_redirects(stree->branches[branch], ms_vars);
+			// exit_cleanup(ms_vars);
 		}
-		else if(branch == (stree->num_branches - 1))//exit to parent
-		{
-			if (temp_fd != -1)
-				close(temp_fd);
-			close(fds[0]);
-			close(fds[1]);
-		}
-		else //exit to parent
-		{
-			if (temp_fd != -1)
-				close(temp_fd);
-			temp_fd = fds[0];
-			close(fds[1]);
-		}
+		else
+			pipe_parent(stree, branch, &temp_fd, fds);
 		ms_vars->pipe_number++;
 		ms_vars->pid_arr[branch++] = pid;
 	}
